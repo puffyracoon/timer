@@ -89,7 +89,7 @@
   },
   {
     "Name": "Karka Queen",
-    "Map": "southsun Cove",
+    "Map": "Southsun Cove",
     "uctZeroStartTime": ["2:00", "6:00", "10:30", "15:00", "18:00", "23:00"],
     "Waypoint": "[&BNcGAAA=]",
     "Wiki": "https://wiki.guildwars2.com/wiki/Legendary_Karka_Queen",

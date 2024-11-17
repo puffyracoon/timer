@@ -1,3 +1,17 @@
+@font-face {
+    font-family: 'Inter';
+    src: url(/app/fonts/Inter-VariableFont_opsz,wght.ttf) format('truetype');
+}
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url(/app/fonts/JetBrainsMono-VariableFont_wght.ttf) format('truetype');
+}
+@font-face {
+    font-family: "GWTwo";
+    src: url(/app/fonts/GWTwoFont.ttf) format('truetype');
+}
+
+
 :root{
     --accent-color: #b12c29;
     --text-color: #dddddd;
@@ -30,6 +44,7 @@ header{
     align-items: center;
     z-index: 2;
     box-shadow: 4px 5px 10px 1px rgba(0,0,0,0.10);
+    font-family: 'GWTwo', 'Inter', sans-serif;
 }
 
 .hamburger{
@@ -76,7 +91,7 @@ header{
 
 
 h1{
-    font-family: "Noto Sans Mono", monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 2rem;
     margin: 0;
 }
@@ -87,13 +102,13 @@ h2{
     margin: 0;
 }
 h3{
-    font-family:"Noto Sans Mono", monospace;
+    font-family:"JetBrains Mono", monospace;
     font-size: 1rem;
     color: #696868;
     margin: 0;
 }
 h4{
-    font-family:"Noto Sans Mono", monospace;
+    font-family:"JetBrains Mono", monospace;
     color: #5E0400;
     font-size: 1rem;
     margin: 0;
