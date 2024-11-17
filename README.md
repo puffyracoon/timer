@@ -26,4 +26,4 @@ uncheck events you don't want so see in the menu
 - UI/UX improvement
 
 
-![screenshot.png](/app/img/screenshot.png)
+![screenshot.png](/app/img/Screenshot.png)
