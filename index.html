@@ -7,18 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>GW2 Simple Timer</title>
     <link rel="icon" type="image/x-icon" href="/app/img/Event_star_(map_icon).png">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+Mono:wght@100..900&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="app/Style.css">
     <script defer type="module" src="app/script.js"></script>
 </head>
-
 
 <body>
     <header>
@@ -42,14 +33,12 @@
         <div class="about">
             Skiqper.4827
             <br/>
-            <a href="" target="_blank" class="github-link">Github</a>
+            <a href="https://github.com/Snipppppy/GW2-Simple-Timer/" target="_blank" class="github-link">Github</a>
         </div>
     </aside>
     <div class="event-table" id="event-table"></div>
 </body>
 
-
-<!-- HTML Template for Event Cards-->
 <template id="event-card-template">
     <div class="event-card-element">
         <div class="left-placeholder"></div>
@@ -63,20 +52,20 @@
         </div>
         <div class="links">
             <div class="waypoint-link links-tab"><img class="waypoint-icon" src="app/img/waypoint.svg" width="30px" height="30px" alt="Copy Waypoint"></div>
-            <a class="wiki-link links-tab" href="https://github.com/Snipppppy/GW2-Simple-Timer" target="_blank"><img class="wiki-icon" src="app/img/wiki.svg" width="25px" height="25px" alt="Guild Wiki"></a>
+            <a class="wiki-link links-tab" href="" target="_blank"><img class="wiki-icon" src="app/img/wiki.svg" width="25px" height="25px" alt="Guild Wiki"></a>
         </div>
         <div class="right-placeholder"></div>
     </div>
 </template>
 
-
+<!-- HTML Template for Event Toggle switch-->
 <template id="tgl-template">
     <div class="tgl-list-element" >
-        <label class="tgl-label" >test</label>
+        <label class="tgl-label" ></label>
         <input class="tgl-checkbox" type="checkbox">
         <span class="tgl-slider"></span>
+
     </div>
 </template>
-
 
 </html>

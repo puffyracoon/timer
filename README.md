@@ -2,7 +2,7 @@
 
 ---
 
-#### A Simple GuildWars2 Meta Event Timer
+### A Simple GuildWars2 Meta Event Timer
 
 Visit: https://gw2simpletimer.netlify.app/  
 uncheck events you don't want so see in the menu
@@ -11,7 +11,7 @@ uncheck events you don't want so see in the menu
 
 ---
 
-#### Known issues
+### Known issues
 
 - missing multiple events
 - timezones are working, but are properly jank
@@ -20,10 +20,12 @@ uncheck events you don't want so see in the menu
 
 ---
 
-#### Whaht's to come
-
+### Roadmap
 - add missing events
 - UI/UX improvement
+- provide FAST Farming Links
+- include Farm train notifications
 
+---
 
 ![screenshot.png](/app/img/Screenshot.png)
