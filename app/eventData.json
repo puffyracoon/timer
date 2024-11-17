@@ -1,0 +1,258 @@
+[
+  {
+    "Name": "Shadow Behemoth",
+    "Map": "Queensdale",
+    "uctZeroStartTime": ["1:45", "3:45", "5:45", "7:45", "9:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45"],
+    "Waypoint": "[&BPcAAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Shadow_Behemoth",
+    "Category": "base"
+  },
+  {
+    "Name": "Fire Elemental",
+    "Map": "Metrica Province",
+    "uctZeroStartTime": ["0:45", "2:45", "4:45", "6:45", "8:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45"],
+    "Waypoint": "[&BEcAAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Fire_Elemental",
+    "Category": "base"
+  },
+  {
+    "Name": "Svanir Shaman Chief",
+    "Map": "Wayfarer Foothills",
+    "uctZeroStartTime": ["0:15", "2:15", "4:15", "6:15", "8:15", "10:15", "12:15", "14:15", "16:15", "18:15", "20:15", "22:15"],
+    "Waypoint": "[&BH4BAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Champion_Svanir_Shaman_Chief",
+    "Category": "base"
+  },
+  {
+    "Name": "Great Jungle Wurm",
+    "Map": "Caledon Forest",
+    "uctZeroStartTime": ["1:15", "3:15", "5:15", "7:15", "9:15", "11:15", "13:15", "15:15", "17:15", "19:15", "21:15", "23:15"],
+    "Waypoint": "[&BEEFAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Great_Jungle_Wurm",
+    "Category": "base"
+  },
+  {
+    "Name": "Golem Mark II",
+    "Map": "Mount Maelstrom",
+    "uctZeroStartTime": ["2:00", "5:00", "8:00", "11:00", "14:00", "17:00", "20:00", "23:00"],
+    "Waypoint": "[&BNQCAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Great_Jungle_Wurm",
+    "Category": "base"
+  },
+  {
+  "Name": "Claw of Jormag",
+  "Map": "Frostgorge Sound",
+  "uctZeroStartTime": ["2:30", "5:30", "8:30", "11:30", "14:30", "17:30", "20:30", "23:30"],
+  "Waypoint": "[&BH0CAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Claw_of_Jormag",
+    "Category": "base"
+},
+  {
+  "Name": "Admiral Taidha Covington",
+  "Map": "Bloodtide Coast",
+  "uctZeroStartTime": ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"],
+  "Waypoint": "[&BKgBAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Admiral_Taidha_Covington",
+    "Category": "base"
+},
+  {
+    "Name": "Megadestroyer",
+    "Map": "Mount Maelstrom",
+    "uctZeroStartTime": ["00:30", "03:30", "06:30", "09:30", "12:30", "15:30", "18:30", "21:30"],
+    "Waypoint": "[&BM0CAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Megadestroyer",
+    "Category": "base"
+  },
+  {
+    "Name": "The Shatterer",
+    "Map": "Blazeridge Steppes",
+    "uctZeroStartTime": ["1:00", "4:00", "7:00", "10:00", "13:00", "16:00", "19:00", "22:00"],
+    "Waypoint": "[&BE4DAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/The_Shatterer",
+    "Category": "base"
+  },
+  {
+    "Name": "Modniir Ulgoth",
+    "Map": "Harathi Hinterlands",
+    "uctZeroStartTime": ["1:30", "4:30", "7:30", "10:30", "13:30", "16:30", "19:30", "22:30"],
+    "Waypoint": "[&BLAAAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Modniir_Ulgoth",
+    "Category": "base"
+  },
+  {
+    "Name": "Tequatl",
+    "Map": "Sparkfly Fen",
+    "uctZeroStartTime": ["0:00", "3:00", "7:00", "11:30", "16:00", "19:00"],
+    "Waypoint": "[&BNABAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Tequatl_the_Sunless",
+    "Category": "base"
+  },
+  {
+    "Name": "Karka Queen",
+    "Map": "southsun Cove",
+    "uctZeroStartTime": ["2:00", "6:00", "10:30", "15:00", "18:00", "23:00"],
+    "Waypoint": "[&BNcGAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Legendary_Karka_Queen",
+    "Category": "base"
+  },
+  {
+    "Name": "Triple Trouble",
+    "Map": "Bloodtide Coast",
+    "uctZeroStartTime": ["1:00", "4:00", "8:00", "12:30", "17:00", "20:00"],
+    "Waypoint": "[&BKoBAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Triple_Trouble",
+    "Category": "base"
+  },
+  {
+    "Name": "Ley Line Anomaly",
+    "Map": "Gendaran Fields",
+    "uctZeroStartTime": ["4:20", "01:20", "10:20", "16:20", "22:20"],
+    "Waypoint": "[&BOQAAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly",
+    "Category": "base"
+  },
+  {
+    "Name": "Ley Line Anomaly ",
+    "Map": "Timberline Fals",
+    "uctZeroStartTime": ["0:20", "6:20", "12:20", "18:20"],
+    "Waypoint": "[&BEwCAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly",
+    "Category": "base"
+  },
+  {
+    "Name": "Ley Line Anomaly ",
+    "Map": "Iron Marsches",
+    "uctZeroStartTime": ["2:20", "8:20", "14:20", "20:20"],
+    "Waypoint": "[&BOcBAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly",
+    "Category": "base"
+  },
+  {
+    "Name": "Sandstorm",
+    "Map": "Dry Top",
+    "uctZeroStartTime": ["1:40", "3:40", "5:40", "7:40", "9:40", "11:40", "13:40", "15:40", "17:40", "19:40", "21:40", "23:40", "0:40", "2:40", "4:40", "6:40", "8:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40"],
+    "Waypoint": "[&BIAHAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Sandstorm!",
+    "Category": "ls2"
+  },
+    {
+       "Name": "Night Bosses",
+        "Map": "Verdant Brink",
+        "uctZeroStartTime": ["0:10", "2:10", "4:10", "6:10", "8:10", "10:10", "12:10", "14:10", "16:10", "18:10", "20:10", "22:10"],
+        "Waypoint": "[&BAgIAAA=]",
+      "Wiki": "https://wiki-de.guildwars2.com/wiki/Die_Nacht_und_der_Feind",
+      "Category": "hot"
+    },
+    {
+       "Name": "Octovine",
+        "Map": "Auric Basin",
+        "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+        "Waypoint": "[&BGwIAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Battle_in_Tarir",
+      "Category": "hot"
+    },
+  {
+    "Name": "Chak Gerent",
+    "Map": "Tangled Depths",
+    "uctZeroStartTime": ["0:30", "2:30", "4:30", "6:30", "8:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30"],
+    "Waypoint": "[&BPUHAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/King_of_the_Jungle",
+    "Category": "hot"
+  },
+  {
+    "Name": "Noran's Homestead",
+    "Map": "Lake Doric",
+    "uctZeroStartTime": ["0:30", "2:30", "4:30", "6:30", "8:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30"],
+    "Waypoint": "[&BLAJAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_Noran%27s_Homestead",
+    "Category": "ls3"
+  },
+    {
+       "Name": "Pinata",
+        "Map": "Cristal Oasis",
+        "uctZeroStartTime": ["0:20", "2:20", "4:20", "6:20", "8:20", "10:20", "12:20", "14:20", "16:20", "18:20", "20:20", "22:20"],
+        "Waypoint": "[&BLsKAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Casino_Blitz",
+      "Category": "pof"
+    },
+    {
+       "Name": "Death-Branded Shatterer",
+        "Map": "Jahai Bluffs",
+        "uctZeroStartTime": ["0:15", "2:15", "4:15", "6:15", "8:15", "10:15", "12:15", "14:15", "16:15", "18:15", "20:15", "22:15"],
+        "Waypoint": "[&BJMLAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Destroy_the_Death-Branded_Shatterer",
+      "Category": "ls4"
+    },
+    {
+       "Name": "Palawadan",
+        "Map": "Domain of Istan",
+        "uctZeroStartTime": ["1:45", "3:45", "5:45", "7:45", "9:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45"],
+        "Waypoint": "[&BAkLAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Palawadan,_Jewel_of_Istan_(meta_event)",
+      "Category": "ls4"
+    },
+    {
+        "Name": "Thunderhead Keep",
+        "Map": "Thunderhead Peaks",
+        "uctZeroStartTime": ["1:45", "3:45", "5:45", "7:45", "9:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45"],
+        "Waypoint": "[&BLsLAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Thunderhead_Keep_(meta_event)",
+      "Category": "ls4"
+    },
+    {
+        "Name": "Icebrood Chmapions",
+        "Map": "Bjora Marches",
+        "uctZeroStartTime": ["0:00", "2:00", "4:00", "6:00", "8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
+        "Waypoint": "[&BCcMAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Storms_of_Winter",
+      "Category": "es"
+    },
+    {
+        "Name": "Drakkar",
+        "Map": "Bjora Marches",
+        "uctZeroStartTime": ["1:20", "3:20", "5:20", "7:20", "9:20", "11:20", "13:20", "15:20", "17:20", "19:20", "21:20", "23:20"],
+        "Waypoint": "[&BDkMAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Champion_of_the_Ice_Dragon",
+      "Category": "es"
+    },
+    {
+        "Name": "Dragonstorm",
+        "Map": "Eye of the North",
+        "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+        "Waypoint": "[&BAkMAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Dragonstorm",
+      "Category": "es"
+    },
+  {
+    "Name": "Aetherblade Assault",
+    "Map": "Seitung Province",
+    "uctZeroStartTime": ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30"],
+    "Waypoint": "[&BGUNAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Aetherblade_Assault",
+    "Category": "eod"
+  },
+  {
+    "Name": "Wizard's Tower",
+    "Map": "Skywatch Archipelago",
+    "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+    "Waypoint": "[&BL4NAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Unlocking_the_Wizard's_Tower",
+    "Category": "soto"
+  },
+    {
+        "Name": "Defense of Amnitas",
+        "Map": "Amnitas",
+        "uctZeroStartTime": ["0:00", "2:00", "4:00", "6:00", "8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
+        "Waypoint": "[&BDQOAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/The_Defense_of_Amnytas",
+      "Category": "soto"
+    },
+    {
+        "Name": "Convergences",
+        "Map": "Amnitas",
+        "uctZeroStartTime": ["1:30", "4:30", "7:30", "10:30", "13:30", "16:30", "19:30", "22:30"],
+        "Waypoint": "[&BB8OAAA=]",
+      "Wiki": "https://wiki.guildwars2.com/wiki/Convergences",
+      "Category": "soto"
+    }
+]
