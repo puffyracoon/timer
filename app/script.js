@@ -144,9 +144,9 @@ function getLocalTime(uctZeroStartTimeAsString) {
 }
 
 function getTimeAsStr(time){
-    let h = time.getHours()
-    let m = String(time.getMinutes()).padEnd(2, "0")
-    return `${h}:${m}`
+    let hours = String(time.getHours()).padStart(2, " ")
+    let min = String(time.getMinutes()).padEnd(2, "0")
+    return `${hours}:${min}`
 }
 
 function updateEventCard() {

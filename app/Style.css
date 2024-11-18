@@ -142,13 +142,15 @@ h4{
 }
 
 .event-time-container{
-    width: 7rem;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     justify-content: flex-end;
 }
 
+.event-start-time{
+    white-space: pre;
+}
 
 .links{
     display: flex;
