@@ -123,8 +123,7 @@ h4{
     justify-content: space-between;
     margin: auto;
     width: 100%;
-    max-width: 36rem;
-    min-height: 62px;
+    max-width: 43rem;
     border-bottom: 1px solid;
     box-shadow: 4px 8px 14px 1px rgba(0,0,0,0.30);
 }
@@ -214,6 +213,8 @@ h4{
 .es{ border-color:  rgba(0, 112, 255, .3);}
 .eod { border-color:  rgba(0, 237, 255, .3);}
 .soto { border-color: rgba(255, 237, 0, .3);}
+.janthir { border-color: rgba(46, 101, 125, 8);}
+
 
 
 .tgl-list-element{

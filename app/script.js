@@ -51,7 +51,7 @@ class event {
         if (!card) return
         let remainingMS = this.localStartTime - now
         if (remainingMS < 0) {    card.remove()   }
-        if (remainingMS < 1800000) {  this.updateCountDown(remainingMS) }
+        if (remainingMS < 900000) {  this.updateCountDown(remainingMS) }
     }
     updateCountDown(remainingMS) {
         let div = document.getElementById(`rt-${this.eventid}`)

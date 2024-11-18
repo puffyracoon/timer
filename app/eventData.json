@@ -104,7 +104,7 @@
     "Category": "base"
   },
   {
-    "Name": "Ley Line Anomaly",
+    "Name": "Ley Line Anomaly (Gendaran Fields)",
     "Map": "Gendaran Fields",
     "uctZeroStartTime": ["4:20", "01:20", "10:20", "16:20", "22:20"],
     "Waypoint": "[&BOQAAAA=]",
@@ -112,7 +112,7 @@
     "Category": "base"
   },
   {
-    "Name": "Ley Line Anomaly ",
+    "Name": "Ley Line Anomaly (Timberline Fals)",
     "Map": "Timberline Fals",
     "uctZeroStartTime": ["0:20", "6:20", "12:20", "18:20"],
     "Waypoint": "[&BEwCAAA=]",
@@ -120,7 +120,7 @@
     "Category": "base"
   },
   {
-    "Name": "Ley Line Anomaly ",
+    "Name": "Ley Line Anomaly (Iron Marsches)",
     "Map": "Iron Marsches",
     "uctZeroStartTime": ["2:20", "8:20", "14:20", "20:20"],
     "Waypoint": "[&BOcBAAA=]",
@@ -160,6 +160,14 @@
     "Category": "hot"
   },
   {
+    "Name": "Dragon's Stand",
+    "Map": "Dragon's Stand",
+    "uctZeroStartTime": ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30"],
+    "Waypoint": "[&BBAIAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Advancing_on_the_Blighting_Towers",
+    "Category": "hot"
+  },
+  {
     "Name": "Noran's Homestead",
     "Map": "Lake Doric",
     "uctZeroStartTime": ["0:30", "2:30", "4:30", "6:30", "8:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30"],
@@ -167,14 +175,70 @@
     "Wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_Noran%27s_Homestead",
     "Category": "ls3"
   },
-    {
-       "Name": "Pinata",
-        "Map": "Cristal Oasis",
-        "uctZeroStartTime": ["0:20", "2:20", "4:20", "6:20", "8:20", "10:20", "12:20", "14:20", "16:20", "18:20", "20:20", "22:20"],
-        "Waypoint": "[&BLsKAAA=]",
-      "Wiki": "https://wiki.guildwars2.com/wiki/Casino_Blitz",
-      "Category": "pof"
-    },
+  {
+    "Name": "New Loamhurst",
+    "Map": "Lake Doric",
+    "uctZeroStartTime": ["1:45", "3:45", "5:45", "7:45", "9:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45"],
+    "Waypoint": "[&BLQJAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_New_Loamhurst",
+    "Category": "ls3"
+  },
+  {
+    "Name": "Saidra's Haven",
+    "Map": "Lake Doric",
+    "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+    "Waypoint": "[&BK0JAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/White_Mantle_Control:_Saidra's_Haven",
+    "Category": "ls3"
+  },
+  {
+    "Name": "Pinata",
+    "Map": "Cristal Oasis",
+    "uctZeroStartTime": ["0:20", "2:20", "4:20", "6:20", "8:20", "10:20", "12:20", "14:20", "16:20", "18:20", "20:20", "22:20"],
+    "Waypoint": "[&BLsKAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Casino_Blitz",
+    "Category": "pof"
+  },
+  {
+    "Name": "Buried Treasure",
+    "Map": "Desert Highlands",
+    "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+    "Waypoint": "[&BGsKAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/The_Search_for_Buried_Treasure",
+    "Category": "pof"
+  },
+  {
+    "Name": "The Path to Ascension",
+    "Map": "Elon Riverlands ",
+    "uctZeroStartTime": ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30"],
+    "Waypoint": "[&BFMKAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/The_Path_to_Ascension",
+    "Category": "pof"
+  },
+  {
+    "Name": "Ddoppelganger",
+    "Map": "Elon Riverlands ",
+    "uctZeroStartTime": ["1:55", "3:55", "5:55", "7:55", "9:55", "11:55", "13:55", "15:55", "17:55", "19:55", "21:55", "23:55"],
+    "Waypoint": "[&BFMKAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/The_Path_to_Ascension",
+    "Category": "pof"
+  },
+  {
+    "Name": "Maws of Torment",
+    "Map": "The Desolation",
+    "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+    "Waypoint": "[&BKMKAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Maws_of_Torment",
+    "Category": "pof"
+  },
+  {
+    "Name": "Forged with Fire",
+    "Map": "Domain of Vabbi",
+    "uctZeroStartTime": ["1:40", "3:40", "5:40", "7:40", "9:40", "11:40", "13:40", "15:40", "17:40", "19:40", "21:40", "23:40", "0:40", "2:40", "4:40", "6:40", "8:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40"],
+    "Waypoint": "[&BO0KAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Forged_with_Fire",
+    "Category": "pof"
+  },
     {
        "Name": "Death-Branded Shatterer",
         "Map": "Jahai Bluffs",
@@ -232,6 +296,38 @@
     "Category": "eod"
   },
   {
+    "Name": "Kaineng Blackout",
+    "Map": "New Kaineng City",
+    "uctZeroStartTime": ["0:00", "2:00", "4:00", "6:00", "8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
+    "Waypoint": "[&BBkNAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Aetherblade_Assault",
+    "Category": "eod"
+  },
+  {
+    "Name": "Gang War",
+    "Map": "The Echovald Wilds",
+    "uctZeroStartTime": ["0:30", "2:30", "4:30", "6:30", "8:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30"],
+    "Waypoint": "[&BMwMAAA=]",
+    "Wiki": "https://wiki.guildwars2.…The_Gang_War_of_Echovald",
+    "Category": "eod"
+  },
+  {
+    "Name": "Aspenwood",
+    "Map": "The Echovald Wilds",
+    "uctZeroStartTime": ["1:40", "3:40", "5:40", "7:40", "9:40", "11:40", "13:40", "15:40", "17:40", "19:40", "21:40", "23:40"],
+    "Waypoint": "[&BPkMAAA=]",
+    "Wiki": "https://wiki.guildwars2.…u_fight_through_the_fort",
+    "Category": "eod"
+  },
+  {
+    "Name": "Dragon's End",
+    "Map": "Dragon's End",
+    "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
+    "Waypoint": "[&BKIMAAA=]",
+    "Wiki": "https://wiki.guildwars2.…_Battle_for_the_Jade_Sea",
+    "Category": "eod"
+  },
+  {
     "Name": "Wizard's Tower",
     "Map": "Skywatch Archipelago",
     "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
@@ -247,12 +343,20 @@
       "Wiki": "https://wiki.guildwars2.com/wiki/The_Defense_of_Amnytas",
       "Category": "soto"
     },
-    {
-        "Name": "Convergences",
-        "Map": "Amnitas",
-        "uctZeroStartTime": ["1:30", "4:30", "7:30", "10:30", "13:30", "16:30", "19:30", "22:30"],
-        "Waypoint": "[&BB8OAAA=]",
-      "Wiki": "https://wiki.guildwars2.com/wiki/Convergences",
-      "Category": "soto"
-    }
+  {
+    "Name": "Convergences",
+    "Map": "Amnitas",
+    "uctZeroStartTime": ["1:30", "4:30", "7:30", "10:30", "13:30", "16:30", "19:30", "22:30"],
+    "Waypoint": "[&BB8OAAA=]",
+    "Wiki": "https://wiki.guildwars2.com/wiki/Convergences",
+    "Category": "soto"
+  },
+  {
+    "Name": "Janthir Syntri",
+    "Map": "Janthir Syntri",
+    "uctZeroStartTime": ["0:30", "2:30", "4:30", "6:30", "8:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30"],
+    "Waypoint": "[&BCoPAAA=]",
+    "Wiki": "https://wiki.guildwars2.…ki/Of_Mists_and_Monsters",
+    "Category": "janthir"
+  }
 ]
