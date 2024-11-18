@@ -58,8 +58,6 @@ class event {
         if (remainingMS < 0) {
             card.remove()
             this.localStartTime.setDate(this.localStartTime.getDate() +1)
-            console.log(this)
-            console.log(allEvents)
             return}
         if (remainingMS < minCountdownTime) {  this.updateCountDown(remainingMS) }
     }
