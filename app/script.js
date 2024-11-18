@@ -115,6 +115,7 @@ function addVisibilityTgl(eventData) {
         setVisibility(parentEventID, e.target.checked)
         let elements = document.getElementsByClassName(parentEventID)
         toggleVisibility(elements, e.target.checked)
+        umami.track(`Toggeled: ${eventData.Name} ${e.target.checked}`)
     })
 }
 
