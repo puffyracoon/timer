@@ -8,6 +8,11 @@ const cardTemplate = document.getElementById("event-card-template")
 const toggleTemplate = document.getElementById("tgl-template")
 let allEvents = []
 
+//
+let now = new Date();
+const minCountdownTime = 900000
+const maxFutureCardTime = 5*3600000
+
 class event {
     constructor(eventData, startTimeStr) {
         this.parentEventID = eventData.Name.replaceAll(" ", "-")
@@ -18,10 +23,10 @@ class event {
         this.wiki = eventData.Wiki
         this.localStartTime = getLocalTime(startTimeStr)
         this.category = eventData.Category
+        if (this.localStartTime < now) {this.localStartTime.setDate(this.localStartTime.getDate() +1 )}
     }
     addEventToDOM() {
-        let now = new Date();
-        if (this.localStartTime < now) {return}
+        if (this.localStartTime > now.getTime() + maxFutureCardTime) {return}
 
         let clone = cardTemplate.content.cloneNode(true)
 
@@ -46,12 +51,17 @@ class event {
         toggleVisibility(card, visibility)
 
     }
-    updateCard(now) {
+    updateCard() {
         let card = document.getElementById(this.eventid)
-        if (!card) return
+        if (!card) {this.addEventToDOM(); return}
         let remainingMS = this.localStartTime - now
-        if (remainingMS < 0) {    card.remove()   }
-        if (remainingMS < 900000) {  this.updateCountDown(remainingMS) }
+        if (remainingMS < 0) {
+            card.remove()
+            this.localStartTime.setDate(this.localStartTime.getDate() +1)
+            console.log(this)
+            console.log(allEvents)
+            return}
+        if (remainingMS < minCountdownTime) {  this.updateCountDown(remainingMS) }
     }
     updateCountDown(remainingMS) {
         let div = document.getElementById(`rt-${this.eventid}`)
@@ -80,7 +90,12 @@ for (let i = 0; i < allEvents.length; i++) {
 }
 
 //Update
-setInterval(updateEventCard, 1000)
+setInterval(interval, 1000)
+function interval(){
+    now = new Date();
+    updateEventCards()
+
+}
 
 function addVisibilityTgl(eventData) {
     let clone = toggleTemplate.content.cloneNode(true)
@@ -149,9 +164,12 @@ function getTimeAsStr(time){
     return `${hours}:${min}`
 }
 
-function updateEventCard() {
-    let now = new Date();
+function updateEventCards() {
     for (let i = 0; i < allEvents.length; i++) {
-        allEvents[i].updateCard(now)
+        allEvents[i].updateCard()
     }
+}
+
+function tomorowSameTime(Date){
+    date
 }
