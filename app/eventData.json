@@ -147,7 +147,7 @@
        "Name": "Octovine",
         "Map": "Auric Basin",
         "uctZeroStartTime": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
-        "Waypoint": "[&BN0HAAA=] [&BGwIAAA=] [&BAIIAAA=] [&BAYIAAA=]",
+        "Waypoint": "[&BN0HAAA=] - [&BGwIAAA=] - [&BAIIAAA=] - [&BAYIAAA=]",
       "Wiki": "https://wiki.guildwars2.com/wiki/Battle_in_Tarir",
       "Category": "hot"
     },
@@ -355,7 +355,7 @@
     "Name": "Mists and Monsters",
     "Map": "Janthir Syntri",
     "uctZeroStartTime": ["0:40", "2:40", "4:40", "6:40", "8:40", "10:40", "12:40", "14:40", "16:40", "18:40", "24:30", "22:40"],
-    "Waypoint": "[&BCoPAAA=] [&BLgOAAA=]",
+    "Waypoint": "[&BCoPAAA=] - [&BLgOAAA=]",
     "Wiki": "https://wiki.guildwars2.…ki/Of_Mists_and_Monsters",
     "Category": "janthir"
   }
