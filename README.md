@@ -24,7 +24,7 @@ uncheck events you don't want so see in the menu
 - add missing events
 - UI/UX improvement
 - provide FAST Farming Links
-- include Farm train notifications
+- include Farm train Discord notifications - maybe if possible
 
 ---
 
