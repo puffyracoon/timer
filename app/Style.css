@@ -86,12 +86,20 @@ header{
     background-color: rgb(39, 39, 45);
     transition: translate 200ms;
     translate: 100%;
-    max-width: 80%;
+    max-width: min(25em, 80%);
     overflow-y: auto;
     scrollbar-width: none;
     box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.5);
 }
 
+#browser-settings-alert{
+    margin: 2em 1em;
+    padding: .5em;
+    border: 2px solid var(--accent-color);
+    border-radius: 7px;
+    color: var(--accent-color);
+
+}
 
 h1{
     font-family: "JetBrains Mono", monospace;

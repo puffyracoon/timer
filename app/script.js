@@ -87,6 +87,13 @@ for (let i = 0; i < allEvents.length; i++) {
     allEvents[i].addEventToDOM()
 }
 
+//Hide browser-settings-alert in the SideBar
+if (localStorage.length > 0) {
+    document.getElementById("browser-settings-alert").remove()
+} else {
+    umami.track(`revisits with disabled events`)
+}
+
 //Update
 setInterval(interval, 1000)
 function interval(){
