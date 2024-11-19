@@ -14,7 +14,6 @@ uncheck events you don't want so see in the menu
 ### Known issues
 
 - missing multiple events
-- timezones are working, but are properly jank
 
 
 
@@ -22,6 +21,7 @@ uncheck events you don't want so see in the menu
 
 ### Roadmap
 - add missing events
+- audible alert toggle
 - UI/UX improvement
 - provide FAST Farming Links
 - include Farm train Discord notifications - maybe if possible

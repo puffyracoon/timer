@@ -10,8 +10,8 @@ let allEvents = []
 
 //
 let now = new Date();
-const minCountdownTime = 900000
-const maxFutureCardTime = 5*3600000
+const minCountdownTime = 20 * 60000
+const maxFutureCardTime = 5 * 3600000
 
 class event {
     constructor(eventData, startTimeStr) {
