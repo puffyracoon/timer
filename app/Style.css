@@ -19,6 +19,7 @@
     --alt-bg-color: #313134;
     --alt2-bg-color: #232323;
     --als-linear-bg: linear-gradient(0deg, rgb(28, 28, 32) 0%, rgb(39, 39, 45) 100%);
+    --og-gw-butten: linear-gradient(180deg,#b40000,#3e1209);
 }
 
 
@@ -79,6 +80,7 @@ header{
 .sidebar{
     position: fixed;
     right: 0;
+    top: 54px;
     height: 100%;
     z-index: 1;
     background-color: rgb(39, 39, 45);
