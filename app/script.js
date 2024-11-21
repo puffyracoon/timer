@@ -1,11 +1,13 @@
-let eventData = await fetch('/app/eventData.json')
+let events = await fetch('/app/events.json')
     .then(response => response.json())
     .then(obj => { return obj })
-    .catch(error => console.error("Culd not fetch EventData", error));
+    .catch(error => console.error("Could not fetch event data: ", error));
 
 const eventTable = document.getElementById("event-table")
 const cardTemplate = document.getElementById("event-card-template")
 const toggleTemplate = document.getElementById("tgl-template")
+const categoryList = document.getElementById("category-list")
+const categoryTemplate = document.getElementById("tgl-category-template")
 let allEvents = []
 
 //
@@ -13,16 +15,13 @@ let now = new Date();
 const minCountdownTime = 20 * 60000
 const maxFutureCardTime = 5 * 3600000
 
-class event {
-    constructor(eventData, startTimeStr) {
-        this.parentEventID = eventData.Name.replaceAll(" ", "-")
-        this.eventid = startTimeStr+this.parentEventID
-        this.name = eventData.Name
-        this.map = eventData.Map
-        this.waypoint = eventData.Waypoint
-        this.wiki = eventData.Wiki
-        this.localStartTime = getLocalTime(startTimeStr)
-        this.category = eventData.Category
+class Event {
+    constructor(parentEvent, event, start) {
+        this.parentEvent = parentEvent;
+        this.event = event;
+        this.eventid = start + parentEvent.key
+        this.localStartTime = getLocalTime(start)
+        this.color = getObjByKeye(events.categories, parentEvent.categoryKey).color
         if (this.localStartTime < now) {this.localStartTime.setDate(this.localStartTime.getDate() +1 )}
     }
     addEventToDOM() {
@@ -30,24 +29,32 @@ class event {
 
         let clone = cardTemplate.content.cloneNode(true)
 
-        clone.querySelector(".event-card-element").classList.add(this.parentEventID)
-        clone.querySelector(".event-card-element").classList.add(this.category)
+        clone.querySelector(".event-card-element").classList.add(this.parentEvent.key)
         clone.querySelector(".event-card-element").id =  this.eventid
+        clone.querySelector(".event-card-element").style.borderColor =  this.color
         clone.querySelector(".waypoint-link").id =  `wp${this.eventid}`
         clone.querySelector(".remaining-time").id = `rt-${this.eventid}`
-        clone.querySelector(".wiki-link").href = this.wiki
+        clone.querySelector(".wiki-link").href = this.parentEvent.wiki
+        clone.querySelector(".fastf-link").href = this.parentEvent.fastF
+        clone.querySelector(".fastf-link").id = `ff${this.eventid}`
         clone.querySelector(".event-start-time").textContent = getTimeAsStr(this.localStartTime)
-        clone.querySelector(".event-name").textContent = this.name
-        clone.querySelector(".event-map").textContent = this.map
+        clone.querySelector(".event-name").textContent = this.parentEvent.name
+        clone.querySelector(".note").textContent = this.parentEvent.note
+        clone.querySelector(".event-map").textContent = this.event.map
 
         eventTable.appendChild(clone)
 
         let wp = document.getElementById(`wp${this.eventid}`)
-        wp.addEventListener("click", () => {  navigator.clipboard.writeText(this.waypoint)    })
-        wp.classList.add(this.category)
+        let copy = `${getTimeAsStr(this.localStartTime)} || ${this.parentEvent.name} || ${this.event.waypoint}`
+        wp.addEventListener("click", () => {  navigator.clipboard.writeText(copy)    })
+
+        if (this.parentEvent.fastF === "") {
+            document.getElementById(`ff${this.eventid}`).style.visibility = "hidden"
+        }
+
 
         let card = document.getElementById(this.eventid)
-        let visibility = getVisibility(this.parentEventID)
+        let visibility = getVisibility(this.parentEvent.key)
         toggleVisibility(card, visibility)
 
     }
@@ -70,11 +77,21 @@ class event {
     }
 }
 
-// Add Event Toggles
-for (let i = 0; i < eventData.length; i++) {
-    addVisibilityTgl(eventData[i])
-    for (let j = 0; j < eventData[i].uctZeroStartTime.length; j++) {
-        let evt = new event(eventData[i], eventData[i].uctZeroStartTime[j])
+// Add Toggle List categories
+for (let obj of events.categories) {
+    addTglCategory(obj)
+}
+
+// Add Visibility Tiggels
+for (let obj of events.parentEvents) {
+    addVisibilityTgl(obj)
+}
+
+// Init All Events
+for (let event of events.events) {
+    for (let start of event.start) {
+        let pEvt =  getObjByKeye(events.parentEvents, event.parentKey);
+        let evt = new Event(pEvt, event, start)
         allEvents.push(evt)
     }
 }
@@ -83,8 +100,8 @@ for (let i = 0; i < eventData.length; i++) {
 allEvents.sort((a, b) => a.localStartTime - b.localStartTime)
 
 // Add Event Cards
-for (let i = 0; i < allEvents.length; i++) {
-    allEvents[i].addEventToDOM()
+for (let event of allEvents) {
+    event.addEventToDOM()
 }
 
 //Hide browser-settings-alert in the SideBar
@@ -102,25 +119,33 @@ function interval(){
 
 }
 
-function addVisibilityTgl(eventData) {
+function addTglCategory(category) {
+    let clone = categoryTemplate.content.cloneNode(true)
+
+    clone.querySelector(".categories-name").innerHTML = category.name
+    clone.querySelector(".tgl-category-element").style.borderColor = category.color
+    clone.querySelector(".tgl-container").id = category.key
+
+    categoryList.appendChild(clone)
+}
+
+function addVisibilityTgl(parentEvent) {
     let clone = toggleTemplate.content.cloneNode(true)
-    let parentEventID = eventData.Name.replaceAll(" ", "-")
+    let tglList = document.getElementById(parentEvent.categoryKey)
 
-    clone.querySelector(".tgl-label").textContent = eventData.Name
-    clone.querySelector(".tgl-checkbox").checked = getVisibility(parentEventID)
-    clone.querySelector(".tgl-checkbox").id = `cb-${parentEventID}`
-    clone.querySelector(".tgl-label").htmlFor = `cb-${parentEventID}`
+    clone.querySelector(".tgl-label").textContent = parentEvent.name
+    clone.querySelector(".tgl-checkbox").checked = getVisibility(parentEvent.key)
+    clone.querySelector(".tgl-checkbox").id = `cb-${parentEvent.key}`
+    clone.querySelector(".tgl-label").htmlFor = `cb-${parentEvent.key}`
 
-
-    const tglList = document.getElementById(eventData.Category)
     tglList.appendChild(clone)
 
-    let tgl = document.getElementById(`cb-${parentEventID}`)
+    let tgl = document.getElementById(`cb-${parentEvent.key}`)
     tgl.addEventListener("change", (e) => {
-        setVisibility(parentEventID, e.target.checked)
-        let elements = document.getElementsByClassName(parentEventID)
+        setVisibility(parentEvent.key, e.target.checked)
+        let elements = document.getElementsByClassName(parentEvent.key)
         toggleVisibility(elements, e.target.checked)
-        umami.track(`Toggeled: ${eventData.Name} ${e.target.checked}`)
+        umami.track(`Toggeled: ${parentEvent.Name} ${e.target.checked}`)
     })
 }
 
@@ -130,9 +155,15 @@ function getVisibility(parentEventID) {
     return true
 }
 
-function setVisibility(parentEventID, value) {
-    if (value === false) {localStorage.setItem(parentEventID, "false")}
-    if (value === true) {localStorage.removeItem(parentEventID)}
+function setVisibility(parentEventKey, value) {
+    if (value === false) {localStorage.setItem(parentEventKey, "false")}
+    if (value === true) {localStorage.removeItem(parentEventKey)}
+}
+
+function getObjByKeye(ArrOfObject, key){
+    for (let obj of ArrOfObject) {
+        if (obj.key === key) { return obj }
+    }
 }
 
 function toggleVisibility(elements, visibility) {

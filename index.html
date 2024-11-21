@@ -37,17 +37,7 @@
     </label>
     <aside class="sidebar">
         <div id="browser-settings-alert">Depending on your browser settings, this will be saved for your future sessions.</div>
-        <div id="base" class="base event-toggle-list"></div>
-        <div id="ls2" class="ls2 event-toggle-list"></div>
-        <div id="hot" class="hot event-toggle-list"></div>
-        <div id="ls3" class="ls3 event-toggle-list"></div>
-        <div id="pof" class="pof event-toggle-list"></div>
-        <div id="ls4" class="ls4 event-toggle-list"></div>
-        <div id="es" class="es event-toggle-list"></div>
-        <div id="eod" class="eod event-toggle-list"></div>
-        <div id="soto" class="soto event-toggle-list"></div>
-        <div id="janthir" class="janthir event-toggle-list"></div>
-
+        <div id="category-list" class="category-list"></div>
         <div class="about">
             Skiqper.4827
             <br/>
@@ -57,6 +47,7 @@
     <div class="event-table" id="event-table"></div>
 </body>
 
+<!-- HTML Template for Event Card-->
 <template id="event-card-template">
     <div class="event-card-element">
         <div class="event-time-container">
@@ -64,19 +55,34 @@
             <h4 class="remaining-time"></h4>
         </div>
         <div class="event-name-container">
-            <h2 class="event-name">Name Of The Event</h2>
+            <div class="name">
+                <h2 class="event-name">Name Of The Event</h2>
+                <h3 class="note"></h3>
+            </div>
             <h3 class="event-map">--Name Of The Event Map!--</h3>
         </div>
         <div class="links">
-            <div class="waypoint-link links-tab"><img class="waypoint-icon" src="app/img/waypoint.svg" width="20px" height="20px" alt="Copy Waypoint"></div>
-            <a class="wiki-link links-tab" href="" target="_blank"><img class="wiki-icon" src="app/img/wiki.svg" width="20px" height="20px" alt="Guild Wiki"></a>
+            <a class="fastf-link links-tab" href="" target="_blank"><img class="fastf-icon" src="app/img/fastf.svg" width="25px" height="25px" alt="Link to [fast]Farimg Gold/Hour"></a>
+            <a class="wiki-link links-tab" href="" target="_blank"><img class="wiki-icon" src="app/img/wiki.svg" width="25px" height="25px" alt="Link to the official Guild Wars 2 Wiki"></a>
+            <a class="done-link links-tab"><img class="done-icon" src="app/img/done_outline_FFFFFF.svg" width="25px" height="25px" alt=""></a>
+            <a class="reminder-link links-tab"><img class="reminder-icon" src="app/img/notifications_off_FFFFFF.svg" width="25px" height="25px" alt=""></a>
+            <a class="waypoint-link links-tab"><img class="waypoint-icon" src="app/img/waypoint.svg" width="25px" height="25px" alt="Copy Waypoint"></a>
+
         </div>
+    </div>
+</template>
+
+<!-- HTML Template for Sidebar categories-->
+<template id="tgl-category-template">
+    <div class="tgl-category-element">
+        <div class="categories-name"></div>
+        <dvi class="tgl-container"></dvi>
     </div>
 </template>
 
 <!-- HTML Template for Event Toggle switch-->
 <template id="tgl-template">
-    <div class="tgl-list-element" >
+    <div class="tgl-element" >
         <label class="tgl-label" ></label>
         <input class="tgl-checkbox" type="checkbox">
         <span class="tgl-slider"></span>

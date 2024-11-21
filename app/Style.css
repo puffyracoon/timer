@@ -86,7 +86,7 @@ header{
     background-color: rgb(39, 39, 45);
     transition: translate 200ms;
     translate: 100%;
-    max-width: min(25em, 80%);
+    width: min(20em, 80%);
     overflow-y: auto;
     scrollbar-width: none;
     box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.5);
@@ -99,6 +99,24 @@ header{
     border-radius: 7px;
     color: var(--accent-color);
 
+}
+
+.category-list{
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+}
+
+.categories-name{
+    font-weight: bold;
+    color: #696b6d;
+    font-size: 1.2rem;
+    font-family: GWTwo, Inter, sans-serif;
+}
+
+.tgl-category-element{
+    border-left: 3px solid;
+    margin: 1.5em 1em;
+    padding-left: .5em;
 }
 
 h1{
@@ -135,11 +153,11 @@ h4{
 .event-card-element{
     background: linear-gradient(0deg, rgb(28, 28, 32) 0%, rgb(39, 39, 45) 100%);
     display: flex;
-    gap: 0.5rem;
+    gap: 1rem;
     flex-direction: row;
     justify-content: space-between;
-    width: calc(100% - 3em);
-    max-width: 29.1em;
+    width: calc(100% - 3.5em);
+    max-width: 36.1em;
     margin: auto;
     border-radius: .5em;
     border: 3px solid ;
@@ -160,6 +178,17 @@ h4{
     overflow: hidden;
     white-space: nowrap;
     margin-top: 0.8em;
+}
+
+.name{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.note{
+    font-size: .8rem;
 }
 
 .event-time-container{
@@ -185,8 +214,8 @@ h4{
     background-color: var(--alt-bg-color);
     border-bottom-right-radius: 7px ;
     border-bottom-left-radius: 7px;
-    width: 2.8em;
-    height: 2.8em;
+    width: 2.5em;
+    height: 2.7em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -208,6 +237,13 @@ h4{
     background-color: #690c0b;
 }
 
+@media (max-width: 550px){
+    .fastf-link{display: none;}
+}
+@media (max-width: 500px){
+    .wiki-link{display: none;}
+}
+
 .wiki-icon{
     margin-bottom: 9px;
     opacity: 70%;
@@ -215,35 +251,30 @@ h4{
 
 .waypoint-icon{
     opacity: 70%;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 }
 
-.event-toggle-list{
-    margin: .5rem;
-    border-left: 6px solid;
-    position: relative;
+.done-icon{
+    opacity: 70%;
+    margin-bottom: 9px;
+}
+
+.reminder-icon{
+    opacity: 70%;
+    margin-bottom: 9px;
+}
+
+.fastf-icon{
+    opacity: 70%;
+    margin-bottom: 9px;
 }
 
 
-
-.base{ border-color: rgba(179, 0, 0, .4);}
-.ls2{ border-color:  rgba(255, 225, 112, .4);}
-.hot{ border-color:  rgba(28, 181, 0, .4);}
-.ls3 { border-color:  rgba(9, 96, 0, .4);}
-.pof{ border-color:  rgba(255, 130, 0, .4);}
-.ls4 { border-color:  rgba(157, 0, 255, .4);}
-.es{ border-color: rgba(0, 72, 255, 0.4);}
-.eod { border-color: rgba(0, 255, 255, 0.35);}
-.soto { border-color: rgba(255, 237, 0, 0.4);}
-.janthir { border-color: rgba(46, 101, 125, 1);}
-
-
-
-.tgl-list-element{
+.tgl-element{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin: 1rem 1rem;
+    margin: .6em 0;
     cursor: pointer;
 }
 
