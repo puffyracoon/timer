@@ -1,14 +1,14 @@
 @font-face {
     font-family: 'Inter';
-    src: url(/app/fonts/Inter-VariableFont_opsz,wght.ttf) format('truetype');
+    src: url(/app/assets/fonts/Inter-VariableFont_opsz,wght.ttf) format('truetype');
 }
 @font-face {
     font-family: 'JetBrains Mono';
-    src: url(/app/fonts/JetBrainsMono-VariableFont_wght.ttf) format('truetype');
+    src: url(/app/assets/fonts/JetBrainsMono-VariableFont_wght.ttf) format('truetype');
 }
 @font-face {
     font-family: "GWTwo";
-    src: url(/app/fonts/GWTwoFont.ttf) format('truetype');
+    src: url(/app/assets/fonts/GWTwoFont.ttf) format('truetype');
 }
 
 
@@ -131,8 +131,8 @@ h2{
     margin: 0;
 }
 h3{
-    font-family:"JetBrains Mono", monospace;
-    font-size: 0.9rem;
+    font-family: "Inter", sans-serif;
+    font-size: 0.8rem;
     color: #696868;
     margin: 0;
 }
@@ -157,12 +157,12 @@ h4{
     flex-direction: row;
     justify-content: space-between;
     width: calc(100% - 3.5em);
-    max-width: 36.1em;
+    max-width: 36em;
     margin: auto;
     border-radius: .5em;
     border: 3px solid ;
-    border-top: 0px solid;
-    border-bottom: 0px solid;
+    border-top: 0;
+    border-bottom: 0;
     padding: 0 1em;
     box-shadow: 4px 8px 14px 1px rgba(0,0,0,0.30);
 }
@@ -184,12 +184,9 @@ h4{
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    position: relative;
+    align-items: flex-end;
 }
 
-.note{
-    font-size: .8rem;
-}
 
 .event-time-container{
     display: flex;
@@ -207,7 +204,7 @@ h4{
     flex-direction: row;
     gap: .7rem;
     align-items: flex-start;
-
+    user-select: none;
 }
 
 .links-tab{
@@ -219,17 +216,27 @@ h4{
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     cursor: pointer;
     transition: 0.3s;
     box-shadow: 1px 2px 18px 1px rgba(0,0,0,0.30);
-
+    color: var(--accent-color);
+    font-weight: bold;
 }
 
-.links-tab:hover{
+.links-tab > * {
+    opacity: 60%;
+}
+
+.hover:hover{
     height: 3em;
     background-color: var(--accent-color);
     box-shadow: 4px 8px 14px 1px rgba(0,0,0,0.30);
+    color: var(--text-color);
+}
+
+.links-tab:hover > *{
+    opacity: 100%;
 }
 
 .links-tab:active{
@@ -244,31 +251,9 @@ h4{
     .wiki-link{display: none;}
 }
 
-.wiki-icon{
-    margin-bottom: 9px;
-    opacity: 60%;
-}
-
-.waypoint-icon{
-    opacity: 60%;
-    margin-bottom: 9px;
-}
-
 .done-icon{
     opacity: 20%;
-    margin-bottom: 9px;
 }
-
-.reminder-icon{
-    opacity: 20%;
-    margin-bottom: 9px;
-}
-
-.fastf-icon{
-    opacity: 60%;
-    margin-bottom: 9px;
-}
-
 
 .tgl-element{
     display: flex;

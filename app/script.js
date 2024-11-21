@@ -9,11 +9,12 @@ const toggleTemplate = document.getElementById("tgl-template")
 const categoryList = document.getElementById("category-list")
 const categoryTemplate = document.getElementById("tgl-category-template")
 let allEvents = []
+let alertSound = new Audio("app/assets/alert.mp3");
 
 //
 let now = new Date();
-const minCountdownTime = 20 * 60000
-const maxFutureCardTime = 5 * 3600000
+const minCountdownTime = 20 * 60 * 1000
+const maxFutureCardTime = 5 * 60 * 60 * 1000
 
 class Event {
     constructor(parentEvent, event, start) {
@@ -23,6 +24,10 @@ class Event {
         this.localStartTime = getLocalTime(start)
         this.color = getObjByKeye(events.categories, parentEvent.categoryKey).color
         if (this.localStartTime < now) {this.localStartTime.setDate(this.localStartTime.getDate() +1 )}
+        this.reminderMSbeforEvent = "no"
+        this.remainingMS = null
+        this.timeoutID = null
+        this.intervalID = null
     }
     addEventToDOM() {
         if (this.localStartTime > now.getTime() + maxFutureCardTime) {return}
@@ -34,6 +39,8 @@ class Event {
         clone.querySelector(".event-card-element").style.borderColor =  this.color
         clone.querySelector(".waypoint-link").id =  `wp${this.eventid}`
         clone.querySelector(".remaining-time").id = `rt-${this.eventid}`
+        clone.querySelector(".reminder-link").id = `rl-${this.eventid}`
+        clone.querySelector(".reminder-icon").id = `ri-${this.eventid}`
         clone.querySelector(".wiki-link").href = this.parentEvent.wiki
         clone.querySelector(".fastf-link").href = this.parentEvent.fastF
         clone.querySelector(".fastf-link").id = `ff${this.eventid}`
@@ -48,10 +55,12 @@ class Event {
         let copy = `${getTimeAsStr(this.localStartTime)} || ${this.parentEvent.name} || ${this.event.waypoint}`
         wp.addEventListener("click", () => {  navigator.clipboard.writeText(copy)    })
 
+        let rl = document.getElementById(`rl-${this.eventid}`)
+        rl.addEventListener("click", () => { updateAlert(this) } )
+
         if (this.parentEvent.fastF === "") {
             document.getElementById(`ff${this.eventid}`).style.visibility = "hidden"
         }
-
 
         let card = document.getElementById(this.eventid)
         let visibility = getVisibility(this.parentEvent.key)
@@ -61,21 +70,24 @@ class Event {
     updateCard() {
         let card = document.getElementById(this.eventid)
         if (!card) {this.addEventToDOM(); return}
-        let remainingMS = this.localStartTime - now
-        if (remainingMS < 0) {
+        this.remainingMS = this.localStartTime - now
+        if (this.remainingMS < 0) {
             card.remove()
             this.localStartTime.setDate(this.localStartTime.getDate() +1)
+            clearInterval(this.intervalID)
             return}
-        if (remainingMS < minCountdownTime) {  this.updateCountDown(remainingMS) }
+        if (this.remainingMS < minCountdownTime) {  this.updateCountDown() }
     }
-    updateCountDown(remainingMS) {
+    updateCountDown() {
         let div = document.getElementById(`rt-${this.eventid}`)
-        let m = Math.floor((remainingMS % (1000*60*60))/(1000*60));
-        let s = Math.floor((remainingMS % (1000*60))/(1000));
+        let m = Math.floor((this.remainingMS % (1000*60*60))/(1000*60));
+        let s = Math.floor((this.remainingMS % (1000*60))/(1000));
         let sStr = String(s).padStart(2,"0");
         div.textContent = m + ":" + sStr
     }
+
 }
+
 
 // Add Toggle List categories
 for (let obj of events.categories) {
@@ -145,7 +157,7 @@ function addVisibilityTgl(parentEvent) {
         setVisibility(parentEvent.key, e.target.checked)
         let elements = document.getElementsByClassName(parentEvent.key)
         toggleVisibility(elements, e.target.checked)
-        umami.track(`Toggeled: ${parentEvent.Name} ${e.target.checked}`)
+        umami.track(`Toggeled: ${parentEvent.name} ${e.target.checked}`)
     })
 }
 
@@ -207,6 +219,66 @@ function updateEventCards() {
     }
 }
 
-function tomorowSameTime(Date){
-    date
+function updateAlert(Event){
+
+    let element = document.getElementById(`rl-${Event.eventid}`)
+
+    if (Event.reminderMSbeforEvent === "no" ) {
+        Event.reminderMSbeforEvent = 2 * 60000
+        if (Event.remainingMS < Event.reminderMSbeforEvent) { setReminderToNo(); return }
+        element.textContent = "2m"
+    } else
+    if (Event.reminderMSbeforEvent === 2 * 60000 ) {
+        Event.reminderMSbeforEvent = 5 * 60000
+        if (Event.remainingMS < Event.reminderMSbeforEvent) { setReminderToNo(); return }
+        element.textContent = "5m"
+        clearTimeout(Event.timeoutID)
+    } else
+    if (Event.reminderMSbeforEvent === 5 * 60000 ) {
+        Event.reminderMSbeforEvent = 10 * 60000
+        element.textContent = "10m"
+        if (Event.remainingMS < Event.reminderMSbeforEvent) { setReminderToNo(); return }
+        clearTimeout(Event.timeoutID)
+    } else
+    if (Event.reminderMSbeforEvent === 10 * 60000) {
+        setReminderToNo()
+        return;
+    }
+
+    let reminderInMS = Event.remainingMS - Event.reminderMSbeforEvent
+    Event.timeoutID = setTimeout(()=> {alert()}, reminderInMS);
+
+    function setReminderToNo(){
+        Event.reminderMSbeforEvent = "no"
+        clearTimeout(Event.timeoutID)
+        clearInterval(Event.intervalID)
+        element.textContent = ""
+        let img = document.createElement('img')
+        img.src = "app/assets/notifications_off_FFFFFF.svg"
+        img.alt = "Reminder switch 2 5 10 Minutes"
+        element.appendChild(img)
+        element.style.backgroundColor = "var(--alt-bg-color)"
+    }
+
+    function alert(){
+        alertSound.play()
+
+        let x = 0
+
+        umami.track(`A Gamer got reminded about ${Event.parentEvent.name}`)
+
+        let img = document.createElement("img");
+        img.src = "app/assets/notifications_active_FFFFFF.svg"
+        img.alt = "Reminder"
+        element.textContent = ""
+        element.appendChild(img)
+
+        Event.intervalID = setInterval(()=>{blink()}, 1000)
+        function blink(){
+            if (x === 0) { element.style.backgroundColor = "var(--accent-color)"; x=1}
+            else { element.style.backgroundColor = "var(--alt-bg-color)"; x=0}
+        }
+    }
 }
+
+

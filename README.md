@@ -24,4 +24,4 @@ uncheck events you don't want so see in the menu
 
 
 
-![screenshot.png](/app/img/Screenshot.png)
+![screenshot.png](/app/assets/Screenshot.png)

@@ -571,9 +571,9 @@
       "durationMS": 1200000
     },
     {
-      "key": "Convergences",
+      "key": "Convergence:InnerNayos",
       "categoryKey": "soto",
-      "name": "Convergences",
+      "name": "Convergence: Inner Nayos",
       "wiki": "https://wiki.guildwars2.com/wiki/Convergences",
       "fastF": "https://fast.farming-community.eu/open-world/meta/convergences",
       "durationMS": 900000
@@ -581,7 +581,7 @@
     {
       "key": "MistsandMonsters",
       "categoryKey": "janthir",
-      "name": "Mists and Monsters",
+      "name": "of Mists and Monsters",
       "wiki": "https://wiki.guildwars2.…ki/Of_Mists_and_Monsters",
       "fastF": "https://fast.farming-community.eu/open-world/meta/of-mists-and-monsters",
       "durationMS": 900000
@@ -987,7 +987,7 @@
       "waypoint": "[&BDQOAAA=]"
     },
     {
-      "parentKey": "Convergences",
+      "parentKey": "Convergence:InnerNayos",
       "start": ["1:30", "4:30", "7:30", "10:30", "13:30", "16:30", "19:30", "22:30"],
       "map": "Amnitas",
       "waypoint": "[&BB8OAAA=]"
@@ -1000,7 +1000,7 @@
     },
     {
       "parentKey": "Convergence:MountBalrior",
-      "start": ["0:00", "3:00", "6:00", "9:00", "12:00", "15:00", "18.00", "21:00"],
+      "start": ["0:00", "3:00", "6:00", "9:00", "12:00", "15:00", "18:00", "21:00"],
       "map": "Lowland Shore",
       "waypoint": "[&BK4OAAA=]"
     }
