@@ -8,10 +8,11 @@ const cardTemplate = document.getElementById("event-card-template")
 const toggleTemplate = document.getElementById("tgl-template")
 const categoryList = document.getElementById("category-list")
 const categoryTemplate = document.getElementById("tgl-category-template")
+
 let allEvents = []
+
 let alertSound = new Audio("app/assets/alert.mp3");
 
-//
 let now = new Date();
 const minCountdownTime = 20 * 60 * 1000
 const maxFutureCardTime = 5 * 60 * 60 * 1000
@@ -58,6 +59,9 @@ class Event {
         let rl = document.getElementById(`rl-${this.eventid}`)
         rl.addEventListener("click", () => { updateAlert(this) } )
 
+        rl.addEventListener("mouseover", () => { rl.style.backgroundColor = "var(--accent-color)" } )
+        rl.addEventListener("mouseout", () => { rl.style.backgroundColor = "var(--alt-bg-color)" } )
+
         if (this.parentEvent.fastF === "") {
             document.getElementById(`ff${this.eventid}`).style.visibility = "hidden"
         }
@@ -88,7 +92,6 @@ class Event {
 
 }
 
-
 // Add Toggle List categories
 for (let obj of events.categories) {
     addTglCategory(obj)
@@ -111,11 +114,6 @@ for (let event of events.events) {
 //Sort All Events
 allEvents.sort((a, b) => a.localStartTime - b.localStartTime)
 
-// Add Event Cards
-for (let event of allEvents) {
-    event.addEventToDOM()
-}
-
 //Hide browser-settings-alert in the SideBar
 if (localStorage.length > 0) {
     document.getElementById("browser-settings-alert").remove()
@@ -123,7 +121,10 @@ if (localStorage.length > 0) {
     umami.track(`revisits with disabled events`)
 }
 
-//Update
+//Add Cards to DOM
+updateEventCards()
+
+//Update Cards
 setInterval(interval, 1000)
 function interval(){
     now = new Date();
@@ -257,7 +258,6 @@ function updateAlert(Event){
         img.src = "app/assets/notifications_off_FFFFFF.svg"
         img.alt = "Reminder switch 2 5 10 Minutes"
         element.appendChild(img)
-        element.style.backgroundColor = "var(--alt-bg-color)"
     }
 
     function alert(){
@@ -276,7 +276,7 @@ function updateAlert(Event){
             if (x === 0) { element.style.backgroundColor = "var(--accent-color)"; x=1}
             else { element.style.backgroundColor = "var(--alt-bg-color)"; x=0}
         }
-        umami.track(`A Gamer got reminded about ${Event.parentEvent.name}`)
+        umami.track(`A Gamer got notified about ${Event.parentEvent.name}`)
     }
 }
 
