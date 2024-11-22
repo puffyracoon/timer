@@ -265,8 +265,6 @@ function updateAlert(Event){
 
         let x = 0
 
-        umami.track(`A Gamer got reminded about ${Event.parentEvent.name}`)
-
         let img = document.createElement("img");
         img.src = "app/assets/notifications_active_FFFFFF.svg"
         img.alt = "Reminder"
@@ -278,6 +276,7 @@ function updateAlert(Event){
             if (x === 0) { element.style.backgroundColor = "var(--accent-color)"; x=1}
             else { element.style.backgroundColor = "var(--alt-bg-color)"; x=0}
         }
+        umami.track(`A Gamer got reminded about ${Event.parentEvent.name}`)
     }
 }
 
