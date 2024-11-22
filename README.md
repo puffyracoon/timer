@@ -20,6 +20,4 @@ uncheck events you don't want so see in the menu
 - UI/UX improvement
 - include Farm train Discord notifications - maybe if possible
 
-
-
-![screenshot.png](/app/assets/Screenshot.png)
+![Screenshot.png](app/assets/Screenshot.png)
