@@ -2,6 +2,7 @@ let events = await fetch('/app/events.json')
     .then(response => response.json())
     .then(obj => { return obj })
     .catch(error => console.error("Could not fetch event data: ", error));
+let alertSound = new Audio("app/assets/alert.mp3");
 
 const eventTable = document.getElementById("event-table")
 const cardTemplate = document.getElementById("event-card-template")
@@ -11,11 +12,9 @@ const categoryTemplate = document.getElementById("tgl-category-template")
 
 let allEvents = []
 
-let alertSound = new Audio("app/assets/alert.mp3");
-
 let now = new Date();
-const minCountdownTime = 20 * 60 * 1000
-const maxFutureCardTime = 5 * 60 * 60 * 1000
+const minTimeToShowCountdown = 20 * 60 * 1000
+const maxTimeToShowCards = 2 * 60 * 60 * 1000
 
 class Event {
     constructor(parentEvent, event, start) {
@@ -29,80 +28,74 @@ class Event {
         this.remainingMS = null
         this.timeoutID = null
         this.intervalID = null
+        this.card = null
     }
     addEventToDOM() {
-        if (this.localStartTime > now.getTime() + maxFutureCardTime) {return}
-
         let clone = cardTemplate.content.cloneNode(true)
-
-        clone.querySelector(".event-card-element").classList.add(this.parentEvent.key)
         clone.querySelector(".event-card-element").id =  this.eventid
+        clone.querySelector(".event-card-element").classList.add(this.parentEvent.key)
         clone.querySelector(".event-card-element").style.borderColor =  this.color
-        clone.querySelector(".waypoint-link").id =  `wp${this.eventid}`
-        clone.querySelector(".remaining-time").id = `rt-${this.eventid}`
-        clone.querySelector(".reminder-link").id = `rl-${this.eventid}`
-        clone.querySelector(".reminder-icon").id = `ri-${this.eventid}`
         clone.querySelector(".wiki-link").href = this.parentEvent.wiki
         clone.querySelector(".fastf-link").href = this.parentEvent.fastF
-        clone.querySelector(".fastf-link").id = `ff${this.eventid}`
         clone.querySelector(".event-start-time").textContent = getTimeAsStr(this.localStartTime)
         clone.querySelector(".event-name").textContent = this.parentEvent.name
         clone.querySelector(".note").textContent = this.parentEvent.note
         clone.querySelector(".event-map").textContent = this.event.map
-
         eventTable.appendChild(clone)
+        this.card = document.getElementById(this.eventid)
 
-        let wp = document.getElementById(`wp${this.eventid}`)
+        // Waypoint Link
+        let wp = this.card.querySelector(".waypoint-link")
         let copy = `${getTimeAsStr(this.localStartTime)} || ${this.parentEvent.name} || ${this.event.waypoint}`
         wp.addEventListener("click", () => {  navigator.clipboard.writeText(copy)    })
 
-        let rl = document.getElementById(`rl-${this.eventid}`)
+        //Reminder Link
+        let rl = this.card.querySelector(".reminder-link")
         rl.addEventListener("click", () => { updateAlert(this) } )
-
         rl.addEventListener("mouseover", () => { rl.style.backgroundColor = "var(--accent-color)" } )
         rl.addEventListener("mouseout", () => { rl.style.backgroundColor = "var(--alt-bg-color)" } )
 
+        // [fast] FarmingLink
         if (this.parentEvent.fastF === "") {
-            document.getElementById(`ff${this.eventid}`).style.visibility = "hidden"
+            this.card.querySelector(".fastf-link").style.visibility = "hidden"
         }
 
-        let card = document.getElementById(this.eventid)
+        //Toggle Visibility based on localStorage Settings
         let visibility = getVisibility(this.parentEvent.key)
-        toggleVisibility(card, visibility)
+        toggleVisibility(this.card, visibility)
 
     }
     updateCard() {
-        let card = document.getElementById(this.eventid)
-        if (!card) {this.addEventToDOM(); return}
         this.remainingMS = this.localStartTime - now
+        if (this.localStartTime > now.getTime() + maxTimeToShowCards) {return}
+        if (!this.card) {this.addEventToDOM()}
+        if (this.remainingMS < minTimeToShowCountdown) {this.updateCountDown()}
         if (this.remainingMS < 0) {
-            card.remove()
+            this.card.remove()
             this.localStartTime.setDate(this.localStartTime.getDate() +1)
             clearInterval(this.intervalID)
-            return}
-        if (this.remainingMS < minCountdownTime) {  this.updateCountDown() }
+        }
     }
     updateCountDown() {
-        let div = document.getElementById(`rt-${this.eventid}`)
-        let m = Math.floor((this.remainingMS % (1000*60*60))/(1000*60));
-        let s = Math.floor((this.remainingMS % (1000*60))/(1000));
-        let sStr = String(s).padStart(2,"0");
-        div.textContent = m + ":" + sStr
+        let element = this.card.querySelector(".remaining-time")
+        let min = Math.floor((this.remainingMS % (1000*60*60))/(1000*60));
+        let sec = Math.floor((this.remainingMS % (1000*60))/(1000));
+        let secStr = String(sec).padStart(2,"0");
+        element.textContent = min + ":" + secStr
     }
-
 }
 
-// Add Toggle List categories
-for (let obj of events.categories) {
-    addTglCategory(obj)
+// Add toggle list categories
+for (let category of events.categories) {
+    addTglCategory(category)
 }
 
-// Add Visibility Tiggels
-for (let obj of events.parentEvents) {
-    addVisibilityTgl(obj)
+// Add visibility toggles
+for (let parent of events.parentEvents) {
+    addVisibilityTgl(parent)
 }
 
-// Init All Events
+// Init all events
 for (let event of events.events) {
     for (let start of event.start) {
         let pEvt =  getObjByKeye(events.parentEvents, event.parentKey);
@@ -111,7 +104,7 @@ for (let event of events.events) {
     }
 }
 
-//Sort All Events
+//Sort all events
 allEvents.sort((a, b) => a.localStartTime - b.localStartTime)
 
 //Hide browser-settings-alert in the SideBar
@@ -124,7 +117,7 @@ if (localStorage.length > 0) {
 //Add Cards to DOM
 updateEventCards()
 
-//Update Cards
+//Update cards
 setInterval(interval, 1000)
 function interval(){
     now = new Date();
@@ -222,7 +215,7 @@ function updateEventCards() {
 
 function updateAlert(Event){
 
-    let element = document.getElementById(`rl-${Event.eventid}`)
+    let element = Event.card.querySelector(".reminder-link")
 
     if (Event.reminderMSbeforEvent === "no" ) {
         Event.reminderMSbeforEvent = 2 * 60000
