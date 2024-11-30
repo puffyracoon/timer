@@ -50,8 +50,6 @@ class EventClass {
         let wp = this.card.querySelector(".waypoint-link")
         let copy = `${getTimeAsStr(this.localStartTime)} || ${this.parentEvent.name} || ${this.event.waypoint}`
         wp.addEventListener("click", () => {  navigator.clipboard.writeText(copy)    })
-        wp.addEventListener("mousemove", () => {this.card.querySelector(".waypoint-icon").src = "app/assets/waypoint_active.svg"})
-        wp.addEventListener("mouseout", () => {this.card.querySelector(".waypoint-icon").src = "app/assets/waypoint.svg"})
 
         //Reminder Link
         let rl = this.card.querySelector(".reminder-link")
