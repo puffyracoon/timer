@@ -147,11 +147,26 @@ function interval(){
 function addToggleCategory(category) {
     let clone = categoryTemplate.content.cloneNode(true)
 
-    clone.querySelector(".categories-name").innerHTML = category.name
+    clone.querySelector(".categories-label").innerHTML = category.name
     clone.querySelector(".tgl-category-element").style.borderColor = category.color
     clone.querySelector(".tgl-container").id = category.key
+    clone.querySelector(".category-checkbox").id = `catTgl-${category.key}`
+    clone.querySelector(".category-checkbox").checked = true
+    clone.querySelector(".categories-label").htmlFor = `catTgl-${category.key}`
 
     categoryList.appendChild(clone)
+
+    let categoryToggle = document.getElementById(`catTgl-${category.key}`)
+    categoryToggle.addEventListener("change", () => {
+        let AllvisibilityCheckbox = document.getElementsByClassName(`vcb-${category.key}`)
+        const event = new Event("change");
+        console.log(AllvisibilityCheckbox, `vcb-${category.key}`)
+        for (let cb of AllvisibilityCheckbox) {
+            cb.checked = categoryToggle.checked
+            cb.dispatchEvent(event)
+        }
+
+    })
 }
 
 function addToggleElement(parentEvent) {
@@ -161,6 +176,7 @@ function addToggleElement(parentEvent) {
     clone.querySelector(".tgl-label").textContent = parentEvent.name
     clone.querySelector(".visibility-checkbox").checked = getVisibilityFromLocalStorage(parentEvent.key)
     clone.querySelector(".visibility-checkbox").id = `vcb-${parentEvent.key}`
+    clone.querySelector(".visibility-checkbox").classList.add(`vcb-${parentEvent.categoryKey}`)
     clone.querySelector(".tgl-label").htmlFor = `vcb-${parentEvent.key}`
     clone.querySelector(".done-checkbox").checked = getDoneFromLocalStorage(parentEvent.key)
     clone.querySelector(".done-checkbox").id = `dcb-${parentEvent.key}`

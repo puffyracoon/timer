@@ -103,19 +103,27 @@ header{
 
 .category-list{
     font-family: 'Inter', sans-serif;
-    color: var(--text-color);
+    color: #adabab;
 }
 
-.categories-name{
+.categories-header{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1em;;
+}
+
+.categories-label{
     font-weight: bold;
     color: #696b6d;
+
+    color: var(--text-color);
     font-size: 1.2rem;
     font-family: GWTwo, Inter, sans-serif;
 }
 
 .tgl-category-element{
     border-left: 3px solid;
-    margin: 1.5em 1em;
+    margin: 2em 1em;
     padding-left: .5em;
 }
 
