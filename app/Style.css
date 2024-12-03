@@ -224,8 +224,33 @@ h4{
     font-weight: bold;
 }
 
+
 .links-tab > * {
     opacity: 60%;
+}
+
+.links-tab:hover::after{
+    content: attr(tootltip);
+    color: #222222;
+    position: absolute;
+    background-color: #6f6c6c;
+    transform: translateY(-40px);
+    padding: 2px 5px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 18px 1px rgba(0,0,0,0.30);
+    z-index: 2;
+}
+
+.links-tab:hover::before{
+    content: "";
+    position: absolute;
+    height: 0;
+    width: 0;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    border-top: 8px solid #6f6c6c;
+    transform: translateY(-24px);
+    z-index: 3;
 }
 
 .hover:hover{
