@@ -467,9 +467,9 @@
       "durationMS": 1200000
     },
     {
-      "key": "IcebroodChmapions",
+      "key": "IcebroodChampions",
       "categoryKey": "ls5",
-      "name": "Icebrood Chmmpions",
+      "name": "Icebrood Champions",
       "wiki": "https://wiki.guildwars2.com/wiki/Storms_of_Winter",
       "fastF": "https://fast.farming-community.eu/open-world/meta/storms-of-winter",
       "durationMS": 120000
@@ -909,7 +909,7 @@
       "waypoint": "[&BCcMAAA=]"
     },
     {
-      "parentKey": "IcebroodChmapions",
+      "parentKey": "IcebroodChampions",
       "start": ["0:05", "2:05", "4:05", "6:05", "8:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05"],
       "map": "Bjora Marches",
       "waypoint": "[&BCcMAAA=]"
