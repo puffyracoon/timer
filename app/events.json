@@ -989,7 +989,7 @@
     {
       "parentKey": "Convergence:InnerNayos",
       "start": ["1:30", "4:30", "7:30", "10:30", "13:30", "16:30", "19:30", "22:30"],
-      "map": "Amnitas",
+      "map": "Wizard's Tower",
       "waypoint": "[&BB8OAAA=]"
     },
     {
