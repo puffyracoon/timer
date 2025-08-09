@@ -1,14 +1,14 @@
 @font-face {
     font-family: 'Inter';
-    src: url(/timer/assets/fonts/Inter-VariableFont_opsz,wght.ttf) format('truetype');
+    src: url(assets/fonts/Inter-VariableFont_opsz,wght.ttf) format('truetype');
 }
 @font-face {
     font-family: 'JetBrains Mono';
-    src: url(/timer/assets/fonts/JetBrainsMono-VariableFont_wght.ttf) format('truetype');
+    src: url(assets/fonts/JetBrainsMono-VariableFont_wght.ttf) format('truetype');
 }
 @font-face {
     font-family: "GWTwo";
-    src: url(/timer/assets/fonts/GWTwoFont.ttf) format('truetype');
+    src: url(assets/fonts/GWTwoFont.ttf) format('truetype');
 }
 
 
@@ -1202,15 +1202,13 @@ h4{
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--border-radius);
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
     transition: var(--transition-fast);
-    width: 30px;
-    height: 30px;
 }
 
 .favorite-star:not(.favorited) {
     color: var(--text-secondary);
-    background: var(--alt-bg-color);
 }
 
 .favorite-star.favorited {
@@ -1219,10 +1217,9 @@ h4{
     box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
 }
 
-.favorite-star:hover {
-    color: #ffd700;
-    background: rgba(255, 215, 0, 0.1);
-    transform: scale(1.1);
+/* Prevent favorite star from expanding height on hover like other buttons */
+.favorite-star.links-tab:hover {
+    height: 2.5em !important;
 }
 
 /* Chain start indicator */
@@ -1496,7 +1493,8 @@ a:active {
 .links-tab:hover .wiki-icon,
 .links-tab:hover .done-icon,
 .links-tab:hover .reminder-icon,
-.links-tab:hover .waypoint-icon {
+.links-tab:hover .waypoint-icon,
+.links-tab:hover .favorite-star {
     opacity: 1;
     transform: scale(1.1);
 }

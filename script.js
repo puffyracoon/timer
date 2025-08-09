@@ -1,8 +1,8 @@
-let events = await fetch('/timer/events.json')
+let events = await fetch('events.json')
     .then(response => response.json())
     .then(obj => { return obj })
     .catch(error => console.error("Could not fetch event data: ", error));
-let alertSound = new Audio("/timer/assets/alert.mp3");
+let alertSound = new Audio("assets/alert.mp3");
 
 const eventTable = document.getElementById("event-table")
 const cardTemplate = document.getElementById("event-card-template")
@@ -237,7 +237,7 @@ function sendNotification(eventName, timeRemaining) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(`GW2 Event Starting Soon!`, {
             body: `${eventName} starts in ${timeRemaining}`,
-            icon: '/timer/assets/Event_star_(map_icon).png',
+            icon: 'assets/Event_star_(map_icon).png',
             tag: eventName // Prevents duplicate notifications
         })
     }
@@ -856,13 +856,13 @@ function toggleDone(parentEventKey, value) {
 
     if (value === false) {
         for (let e of elements) {
-            e.src = "/timer/assets/done_outline_FFFFFF.svg"
+            e.src = "assets/done_outline_FFFFFF.svg"
             localStorage.removeItem(`done-${parentEventKey}`)
         }
     }
     if (value === true) {
         for (let e of elements) {
-            e.src = "/timer/assets/done_outline_75FB4C_.svg"
+            e.src = "assets/done_outline_75FB4C_.svg"
             let ServerResetTime = new Date()
             ServerResetTime.setUTCHours(24)
             ServerResetTime.setUTCMinutes(0)
