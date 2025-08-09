@@ -1194,26 +1194,35 @@ h4{
     height: 30px;
 }
 
-/* Favorite star indicator */
+/* Favorite star indicator - Now in links section */
 .favorite-star {
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
-    font-size: 1.2em;
+    font-size: 1.3em;
     cursor: pointer;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    transition: var(--transition-fast);
+    width: 30px;
+    height: 30px;
 }
 
 .favorite-star:not(.favorited) {
     color: var(--text-secondary);
+    background: var(--alt-bg-color);
 }
 
 .favorite-star.favorited {
     color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
 }
 
 .favorite-star:hover {
     color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.1);
 }
 
 /* Chain start indicator */
@@ -1365,11 +1374,11 @@ a:active {
     transition: var(--transition-fast);
 }
 
-/* GW2 Logo - Custom dragon/star hybrid */
+/* YLAR Logo - Custom logo */
 .gw2-logo {
     width: 32px;
     height: 32px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23af2421' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12,2 15.09,8.26 22,9 17,14.74 18.18,21.02 12,17.77 5.82,21.02 7,14.74 2,9 8.91,8.26'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%23af2421'/%3E%3C/svg%3E");
+    background-image: url("assets/ylar-logo.svg");
     opacity: 1;
 }
 

@@ -1,8 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-  <!-- Main star shape -->
-  <polygon points="12,2 15.09,8.26 22,9 17,14.74 18.18,21.02 12,17.77 5.82,21.02 7,14.74 2,9 8.91,8.26" fill="#af2421" stroke="#af2421" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Center circle for distinction -->
-  <circle cx="12" cy="12" r="3" fill="#ffffff" stroke="#af2421" stroke-width="1"/>
-  <!-- Small inner dot for detail -->
-  <circle cx="12" cy="12" r="1.5" fill="#af2421"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background circle with GW2 timer styling -->
+  <circle cx="50" cy="50" r="48" fill="#1a1a1a" stroke="#4a9eff" stroke-width="2"/>
+  
+  <!-- YLAR text vertically arranged -->
+  <text x="50" y="30" text-anchor="middle" fill="#4a9eff" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Y</text>
+  <text x="50" y="45" text-anchor="middle" fill="#4a9eff" font-family="Arial, sans-serif" font-size="14" font-weight="bold">L</text>
+  <text x="50" y="60" text-anchor="middle" fill="#4a9eff" font-family="Arial, sans-serif" font-size="14" font-weight="bold">A</text>
+  <text x="50" y="75" text-anchor="middle" fill="#4a9eff" font-family="Arial, sans-serif" font-size="14" font-weight="bold">R</text>
+  
+  <!-- Timer-themed decorative dots -->
+  <circle cx="25" cy="25" r="1.5" fill="#4a9eff" opacity="0.8"/>
+  <circle cx="75" cy="25" r="1.5" fill="#4a9eff" opacity="0.8"/>
+  <circle cx="25" cy="75" r="1.5" fill="#4a9eff" opacity="0.8"/>
+  <circle cx="75" cy="75" r="1.5" fill="#4a9eff" opacity="0.8"/>
 </svg>
