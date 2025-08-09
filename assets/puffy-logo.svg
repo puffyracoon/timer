@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="45" fill="#2a2a2e" stroke="#af2421" stroke-width="3"/>
+  
+  <!-- Cloud/puffy shape -->
+  <g fill="#e8e8e8">
+    <!-- Main cloud body -->
+    <ellipse cx="50" cy="45" rx="25" ry="15"/>
+    <!-- Cloud bumps -->
+    <circle cx="35" cy="40" r="8"/>
+    <circle cx="50" cy="35" r="10"/>
+    <circle cx="65" cy="40" r="8"/>
+    <circle cx="30" cy="50" r="6"/>
+    <circle cx="70" cy="50" r="6"/>
+  </g>
+  
+  <!-- Timer elements -->
+  <g stroke="#af2421" stroke-width="2" fill="none">
+    <!-- Clock face -->
+    <circle cx="50" cy="60" r="12"/>
+    <!-- Clock hands -->
+    <line x1="50" y1="60" x2="50" y2="52" stroke-width="3"/>
+    <line x1="50" y1="60" x2="56" y2="60" stroke-width="2"/>
+  </g>
+  
+  <!-- Center dot -->
+  <circle cx="50" cy="60" r="2" fill="#af2421"/>
+</svg>

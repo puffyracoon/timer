@@ -1361,7 +1361,7 @@ a:active {
 .waypoint-icon,
 .star-icon,
 .alert-icon,
-.gw2-logo {
+.puffy-logo {
     width: 20px;
     height: 20px;
     background-size: contain;
@@ -1371,11 +1371,11 @@ a:active {
     transition: var(--transition-fast);
 }
 
-/* YLAR Logo - Custom logo */
-.gw2-logo {
+/* Puffy Logo - Custom logo */
+.puffy-logo {
     width: 28px;
     height: 28px;
-    background-image: url("assets/ylar.svg");
+    background-image: url("assets/puffy-logo.svg");
     opacity: 1;
 }
 
