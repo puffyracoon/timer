@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--Page Information-->
+    <title>GW2 Meta Event Timer</title>
+    <meta name="description" content="A clear, easy and clean way to keep track of Guild Ware 2 Meta Events.">
+    <meta name="author" content="Snippy" />
+    <meta name="keywords" content="Guild, Wars, 2, gw2, Meta, Event, Timer, Timetable, Ley, Line, Convergences, Icebrood, Pinata, Octovine, Chak, Night, Bosses, Matriarch, Tequatl, Karka, Queen, Triple, Trouble, Ddoppelganger, Death-Branded, Palawadan, Thunderhead, Drakkar, Dragonstorm, Aetherblade, Amnitas">
+    <meta name="page-topic" content="Spiel">
+    <meta name="page-type" content="Katalog Verzeichnis">
+    <meta name="audience" content="Fans">
+    <!--Open Graph Meta tags-->
+    <meta property="og:Title" content="SimpleTimer - GW2 Meta Event Timer">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://puffyracoon.github.io/timer/">
+    <meta property="og:description" content="A clear, easy and clean way to keep track of Guild Ware 2 Meta Events.">
+    <!--Favicon-->
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <!--Assets-->
+    <link rel="stylesheet" href="Style.css">
+    <script defer type="module" src="script.js"></script>
+
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <div class="logo"><div class="gw2-logo"></div></div>
+            <h2 class="SiteName">Vargavinter Meta Timers</h2>
+        </div>
+        <div class="header-center">
+            <div class="header-search">
+                <input type="text" id="event-search" placeholder="Search events..." />
+                <button id="search-clear" class="search-clear">✕</button>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="toggle-favorites" class="favorites-toggle" title="Show Only Favorites"><div class="star-icon"></div></button>
+            <button id="toggle-alerts" class="alerts-toggle" title="Show Only Events with Active Alerts"><div class="alert-icon"></div></button>
+            <button id="faq-toggle" class="faq-toggle" title="How to use this site - FAQ">?</button>
+            <button id="chain-alerts-toggle" class="chain-toggle" title="Event Chain Alerts - Auto-alert for meta event chains">🔗</button>
+        </div>
+    </header>
+
+    <label class="hamburger">
+        <input type="checkbox">
+    </label>
+
+    <aside class="sidebar">
+        <div id="browser-settings-alert">Depending on your browser settings, this will be saved for your future sessions.</div>
+        
+        <!-- GW2 API Key Section -->
+        <div class="api-section">
+            <div class="api-header" id="api-header">
+                <h3>GW2 API Key</h3>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="api-content" id="api-content">
+            <div class="api-input-container">
+                <input type="text" id="api-key-input" placeholder="Enter your GW2 API key..." />
+                <button id="api-key-save" class="api-button">Save</button>
+                <button id="api-key-clear" class="api-button secondary">Clear</button>
+                <button id="api-refresh" class="api-button">🔄 Refresh</button>
+            </div>
+            <div id="api-status" class="api-status"></div>
+            <div class="api-help">
+                <details>
+                    <summary>How to get your API key</summary>
+                    <p>1. Go to <a href="https://account.arena.net/applications" target="_blank">account.arena.net/applications</a></p>
+                    <p>2. Create a new key with "account" and "progression" permissions</p>
+                    <p>3. Copy and paste the key above</p>
+                </details>
+            </div>
+            </div>
+        </div>
+        
+        <!-- Category Quick Controls -->
+        <div class="category-controls">
+            <h3>Categories</h3>
+            <div class="category-links">
+                <span id="select-all-categories" class="category-link">select all</span>
+                <span class="category-separator">-</span>
+                <span id="select-none-categories" class="category-link">select none</span>
+            </div>
+        </div>
+        
+        <div id="category-list" class="category-list"></div>
+        <div class="about">
+            <small></small>Based on Snippy's GW2 timers, if you want to support the original project, please visit <a href="https://github.com/Snipppppy/GW2-Simple-Timer/" target="_blank">Github</a></small>
+            <br/><br/><br/>
+                </div>
+    </aside>
+    <div class="event-table" id="event-table"></div>
+    
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+</body>
+
+<!-- HTML Template for Event Card-->
+<template id="event-card-template">
+    <div class="event-card-element">
+        <div class="favorite-star" title="Add to Favorites">☆</div>
+        <div class="chain-start-indicator" title="Meta Chain Start - This event begins a meta farming sequence" style="display: none;">🔗</div>
+        <div class="event-time-container">
+            <h1 class="event-start-time">00:00</h1>
+            <h4 class="remaining-time"></h4>
+        </div>
+        <div class="event-name-container">
+            <div class="name">
+                <h2 class="event-name">Name Of The Event</h2>
+                <h3 class="note"></h3>
+            </div>
+            <h3 class="event-map">--Name Of The Event Map!--</h3>
+        </div>
+        <div class="links">
+            <a class="fastf-link links-tab hover" tooltip="Visit [fast] Farming Community" href="" target="_blank"><div class="fastf-icon"></div></a>
+            <a class="wiki-link links-tab hover" tooltip="Open Event in Guild Wiki" href="" target="_blank"><div class="wiki-icon"></div></a>
+            <div class="done-link links-tab hover" tooltip="Mark as Done!"><div class="done-icon"></div></div>
+            <a class="reminder-link links-tab hover" tooltip="Set an alert!"><div class="reminder-icon"></div></a>
+            <a class="waypoint-link links-tab hover" tooltip="Copy waypoint to clipboard!"><div class="waypoint-icon"></div></a>
+        </div>
+    </div>
+</template>
+
+<!-- HTML Template for Sidebar categories-->
+<template id="tgl-category-template">
+    <div class="tgl-category-element">
+        <div class="categories-header">
+            <label class="categories-label"></label>
+            <span class="category-arrow">▼</span>
+            <input class="category-checkbox" type="checkbox">
+        </div>
+        <div class="tgl-container"></div>
+    </div>
+</template>
+
+<!-- HTML Template for Event Toggle switch-->
+<template id="tgl-template">
+    <div class="tgl-element" >
+        <label class="tgl-label" ></label>
+        <input class="visibility-checkbox" type="checkbox">
+        <span class="visibility-slider"></span>
+        <input class="done-checkbox" type="checkbox">
+    </div>
+</template>
+
+<!-- FAQ Sidebar -->
+<div class="faq-overlay" id="faq-overlay"></div>
+<div class="faq-sidebar" id="faq-sidebar">
+    <div class="faq-header">
+        <h2>How to Use This Site</h2>
+        <button class="faq-close" id="faq-close">×</button>
+    </div>
+    <div class="faq-content">
+        <div class="faq-section">
+            <h3>🕐 Timer Features</h3>
+            <div class="faq-item">
+                <div class="faq-question">What are the different time displays?</div>
+                <div class="faq-answer">Each event shows the <span class="faq-highlight">start time</span> (when it begins) and <span class="faq-highlight">remaining time</span> (countdown). Events appear 5 hours before they start.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I mark events as completed?</div>
+                <div class="faq-answer">Click the <span class="faq-highlight">checkmark ✓</span> icon to mark an event as done. This saves until the next daily reset and dims the event card.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3>🔔 Alerts & Notifications</h3>
+            <div class="faq-item">
+                <div class="faq-question">How do I set up event alerts?</div>
+                <div class="faq-answer">Click the <span class="faq-highlight">bell 🔔</span> icon to cycle through alert times: 2m → 5m → 10m → off. You'll get browser notifications when enabled.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What are Event Chains?</div>
+                <div class="faq-answer">The <span class="faq-highlight">🔗 button</span> enables auto-alerts for meta event chains (like HoT train). When you complete one event, it automatically sets reminders for the next events in the sequence. Events that start a meta chain are marked with a <span class="faq-highlight">🔗 indicator</span>.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3>🎯 Organization</h3>
+            <div class="faq-item">
+                <div class="faq-question">How do I use favorites?</div>
+                <div class="faq-answer">Click the <span class="faq-highlight">star ⭐</span> to favorite events. Use the star button in the header to show only favorited events. Favoriting one instance marks all instances of that event.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I view my active alerts?</div>
+                <div class="faq-answer">Click the <span class="faq-highlight">bell 🔔</span> button in the header to show only events with active reminders set. This helps you see all your scheduled alerts at a glance.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How does the search work?</div>
+                <div class="faq-answer">Type in the search box to filter events by name or map. Search works in real-time as you type.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I hide events I don't want?</div>
+                <div class="faq-answer">Open the sidebar (hamburger menu) and use the toggles to hide entire event categories or individual events. Use <span class="faq-highlight">"select all" / "select none"</span> for quick category management.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3>🎮 Guild Wars 2 Integration</h3>
+            <div class="faq-item">
+                <div class="faq-question">What is the GW2 API key for?</div>
+                <div class="faq-answer">Enter your GW2 API key in the sidebar to automatically mark events as completed based on your in-game achievements. <span class="faq-highlight">No permissions needed</span> - it only reads your achievement progress.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I copy waypoints?</div>
+                <div class="faq-answer">Click the <span class="faq-highlight">waypoint 📍</span> icon to copy the waypoint code. Paste it in GW2 chat to create a map marker.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3>🔗 Useful Links</h3>
+            <div class="faq-item">
+                <div class="faq-question">What are the other icons for?</div>
+                <div class="faq-answer">
+                    <ul>
+                        <li><span class="faq-highlight">Wiki 📖</span> - Opens the event guide on Guild Wars 2 Wiki</li>
+                        <li><span class="faq-highlight">[fast] 🚀</span> - Links to fast.farming-community.eu for detailed guides</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3>💡 Pro Tips</h3>
+            <div class="faq-item">
+                <div class="faq-answer">
+                    <ul>
+                        <li>Events are <span class="faq-highlight">color-coded by expansion</span> - green borders for HoT, orange for PoF, etc.</li>
+                        <li>Events with a <span class="faq-highlight">🔗 indicator</span> start meta farming chains - perfect for efficient farming</li>
+                        <li>Icon hover effects match the event category colors</li>
+                        <li>Use chain alerts for efficient meta farming</li>
+                        <li>Use "select all/none" for quick category filtering</li>
+                        <li>Your settings (timers, favorites, categories) are saved automatically in your browser</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

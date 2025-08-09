@@ -1,0 +1,40 @@
+{
+  "name": "gw2-meta-timer",
+  "version": "2.0.0",
+  "description": "A modern, feature-rich Guild Wars 2 meta event timer with smart alerts, event chains, and GW2 API integration",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo \"Static files ready for deployment\"",
+    "serve": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/puffyracoon/gw2-meta-timer.git"
+  },
+  "keywords": [
+    "guild-wars-2",
+    "gw2",
+    "meta-events",
+    "timer",
+    "gaming",
+    "mmorpg",
+    "arenanet",
+    "event-tracker",
+    "farming",
+    "alerts"
+  ],
+  "author": "puffyracoon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/puffyracoon/gw2-meta-timer/issues"
+  },
+  "homepage": "https://github.com/puffyracoon/gw2-meta-timer#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
