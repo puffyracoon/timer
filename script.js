@@ -461,6 +461,7 @@ class GW2API {
         // We build a mapping each day by scanning /v2/achievements/daily and matching names.
         this.dailyBossIdMap = {}; // eventKey -> achievementId (for today only)
         this.dailyBossBuildDay = null; // UTC day string used to know when to rebuild
+    this.dailyBossCompletedIds = new Set(); // achievementIds already completed today (optional shortcut)
         // Canonical boss name variants for fuzzy match (lowercase substrings)
         this.bossNameVariants = {
             ShadowBehemoth: ['shadow behemoth'],
@@ -1424,40 +1425,80 @@ async function buildDailyBossMappingIfNeeded() {
             return;
         }
         const dailyData = await res.json();
-        const map = {}; const nameById = {};
+        const objectives = dailyData.objectives || [];
+        console.debug('[WV] Objectives sample (first 3):', objectives.slice(0,3).map(o => ({id:o.id, achievement_id:o.achievement_id, keys:Object.keys(o)})));
 
-        // Resolve each objective's achievement meta (sequential for simplicity)
-        for (const objective of dailyData.objectives || []) {
-            const achId = objective.id;
-            try {
-                const metaRes = await fetch(`${gw2Api.baseUrl}/achievements?ids=${achId}`);
-                if (!metaRes.ok) continue;
-                const metas = await metaRes.json();
-                metas.forEach(m => {
-                    if (!m.name) return;
-                    nameById[m.id] = m.name;
-                    const nameLC = m.name.toLowerCase();
-                    for (const [eventKey, variants] of Object.entries(gw2Api.bossNameVariants)) {
-                        if (map[eventKey]) continue;
-                        if (variants.some(v => nameLC.includes(v))) {
-                            map[eventKey] = m.id;
-                        }
-                    }
-                });
-            } catch(err) {
-                console.warn('Error fetching achievement', achId, err);
+        // Collect candidate achievement ids. Prefer explicit achievement_id if present; fall back to id.
+        const primaryIds = new Set();
+        const fallbackIds = new Set();
+        gw2Api.dailyBossCompletedIds.clear();
+        for (const o of objectives) {
+            if (typeof o.achievement_id === 'number') primaryIds.add(o.achievement_id);
+            else if (typeof o.id === 'number') fallbackIds.add(o.id);
+            // Heuristic: mark completed achievement ids directly if objective signals completion
+            if ((o.done || o.completed) && typeof o.achievement_id === 'number') {
+                gw2Api.dailyBossCompletedIds.add(o.achievement_id);
             }
         }
+
+        async function fetchAchievementMetas(idSet) {
+            const ids = Array.from(idSet);
+            if (ids.length === 0) return [];
+            const metas = [];
+            const chunkSize = 150; // API limit safety (documentation allows 200)
+            for (let i = 0; i < ids.length; i += chunkSize) {
+                const slice = ids.slice(i, i+chunkSize);
+                try {
+                    const metaRes = await fetch(`${gw2Api.baseUrl}/achievements?ids=${slice.join(',')}`);
+                    if (!metaRes.ok) {
+                        const txt = await metaRes.text();
+                        console.warn('Meta fetch batch failed', metaRes.status, txt);
+                        if (metaRes.status === 404) {
+                            // All invalid in this batch; continue to next
+                            continue;
+                        }
+                    } else {
+                        const arr = await metaRes.json();
+                        metas.push(...arr);
+                    }
+                } catch (err) {
+                    console.warn('Meta fetch error for batch', slice[0], '...', err);
+                }
+            }
+            return metas;
+        }
+
+        let metas = await fetchAchievementMetas(primaryIds);
+        // Fallback path: if nothing resolved (maybe field name changed or absent), attempt id fallback
+        if (metas.length === 0 && fallbackIds.size > 0) {
+            console.debug('[WV] No metas via achievement_id; trying fallback id set');
+            metas = await fetchAchievementMetas(fallbackIds);
+        }
+
+        const map = {}; const nameById = {};
+        metas.forEach(m => {
+            if (!m || !m.name) return;
+            nameById[m.id] = m.name;
+            const nameLC = m.name.toLowerCase();
+            for (const [eventKey, variants] of Object.entries(gw2Api.bossNameVariants)) {
+                if (map[eventKey]) continue; // already matched
+                if (variants.some(v => nameLC.includes(v))) map[eventKey] = m.id;
+            }
+        });
 
         gw2Api.dailyBossIdMap = map;
         gw2Api.dailyBossBuildDay = today;
         gw2Api._dailyMetaNameById = nameById;
-        console.log('Built WV daily boss mapping:', map);
+        console.log('Built WV daily boss mapping:', map, 'from metas:', metas.length);
 
         if (Object.keys(map).length === 0) {
-            showBossTrackingNotice('No world bosses are in your WV dailies today.');
+            if (metas.length === 0) {
+                showBossTrackingNotice('No world boss achievements resolved from WV objectives (API format may have changed).');
+            } else {
+                showBossTrackingNotice('No world bosses are in your WV dailies today.');
+            }
         }
-    } catch(e) {
+    } catch (e) {
         console.error('Error building daily boss mapping', e);
         showBossTrackingNotice('Error building daily boss mapping.', 'error');
     }
@@ -1514,6 +1555,16 @@ function initializeApp() {
 
     // Initialize What's New modal after base UI
     initWhatsNewModal();
+
+    // Manage API help details overflow to avoid clipping
+    const apiContent = document.getElementById('api-content');
+    const apiHelpDetails = apiContent ? apiContent.querySelector('.api-help details') : null;
+    if (apiContent && apiHelpDetails) {
+        apiHelpDetails.addEventListener('toggle', () => {
+            if (apiHelpDetails.open) apiContent.classList.add('api-content--overflow');
+            else apiContent.classList.remove('api-content--overflow');
+        });
+    }
 }
 
 // Call initialization when script loads (modules are deferred, so DOM is ready)

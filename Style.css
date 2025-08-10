@@ -554,6 +554,44 @@ h2{
     padding: 0 1.2em 1.2em 1.2em;
 }
 
+.api-content.api-content--overflow { overflow: visible; }
+
+.api-help details {
+    position: relative;
+    z-index: 5; /* base above surrounding content */
+}
+
+.api-help details[open] {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 6px 10px 8px;
+    margin-top: 6px;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+    z-index: 20; /* ensure above category list */
+}
+
+.api-help details[open] p {
+    margin: 4px 0;
+}
+
+.api-help summary {
+    cursor: pointer;
+    outline: none;
+    list-style: none;
+}
+
+.api-help summary::-webkit-details-marker { display: none; }
+.api-help summary:after {
+    content: '▸';
+    margin-left: 6px;
+    display: inline-block;
+    transform: rotate(0deg);
+    transition: transform .18s ease;
+    opacity: .75;
+}
+.api-help details[open] > summary:after { transform: rotate(90deg); }
+
 .api-content.collapsed {
     max-height: 0;
     padding: 0 1.2em;
