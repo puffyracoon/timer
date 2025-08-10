@@ -2,7 +2,24 @@ let events = await fetch('events.json')
     .then(response => response.json())
     .then(obj => { return obj })
     .catch(error => console.error("Could not fetch event data: ", error));
+// Alert sound element; will attempt to unlock on first user interaction
 let alertSound = new Audio("assets/alert.mp3");
+alertSound.preload = 'auto';
+let alertSoundUnlocked = false;
+function unlockAlertSoundOnce(){
+    if (alertSoundUnlocked) return;
+    const playPromise = alertSound.play();
+    if (playPromise) {
+        playPromise.then(()=>{ alertSound.pause(); alertSound.currentTime = 0; alertSoundUnlocked = true; })
+            .catch(()=>{/* will retry on next interaction */});
+    }
+}
+window.addEventListener('click', unlockAlertSoundOnce, { once:false });
+window.addEventListener('keydown', unlockAlertSoundOnce, { once:false });
+// Provide safe stub for analytics if umami not loaded
+if (typeof window.umami === 'undefined') {
+    window.umami = { track: (...args)=>console.debug('[umami stub]', ...args) };
+}
 
 const eventTable = document.getElementById("event-table")
 const cardTemplate = document.getElementById("event-card-template")
@@ -328,11 +345,13 @@ function toggleFavorite(eventKey) {
 
 function sendNotification(eventName, timeRemaining) {
     if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(`GW2 Event Starting Soon!`, {
+        const nOpts = {
             body: `${eventName} starts in ${timeRemaining}`,
-            icon: 'assets/notifications_active_FFFFFF.svg',
-            tag: eventName // Prevents duplicate notifications
-        })
+            icon: 'assets/favicon.svg', // existing asset; removed old missing svg
+            tag: eventName
+        };
+        try { new Notification(`GW2 Event Starting Soon!`, nOpts); }
+        catch(err){ console.warn('Notification failed', err); }
     }
 }
 
@@ -555,7 +574,7 @@ const WORLD_BOSS_KEYS = new Set([
 
 // What's New modal version (bump when updating notes)
 // Format suggestion: YYYY-MM-DD + letter suffix for multiple releases/day
-let WHATS_NEW_VERSION = '2025-08-10c'; // bumped for overflow menu & updated change log
+let WHATS_NEW_VERSION = '2025-08-10f'; // bumped for WV account daily + FAQ updates
 // Auto-bump helper: if developer forgets to change version but list changed, allow console helper
 window.bumpWhatsNewVersion = (suffix = 'a') => {
     const d = new Date();
@@ -875,11 +894,7 @@ allEvents.sort((a, b) => a.localStartTime - b.localStartTime)
 if (localStorage.length > 0) {
     document.getElementById("browser-settings-alert").remove()
 } else {
-    try {
-        umami.track(`revisited with disabled events`)
-    } catch (err) {
-        console.log(err)
-    }
+    // analytics removed
 }
 
 //Add Cards to DOM
@@ -982,11 +997,7 @@ function addToggleElement(parentEvent) {
     let visibilityToggle = document.getElementById(`vcb-${parentEvent.key}`)
     visibilityToggle.addEventListener("change", (e) => {
         toggleVisibility(parentEvent.key, e.target.checked)
-        try {
-            umami.track(`Visibility ${parentEvent.key}: ${e.target.checked ? 'on' : 'off'}`)
-        } catch (err){
-            console.log(err)
-        }
+    // analytics removed
     })
 
     let doneToggle = document.getElementById(`dcb-${parentEvent.key}`)
@@ -1144,7 +1155,10 @@ function updateAlert(Event){
     }
 
     function alert(){
-        alertSound.play()
+        const p = alertSound.play();
+        if (p && typeof p.then === 'function') {
+            p.catch(err => console.warn('Alert sound blocked or failed:', err));
+        }
 
         let x = 0
 
@@ -1160,11 +1174,7 @@ function updateAlert(Event){
             else { element.style.backgroundColor = "var(--alt-bg-color)"; x=0}
         }
 
-        try {
-            umami.track(`A Gamer got notified about ${Event.parentEvent.name}`)
-        } catch (err){
-            console.log(err)
-        }
+    try { umami.track(`A Gamer got notified about ${Event.parentEvent.name}`); } catch (err) { console.debug('umami track failed', err); }
     }
     
     // Update filters to reflect alert changes
@@ -1375,55 +1385,81 @@ function updateEventStatesFromAPI() {
         localStorage.setItem('gw2-last-api-sync', gw2Api.lastFetch || Date.now());
     })();
 }
-// Build daily boss mapping if not built for current UTC day (with localStorage caching)
+// Show a banner when boss auto-marking is unavailable or informational
+function showBossTrackingNotice(message, type = 'info') {
+    const noticeId = 'boss-tracking-notice';
+    let notice = document.getElementById(noticeId);
+    if (!notice) {
+        notice = document.createElement('div');
+        notice.id = noticeId;
+        notice.style.padding = '8px';
+        notice.style.marginTop = '6px';
+        notice.style.borderRadius = '4px';
+        notice.style.fontSize = '0.9rem';
+        notice.style.backgroundColor = type === 'error' ? '#ffcccc' : '#e1ecf4';
+        notice.style.color = type === 'error' ? '#990000' : '#084c61';
+        const apiSection = document.getElementById('api-content') || document.body;
+        apiSection.insertBefore(notice, apiSection.firstChild);
+    }
+    notice.textContent = message;
+}
+
+// Build daily boss mapping from personal Wizard's Vault objectives (requires API key)
 async function buildDailyBossMappingIfNeeded() {
-    const today = new Date();
-    const dayKey = today.toISOString().slice(0,10);
-    if (gw2Api.dailyBossBuildDay === dayKey && Object.keys(gw2Api.dailyBossIdMap).length > 0) return;
+    const today = new Date().toISOString().slice(0,10);
+    if (gw2Api.dailyBossBuildDay === today && Object.keys(gw2Api.dailyBossIdMap).length > 0) return;
+
+    if (!gw2Api.apiKey) {
+        console.log('No API key — skipping WV daily boss detection.');
+        gw2Api.dailyBossIdMap = {};
+        showBossTrackingNotice('Connect your GW2 API key to track daily world bosses.');
+        return;
+    }
+
     try {
-        let dailyJson = null, metas = null;
-        const cacheKey = `daily-meta-${dayKey}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-            try {
-                const parsed = JSON.parse(cached);
-                if (parsed && parsed.daily && parsed.metas) {
-                    dailyJson = parsed.daily;
-                    metas = parsed.metas;
-                    console.log('Loaded daily metadata from cache');
-                }
-            } catch { /* ignore */ }
+        const res = await fetch(`${gw2Api.baseUrl}/account/wizardsvault/daily?access_token=${gw2Api.apiKey}`);
+        if (!res.ok) {
+            console.warn('Failed to fetch WV dailies', res.status);
+            showBossTrackingNotice('Could not fetch WV dailies — check your API key.', 'error');
+            return;
         }
-        if (!dailyJson) {
-            const dailyRes = await fetch(`${gw2Api.baseUrl}/achievements/daily`);
-            if (!dailyRes.ok) { console.warn('Failed to fetch daily achievements'); return; }
-            dailyJson = await dailyRes.json();
-        }
-        const idSet = new Set();
-        Object.values(dailyJson).forEach(arr => { if (Array.isArray(arr)) arr.forEach(o => { if (o?.id) idSet.add(o.id); }); });
-        const ids = Array.from(idSet);
-        if (!metas) {
-            const metaRes = await fetch(`${gw2Api.baseUrl}/achievements?ids=${ids.join(',')}`);
-            if (!metaRes.ok) { console.warn('Failed to fetch daily metadata'); return; }
-            metas = await metaRes.json();
-            try { localStorage.setItem(cacheKey, JSON.stringify({daily: dailyJson, metas})); } catch {}
-        }
+        const dailyData = await res.json();
         const map = {}; const nameById = {};
-        metas.forEach(m => {
-            if (!m.name) return;
-            nameById[m.id] = m.name;
-            const nameLC = m.name.toLowerCase();
-            for (const [eventKey, variants] of Object.entries(gw2Api.bossNameVariants)) {
-                if (map[eventKey]) continue;
-                if (variants.some(v => nameLC.includes(v))) map[eventKey] = m.id;
+
+        // Resolve each objective's achievement meta (sequential for simplicity)
+        for (const objective of dailyData.objectives || []) {
+            const achId = objective.id;
+            try {
+                const metaRes = await fetch(`${gw2Api.baseUrl}/achievements?ids=${achId}`);
+                if (!metaRes.ok) continue;
+                const metas = await metaRes.json();
+                metas.forEach(m => {
+                    if (!m.name) return;
+                    nameById[m.id] = m.name;
+                    const nameLC = m.name.toLowerCase();
+                    for (const [eventKey, variants] of Object.entries(gw2Api.bossNameVariants)) {
+                        if (map[eventKey]) continue;
+                        if (variants.some(v => nameLC.includes(v))) {
+                            map[eventKey] = m.id;
+                        }
+                    }
+                });
+            } catch(err) {
+                console.warn('Error fetching achievement', achId, err);
             }
-        });
+        }
+
         gw2Api.dailyBossIdMap = map;
-        gw2Api.dailyBossBuildDay = dayKey;
+        gw2Api.dailyBossBuildDay = today;
         gw2Api._dailyMetaNameById = nameById;
-        console.log('Built daily boss mapping:', map);
-    } catch (e) {
+        console.log('Built WV daily boss mapping:', map);
+
+        if (Object.keys(map).length === 0) {
+            showBossTrackingNotice('No world bosses are in your WV dailies today.');
+        }
+    } catch(e) {
         console.error('Error building daily boss mapping', e);
+        showBossTrackingNotice('Error building daily boss mapping.', 'error');
     }
 }
 
@@ -1461,12 +1497,18 @@ function initializeApp() {
             localStorage.removeItem(`daily-meta-${todayKey}`);
             gw2Api.dailyBossBuildDay = null;
             gw2Api.dailyBossIdMap = {};
+            gw2Api.dailyUnavailable = false; // allow retries after manual intervention
             if (!gw2Api.achievements && gw2Api.apiKey) {
                 await gw2Api.fetchAchievements();
             }
+            showApiStatus('Re-scanning daily API...', 'loading');
             await buildDailyBossMappingIfNeeded();
             updateEventStatesFromAPI();
-            showToast('Daily mapping re-scanned');
+            if (gw2Api.dailyUnavailable) {
+                showToast('Daily API still unavailable');
+            } else {
+                showToast('Daily mapping re-scanned');
+            }
         });
     }
 

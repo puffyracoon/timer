@@ -134,13 +134,10 @@
         <div class="wn-body">
             <p class="wn-version" id="wn-version"></p>
             <ul class="wn-changes" id="wn-changes">
-                <li><strong>Overflow Menu (Mobile):</strong> Actions now collapse under a ⋮ menu on narrow screens instead of disappearing.</li>
-                <li><strong>World Boss Icons:</strong> All core world bosses display a ⚔ marker for quick scanning.</li>
-                <li><strong>Dynamic Daily Auto‑Mark:</strong> Uses Wizard's Vault daily scan + achievement metadata (no manual list).</li>
-                <li><strong>Manual Daily Re‑scan:</strong> Leftmost refresh button rebuilds today's world boss mapping.</li>
-                <li><strong>API Badge Tooltips:</strong> Hover to see which achievement auto‑completed an event.</li>
-                <li><strong>Procedural Backgrounds:</strong> Regenerate anytime or switch to Plain mode.</li>
-                <li><strong>Chain Alerts:</strong> Auto reminder propagation for meta chains (🔗 indicator).</li>
+                <li><strong>World Boss Auto‑Mark Change:</strong> Now uses your personal /account/wizardsvault/daily data (API key required) instead of retired endpoints.</li>
+                <li><strong>Boss Tracking Banner:</strong> Clear notice if no API key or no matching world bosses in today’s WV dailies.</li>
+                <li><strong>Cleanup:</strong> Removed legacy analytics + stale notification icon path.</li>
+                <li><strong>Audio Reliability:</strong> First click/keypress primes alert sound so reminders always play.</li>
             </ul>
         </div>
         <div class="wn-footer">
@@ -261,7 +258,11 @@
             <h3>🎮 Guild Wars 2 Integration</h3>
             <div class="faq-item">
                 <div class="faq-question">What is the GW2 API key for?</div>
-                <div class="faq-answer">Enter your GW2 API key in the sidebar to automatically mark events as completed based on your in-game achievements. <span class="faq-highlight">Only Account + Progression</span> permissions are needed. Auto-marked events show a small <span class="faq-highlight">API badge</span>. These clear automatically on daily reset.</div>
+                <div class="faq-answer">Enter your GW2 API key to enable: <ul><li><span class="faq-highlight">World boss daily auto‑marking</span> (from your personal Wizard's Vault dailies)</li><li><span class="faq-highlight">Achievement-based completion</span> for supported events</li></ul>Only <span class="faq-highlight">account + progression</span> scopes are required. Auto‑marked events show an <span class="faq-highlight">API badge</span> and reset at 00:00 UTC.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Why aren’t world boss dailies marked without a key?</div>
+                <div class="faq-answer">World boss detection now uses <span class="faq-highlight">/account/wizardsvault/daily</span>, which is only available with your API key. Without a key we can’t see your daily objectives, so boss auto‑marking is disabled (you’ll see a banner prompting you to connect).</div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">What does the Last Sync time mean?</div>
@@ -269,7 +270,7 @@
             </div>
             <div class="faq-item">
                 <div class="faq-question">What does "Auto-mark world boss dailies" do?</div>
-                <div class="faq-answer">When enabled, the timer scans the current day's Wizard's Vault dailies and dynamically matches world boss tasks. If a matching boss task is completed on your account, its event card is auto-marked with an <span class="faq-highlight">API badge</span>. Disable it if you prefer to mark everything manually.</div>
+                <div class="faq-answer">When enabled (and API key present) the timer reads your personal Wizard's Vault daily objectives, matches any world boss tasks via name variants, and auto‑marks those bosses you’ve completed with an <span class="faq-highlight">API badge</span>. Disable anytime if you prefer manual tracking.</div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">How do I force a new daily scan?</div>
