@@ -9,7 +9,7 @@
     {
       "key": "core",
       "name": "Core Game",
-      "color": "rgba(179, 0, 0, .4)"
+  "wiki": "https://wiki.guildwars2.com/wiki/Great_Jungle_Wurm"
     },
     {
       "key": "ls1",
@@ -1093,7 +1093,7 @@
     },
     {
       "parentKey": "MistsandMonsters",
-      "start": ["0:40", "2:40", "4:40", "6:40", "8:40", "10:40", "12:40", "14:40", "16:40", "18:40", "24:30", "22:40"],
+  "start": ["0:40", "2:40", "4:40", "6:40", "8:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40"],
       "map": "Janthir Syntri",
       "waypoint": "Decima [&BCoPAAA=] - Greer [&BLgOAAA=]"
     },

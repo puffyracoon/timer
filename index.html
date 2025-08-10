@@ -38,10 +38,10 @@
             </div>
         </div>
         <div class="header-controls">
-            <button id="toggle-favorites" class="favorites-toggle" title="Show Only Favorites"><div class="star-icon"></div></button>
-            <button id="toggle-alerts" class="alerts-toggle" title="Show Only Events with Active Alerts"><div class="alert-icon"></div></button>
-            <button id="faq-toggle" class="faq-toggle" title="How to use this site - FAQ">?</button>
-            <button id="chain-alerts-toggle" class="chain-toggle" title="Event Chain Alerts - Auto-alert for meta event chains">🔗</button>
+            <button id="toggle-favorites" class="favorites-toggle" title="Show Only Favorites" aria-label="Toggle favorites filter"><div class="star-icon" aria-hidden="true"></div></button>
+            <button id="toggle-alerts" class="alerts-toggle" title="Show Only Events with Active Alerts" aria-label="Toggle active alerts filter"><div class="alert-icon" aria-hidden="true"></div></button>
+            <button id="faq-toggle" class="faq-toggle" title="How to use this site - FAQ" aria-label="Open FAQ">?</button>
+            <button id="chain-alerts-toggle" class="chain-toggle" title="Event Chain Alerts - Auto-alert for meta event chains" aria-label="Toggle chain alerts">🔗</button>
         </div>
     </header>
 
@@ -95,6 +95,7 @@
                 <label><input type="radio" name="bg-style" value="generated"> Generated</label>
                 <label><input type="radio" name="bg-style" value="plain"> Plain</label>
             </div>
+            <button id="bg-regenerate" class="api-button secondary" style="margin-top:6px" aria-label="Regenerate backgrounds" title="Clear cached generated backgrounds and regenerate">Regenerate Backgrounds</button>
         </div>
         <div class="about">
             <small></small>Based on Snippy's GW2 timers, if you want to support the original project, please visit <a href="https://github.com/Snipppppy/GW2-Simple-Timer/" target="_blank">Github</a></small>
@@ -117,12 +118,12 @@
                 <div class="event-time"><span class="event-start-time">00:00</span><span class="countdown-separator"> | </span><span class="remaining-time"></span></div>
             </div>
             <div class="event-icons">
-                <button class="fastf-link"><i class="fastf-icon"></i></button>
-                <button class="wiki-link"><i class="wiki-icon"></i></button>
-                <button class="done-link"><i class="done-icon"></i></button>
-                <button class="reminder-link"><div class="reminder-icon"></div></button>
-                <button class="waypoint-link"><i class="waypoint-icon"></i></button>
-                <button class="favorite-star"><i class="fa-regular fa-star"></i></button>
+                <button class="fastf-link" aria-label="Open fast farming guide" title="Open fast farming guide"><i class="fastf-icon" aria-hidden="true"></i></button>
+                <button class="wiki-link" aria-label="Open wiki page" title="Open wiki page"><i class="wiki-icon" aria-hidden="true"></i></button>
+                <button class="done-link" aria-label="Toggle done" title="Mark event done"><i class="done-icon" aria-hidden="true"></i></button>
+                <button class="reminder-link" aria-label="Cycle reminder" title="Set reminder"><div class="reminder-icon" aria-hidden="true"></div></button>
+                <button class="waypoint-link" aria-label="Copy waypoint" title="Copy waypoint"><i class="waypoint-icon" aria-hidden="true"></i></button>
+                <button class="favorite-star" aria-label="Toggle favorite" title="Toggle favorite"><i class="fa-regular fa-star" aria-hidden="true"></i></button>
             </div>
         </div>
     </div>

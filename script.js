@@ -919,7 +919,7 @@ function addToggleElement(parentEvent) {
     visibilityToggle.addEventListener("change", (e) => {
         toggleVisibility(parentEvent.key, e.target.checked)
         try {
-            umami.track(`Toggled ${parentEventKey} ${visibility}`)
+            umami.track(`Visibility ${parentEvent.key}: ${e.target.checked ? 'on' : 'off'}`)
         } catch (err){
             console.log(err)
         }
@@ -1340,5 +1340,28 @@ function initBackgroundStyleToggle(){
             });
         });
     });
+
+    // Regenerate button logic
+    const regenBtn = document.getElementById('bg-regenerate');
+    if (regenBtn) {
+        regenBtn.addEventListener('click', () => {
+            // Remove cached backgrounds from localStorage
+            Object.keys(localStorage).filter(k => k.startsWith('bg-')).forEach(k => localStorage.removeItem(k));
+            // Clear in-memory cache
+            for (const k in proceduralBackgroundCache) { delete proceduralBackgroundCache[k]; }
+            // Reapply if generated mode
+            const style = localStorage.getItem('bg-style') || 'generated';
+            if (style === 'generated') {
+                document.querySelectorAll('.event-card-element').forEach(wrapper => {
+                    const key = wrapper.getAttribute('data-event-key');
+                    const card = wrapper.querySelector('.event-card');
+                    if (!card || !key) return;
+                    const parent = getObjByKey(events.parentEvents, key);
+                    if (parent) applyProceduralBackground(card, parent.categoryKey);
+                });
+            }
+            showToast('Backgrounds regenerated');
+        });
+    }
 }
 
