@@ -66,6 +66,7 @@
                 <button id="api-refresh" class="api-button">🔄 Refresh</button>
             </div>
             <div id="api-status" class="api-status"></div>
+            <div id="api-last-sync" class="api-last-sync"></div>
             <div class="api-help">
                 <details>
                     <summary>How to get your API key</summary>
@@ -88,6 +89,13 @@
         </div>
         
         <div id="category-list" class="category-list"></div>
+        <div class="appearance-controls">
+            <h3>Appearance</h3>
+            <div class="appearance-options" id="appearance-options">
+                <label><input type="radio" name="bg-style" value="generated"> Generated</label>
+                <label><input type="radio" name="bg-style" value="plain"> Plain</label>
+            </div>
+        </div>
         <div class="about">
             <small></small>Based on Snippy's GW2 timers, if you want to support the original project, please visit <a href="https://github.com/Snipppppy/GW2-Simple-Timer/" target="_blank">Github</a></small>
             <br/><br/><br/>
@@ -102,25 +110,20 @@
 <!-- HTML Template for Event Card-->
 <template id="event-card-template">
     <div class="event-card-element">
-        <div class="chain-start-indicator" title="Meta Chain Start - This event begins a meta farming sequence" style="display: none;">🔗</div>
-        <div class="event-time-container">
-            <h1 class="event-start-time">00:00</h1>
-            <h4 class="remaining-time"></h4>
-        </div>
-        <div class="event-name-container">
-            <div class="name">
-                <h2 class="event-name">Name Of The Event</h2>
-                <h3 class="note"></h3>
+        <div class="event-card">
+            <div class="event-info">
+                <div class="event-map"></div>
+                <div class="event-title">Name Of The Event <span class="event-note"></span></div>
+                <div class="event-time"><span class="event-start-time">00:00</span><span class="countdown-separator"> | </span><span class="remaining-time"></span></div>
             </div>
-            <h3 class="event-map">--Name Of The Event Map!--</h3>
-        </div>
-        <div class="links">
-            <a class="fastf-link links-tab hover" tooltip="Visit [fast] Farming Community" href="" target="_blank"><div class="fastf-icon"></div></a>
-            <a class="wiki-link links-tab hover" tooltip="Open Event in Guild Wiki" href="" target="_blank"><div class="wiki-icon"></div></a>
-            <div class="done-link links-tab hover" tooltip="Mark as Done!"><div class="done-icon"></div></div>
-            <a class="reminder-link links-tab hover" tooltip="Set an alert!"><div class="reminder-icon"></div></a>
-            <a class="waypoint-link links-tab hover" tooltip="Copy waypoint to clipboard!"><div class="waypoint-icon"></div></a>
-            <div class="favorite-star links-tab hover" tooltip="Add to Favorites">☆</div>
+            <div class="event-icons">
+                <button class="fastf-link"><i class="fastf-icon"></i></button>
+                <button class="wiki-link"><i class="wiki-icon"></i></button>
+                <button class="done-link"><i class="done-icon"></i></button>
+                <button class="reminder-link"><div class="reminder-icon"></div></button>
+                <button class="waypoint-link"><i class="waypoint-icon"></i></button>
+                <button class="favorite-star"><i class="fa-regular fa-star"></i></button>
+            </div>
         </div>
     </div>
 </template>
@@ -162,6 +165,10 @@
                 <div class="faq-answer">Each event shows the <span class="faq-highlight">start time</span> (when it begins) and <span class="faq-highlight">remaining time</span> (countdown). Events appear 5 hours before they start.</div>
             </div>
             <div class="faq-item">
+                <div class="faq-question">Why do some events not show a countdown yet?</div>
+                <div class="faq-answer">To reduce visual noise the <span class="faq-highlight">countdown only appears in the final 15 minutes</span> before an event starts. Before that you just see the start time.</div>
+            </div>
+            <div class="faq-item">
                 <div class="faq-question">How do I mark events as completed?</div>
                 <div class="faq-answer">Click the <span class="faq-highlight">checkmark ✓</span> icon to mark an event as done. This saves until the next daily reset and dims the event card.</div>
             </div>
@@ -175,7 +182,11 @@
             </div>
             <div class="faq-item">
                 <div class="faq-question">What are Event Chains?</div>
-                <div class="faq-answer">The <span class="faq-highlight">🔗 button</span> enables auto-alerts for meta event chains (like HoT train). When you complete one event, it automatically sets reminders for the next events in the sequence. Events that start a meta chain are marked with a <span class="faq-highlight">🔗 indicator</span>.</div>
+                <div class="faq-answer">The <span class="faq-highlight">🔗 button</span> enables auto-alerts for meta event chains (like HoT train). When you complete one event, it automatically sets reminders for the next events in the sequence. Events that start a meta chain are marked with a <span class="faq-highlight">🔗 indicator</span> next to their name.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Do chain alerts auto-set a reminder?</div>
+                <div class="faq-answer">Yes. When chain alerts are enabled and you mark a chain event as done, the next events in that chain will auto-get a short (2m) reminder if they don't already have one. You can still click the bell to adjust or remove it.</div>
             </div>
         </div>
 
@@ -203,11 +214,31 @@
             <h3>🎮 Guild Wars 2 Integration</h3>
             <div class="faq-item">
                 <div class="faq-question">What is the GW2 API key for?</div>
-                <div class="faq-answer">Enter your GW2 API key in the sidebar to automatically mark events as completed based on your in-game achievements. <span class="faq-highlight">No permissions needed</span> - it only reads your achievement progress.</div>
+                <div class="faq-answer">Enter your GW2 API key in the sidebar to automatically mark events as completed based on your in-game achievements. <span class="faq-highlight">Only Account + Progression</span> permissions are needed. Auto-marked events show a small <span class="faq-highlight">API badge</span>. These clear automatically on daily reset.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What does the Last Sync time mean?</div>
+                <div class="faq-answer">It shows the most recent successful achievement fetch (UTC). Use the <span class="faq-highlight">🔄 Refresh</span> button to manually sync; otherwise it auto-refreshes every 10 minutes.</div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">How do I copy waypoints?</div>
                 <div class="faq-answer">Click the <span class="faq-highlight">waypoint 📍</span> icon to copy the waypoint code. Paste it in GW2 chat to create a map marker.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3>🎨 Appearance</h3>
+            <div class="faq-item">
+                <div class="faq-question">Why do the backgrounds look different?</div>
+                <div class="faq-answer">Zone backgrounds are <span class="faq-highlight">procedurally generated</span> (abstract shapes + palette) so they are original and lightweight. Each category palette matches its expansion. They are cached locally for fast reloads.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Can I disable the generated backgrounds?</div>
+                <div class="faq-answer">Yes. In the sidebar under <span class="faq-highlight">Appearance</span> choose <span class="faq-highlight">Plain</span> to switch to a simple neutral gradient. Switch back to <span class="faq-highlight">Generated</span> any time.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I regenerate a background?</div>
+                <div class="faq-answer">Clear the related <span class="faq-highlight">bg-*</span> entries from your browser storage (or clear all site data) and reload, or temporarily switch to Plain and back after clearing to force a refresh.</div>
             </div>
         </div>
 
@@ -231,6 +262,8 @@
                     <ul>
                         <li>Events are <span class="faq-highlight">color-coded by expansion</span> - green borders for HoT, orange for PoF, etc.</li>
                         <li>Events with a <span class="faq-highlight">🔗 indicator</span> start meta farming chains - perfect for efficient farming</li>
+                        <li>Use the <span class="faq-highlight">Appearance</span> toggle (Generated / Plain) if you prefer simpler backgrounds</li>
+                        <li>Auto-marked API events show an <span class="faq-highlight">API badge</span>; they reset with the daily reset (00:00 UTC)</li>
                         <li>Icon hover effects match the event category colors</li>
                         <li>Use chain alerts for efficient meta farming</li>
                         <li>Use "select all/none" for quick category filtering</li>

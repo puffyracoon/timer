@@ -11,7 +11,6 @@
     src: url(assets/fonts/GWTwoFont.ttf) format('truetype');
 }
 
-
 :root{
     --accent-color: #af2421;
     --success-color: #5ee01a;
@@ -744,34 +743,153 @@ h4{
 
 .event-table{
     display: flex;
-    gap: 0.5em;  /* Reduced from 1em to 0.5em */
+    gap: 0.2em; /* even tighter */
     flex-direction: column;
-    padding-top: 1.2rem;
+    padding-top: 0.75rem;
 }
 
-.event-card-element{
-    background: var(--als-linear-bg);
-    display: flex;
-    gap: 0.6rem;  /* Reduced from 1rem to 0.6rem */
-    flex-direction: row;
-    justify-content: space-between;
+
+/* Max width wrapper */
+.event-card-element {
     width: calc(100% - 3.5em);
     max-width: 40em;
-    margin: auto;
-    border-radius: .8em;
-    border: 3px solid;
-    border-top: 0;
-    border-bottom: 0;
-    padding: 0.7em;  /* Reduced from 1em to 0.7em */
-    box-shadow: var(--card-shadow);
-    transition: var(--transition-normal);
+    margin: 0 auto 4px auto; /* was 6px */
+}
+    /* Background overlay gradient for readability */
+    .event-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.7) 100%);
+        pointer-events: none;
+        opacity: 0.95;
+        border-radius: inherit;
+    }
+    /* Plain mode removes generated imagery, keeps subtle neutral gradient */
+    body.plain-background .event-card {
+        background-image: none !important;
+        background: linear-gradient(180deg,#2b2b2d,#1d1d20);
+    }
+    body.plain-background .event-card::before {
+        background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6));
+    }
+    /* Appearance controls */
+    .appearance-controls {
+        margin: 1.2em 1em 2em 1em;
+        padding: .75em .9em;
+        background: rgba(50,50,55,0.35);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+    }
+    .appearance-controls h3 {
+        margin: 0 0 .6em 0;
+        font-size: .9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        opacity: .85;
+    }
+    .appearance-options label {
+        display: flex;
+        align-items: center;
+        gap: .4em;
+        font-size: .75rem;
+        cursor: pointer;
+        margin-bottom: .4em;
+        user-select: none;
+    }
+    .appearance-options input[type=radio] {
+        accent-color: var(--accent-color);
+    }
+
+/* Card design - copied from test.html */
+.event-card {
+    display: grid;
+    grid-template-columns: 1fr auto; /* Left text, right icons */
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #333;
+    height: 100px;
+    margin-bottom: 10px;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
+    width: 100%; /* ensure consistent width */
+}
+
+/* Overlay */
+.event-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 0;
+}
+
+/* Text section */
+.event-info {
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+}
+.event-info div:first-child {
+    font-size: 0.7em;
+    color: #ccc;
+}
+.event-title {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+.event-title .event-note {
+    font-size: 0.8rem;
+.countdown-separator { display: none; }
+    color: #aaa;
+    margin-left: 8px;
+    font-weight: normal;
+}
+.event-time {
+    font-size: 0.6em;
+    color: #bbb;
+    margin-top: 4px;
+    white-space: nowrap; /* keep time and countdown together */
+}
+.event-time .remaining-time { color: #e74c3c; }
+
+/* Icon section */
+.event-icons {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+}
+.event-icons button {
+    background-color: rgba(0,0,0,0.6);
+    border: none;
+    padding: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.event-icons button i {
+    font-size: 1rem;
+}
+
+/* Add text outline for readability on bright backgrounds */
+.event-card-element, .event-card-element * {
+    text-shadow: 0 0 3px #000, 0 0 2px #000, 0 1px 2px #000;
 }
 
 .event-card-element:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
+
 
 
 .event-name-container{
@@ -989,7 +1107,7 @@ h4{
     .event-card-element {
         width: calc(100% - 1em);
         margin: 0.3em auto;
-        padding: 1em;
+    /* removed padding to match test.html card layout */
     }
 }
 
@@ -1026,7 +1144,7 @@ h4{
 @media (max-width: 400px) {
     .event-card-element {
         width: calc(100% - 1em);
-        padding: 1em;
+    /* removed padding to match test.html card layout */
     }
     
     .links {
@@ -1124,61 +1242,10 @@ h4{
 
 
 /* Event table - compact view only */
-.event-table {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
+/* Removed legacy flex-based event card styles to prevent conflicts with new grid layout */
 
-.event-card-element {
-    flex-direction: row;
-    align-items: center;
-    padding: 1em 1.5em;
-    margin: 0.4em auto;
-    min-height: auto;
-    width: calc(100% - 2em);
-    background-color: rgba(49, 49, 52, 0.6);
-    border-radius: 12px;
-    border: 1px solid rgba(68, 68, 68, 0.5);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: flex;
-    position: relative;
-    backdrop-filter: blur(10px);
-}
-
-.event-card-element:hover {
-    background-color: rgba(49, 49, 52, 0.8);
-    border-color: rgba(175, 36, 33, 0.3);
-}
-
-.event-time-container {
-    flex: 0 0 auto;
-    margin-right: 1em;
-    text-align: left;
-}
-
-.event-start-time {
-    font-size: 1rem;
-    margin: 0;
-}
-
-.remaining-time {
-    font-size: 0.8rem;
-    height: auto;
-}
-
-.event-name-container {
-    flex: 1;
-    margin: 0;
-}
-
-.event-name {
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-.event-map {
+/* Ensure map name in new template gets styling */
+.event-map, .event-map-name {
     font-size: 0.8rem;
     height: auto;
     margin: 0;
@@ -1196,14 +1263,17 @@ h4{
 
 /* Favorite star indicator - Now in links section */
 .favorite-star {
-    font-size: 1.3em;
+    font-size: 1.1em;
     cursor: pointer;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    background-color: rgba(0,0,0,0.6);
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
     transition: var(--transition-fast);
 }
 
@@ -1213,8 +1283,8 @@ h4{
 
 .favorite-star.favorited {
     color: #ffd700;
-    background: rgba(255, 215, 0, 0.1);
-    box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    background: rgba(255, 215, 0, 0.15);
+    box-shadow: 0 0 4px rgba(255, 215, 0, 0.4);
 }
 
 /* Prevent favorite star from expanding height on hover like other buttons */
@@ -1262,15 +1332,68 @@ h4{
     order: -1;
 }
 
+/* Completed (API or user-marked) */
+.event-card-element.done {
+    opacity: 0.55;
+    filter: grayscale(30%);
+    transition: opacity .3s ease;
+}
+
+/* Chain start indicator */
+.event-card .event-title.chain-start::before {
+    content: '\1F517'; /* link icon */
+    margin-right: 3px;
+    font-size: 0.8em;
+    line-height: 1;
+    position: relative;
+    top: -1px;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));
+}
+.event-card .event-title.chain-start {
+    color: inherit; /* keep original text color */
+    font-weight: 600; /* still emphasize */
+}
+
+/* API completion badge */
+.api-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 4px 0 4px;
+    font-size: 0.6rem;
+    line-height: 1.1;
+    border: 1px solid rgba(0,255,170,0.5);
+    background: linear-gradient(180deg, rgba(0,140,120,0.35), rgba(0,90,70,0.35));
+    color: #8fffe6;
+    border-radius: 4px;
+    letter-spacing: .5px;
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    vertical-align: middle;
+}
+.event-card-element.done .api-badge {
+    opacity: .9;
+}
+
+/* API last sync */
+#api-last-sync {
+    margin-top: 4px;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
 .remaining-time{
     color: var(--accent-color);
-    height: 2rem;
     font-weight: 600;
     font-family: 'JetBrains Mono', monospace;
-    display: flex;
+    display: inline-flex; /* inline so it stays on same line */
     align-items: center;
-    transition: var(--transition-fast);
+    transition: none;
+    height: auto; /* no forced height that could push wrap */
+    margin-left: 4px; /* space after separator */
 }
+.remaining-time.visible { opacity: 1; }
+.countdown-separator.visible { display: inline; }
 
 .remaining-time.urgent {
     color: var(--error-color);
@@ -1313,8 +1436,7 @@ h4{
 }
 
 button:focus, input[type="text"]:focus, input[type="password"]:focus, .links-tab:focus {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
+    outline: none;
 }
 
 /* Remove focus outline from checkboxes */
@@ -1324,7 +1446,7 @@ input[type="checkbox"]:focus {
 
 /* Remove focus outline from favorites button */
 .favorites-toggle:focus {
-    outline: none;
+    outline: none !important;
 }
 
 /* Selection styling */

@@ -26,6 +26,100 @@ let favoriteEvents = JSON.parse(localStorage.getItem('favorite-events') || '[]')
 let enableChainAlerts = JSON.parse(localStorage.getItem('chain-alerts-enabled') || 'true')
 let activeChains = new Map() // Track active chain alerts
 
+// ---------- Procedural Background Generation (placed early to avoid TDZ) ----------
+const proceduralBackgroundCache = {};
+function applyProceduralBackground(cardElement, categoryKey){
+    const cacheKey = `bg-${categoryKey}`;
+    const userMode = localStorage.getItem('bg-style') || 'generated';
+    if (userMode === 'plain') {
+        cardElement.style.backgroundImage = 'none';
+        return;
+    }
+
+    // localStorage persistence
+    if (!proceduralBackgroundCache[cacheKey]) {
+        const stored = localStorage.getItem(cacheKey);
+        if (stored) {
+            proceduralBackgroundCache[cacheKey] = stored;
+        }
+    }
+    if (proceduralBackgroundCache[cacheKey]) {
+        cardElement.style.backgroundImage = `url(${proceduralBackgroundCache[cacheKey]})`;
+        cardElement.style.backgroundSize = 'cover';
+        cardElement.style.backgroundPosition = 'center';
+        return;
+    }
+
+    const palettes = {
+        general: ['#2b2f3a','#394152','#1d2229','#556070'],
+        core: ['#331010','#5a1a16','#752520','#3d1614'],
+        // Align Living World Season 1 with core red family (was purple earlier)
+        ls1: ['#361111','#551a18','#7a2520','#461a18'],
+        ls2: ['#3c3622','#6d602c','#9a8c45','#2a2518'],
+        hot: ['#0d2e16','#124226','#1f5c35','#08351b'],
+        ls3: ['#0b3a2f','#145245','#1b6a5b','#094137'],
+        pof: ['#4a2410','#7a3a18','#b65825','#5a2e14'],
+        ls4: ['#26163f','#3d2363','#552f8b','#180d2b'],
+        ls5: ['#0d2347','#12315f','#1b4685','#08162b'],
+        eod: ['#0b2a2f','#114149','#16606b','#072125'],
+        soto: ['#3e3409','#5e4c0f','#7d6313','#271f05'],
+        janthir: ['#1c2d35','#2b4754','#375b6b','#122027'],
+        Festivals: ['#3c1d04','#5e2c07','#8a420d','#281203']
+    };
+    const colors = palettes[categoryKey] || ['#1d1d1f','#2a2a2d','#333336','#232326'];
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 480; canvas.height = 180;
+    const ctx = canvas.getContext('2d');
+    const g = ctx.createLinearGradient(0,0,0,canvas.height);
+    g.addColorStop(0, colors[0]); g.addColorStop(1, colors[3]);
+    ctx.fillStyle = g; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    const layerCount = 5;
+    for (let l=0; l<layerCount; l++) {
+        ctx.globalAlpha = 0.08 + (l/layerCount)*0.05;
+        ctx.fillStyle = colors[(l+1)%colors.length];
+        ctx.beginPath();
+        const peaks = 6 + Math.floor(Math.random()*4);
+        const yBase = canvas.height * (0.3 + 0.6*(l/layerCount));
+        ctx.moveTo(0, canvas.height);
+        for (let i=0;i<=peaks;i++){
+            const x = (i/peaks) * canvas.width;
+            const y = yBase + Math.sin(i + Math.random()*0.8)*18*(1-l/layerCount);
+            ctx.lineTo(x,y);
+        }
+        ctx.lineTo(canvas.width, canvas.height); ctx.closePath(); ctx.fill();
+    }
+
+    ctx.globalAlpha = 0.12;
+    for (let i=0;i<40;i++){
+        const r = 2 + Math.random()*3;
+        const x = Math.random()*canvas.width;
+        const y = Math.random()*canvas.height*0.7;
+        const grd = ctx.createRadialGradient(x,y,0,x,y,r);
+        grd.addColorStop(0, 'rgba(255,255,255,0.35)');
+        grd.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    }
+
+    const noiseDensity = 0.04;
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const data = imgData.data;
+    for (let p=0; p<data.length; p+=4){
+        if (Math.random() < noiseDensity) {
+            const n = (Math.random()*45)|0;
+            data[p]+=n; data[p+1]+=n; data[p+2]+=n;
+        }
+    }
+    ctx.putImageData(imgData,0,0);
+    const url = canvas.toDataURL('image/webp', 0.7);
+    proceduralBackgroundCache[cacheKey] = url;
+    try { localStorage.setItem(cacheKey, url); } catch(e) { /* ignore quota */ }
+    cardElement.style.backgroundImage = `url(${url})`;
+    cardElement.style.backgroundSize = 'cover';
+    cardElement.style.backgroundPosition = 'center';
+}
+
 // Search functionality
 searchInput.addEventListener('input', (e) => {
     currentSearchTerm = e.target.value.toLowerCase()
@@ -179,15 +273,17 @@ updateChainToggleUI()
 
 function filterEvents() {
     const eventCards = document.querySelectorAll('.event-card-element')
-    
     eventCards.forEach(card => {
-        const eventName = card.querySelector('.event-name').textContent.toLowerCase()
-        const eventMap = card.querySelector('.event-map').textContent.toLowerCase()
+        const titleEl = card.querySelector('.event-title')
+        const mapEl = card.querySelector('.event-map')
+        if (!titleEl || !mapEl) { return } // skip malformed cards
+        const eventName = titleEl.childNodes[0] ? titleEl.childNodes[0].textContent.toLowerCase() : titleEl.textContent.toLowerCase()
+        const eventMap = mapEl.textContent.toLowerCase()
         const isFavorite = card.querySelector('.favorite-star').classList.contains('favorited')
         
         // Check if event has active alerts (reminder set)
-        const reminderElement = card.querySelector('.reminder-link')
-        const hasActiveAlert = reminderElement && reminderElement.textContent.trim() !== ""
+    const reminderElement = card.querySelector('.reminder-link')
+    const hasActiveAlert = reminderElement && /^(2m|5m|10m)$/.test(reminderElement.textContent.trim())
         
         const matchesSearch = !currentSearchTerm || 
             eventName.includes(currentSearchTerm) || 
@@ -216,17 +312,14 @@ function toggleFavorite(eventKey) {
     localStorage.setItem('favorite-events', JSON.stringify(favoriteEvents))
     
     // Update all favorite stars for this event key
-    const allEventCards = document.querySelectorAll(`[data-event-key="${eventKey}"]`)
-    allEventCards.forEach(card => {
-        const favoriteStar = card.querySelector('.favorite-star')
-        if (favoriteStar) {
-            if (!isFavorited) { // Now favorited
-                favoriteStar.classList.add('favorited')
-                favoriteStar.textContent = '★'
-            } else { // No longer favorited
-                favoriteStar.classList.remove('favorited')
-                favoriteStar.textContent = '☆'
-            }
+    document.querySelectorAll(`[data-event-key="${eventKey}"] .favorite-star`).forEach(favoriteStar => {
+        if (!favoriteStar) return
+        if (!isFavorited) {
+            favoriteStar.classList.add('favorited')
+            favoriteStar.textContent = '★'
+        } else {
+            favoriteStar.classList.remove('favorited')
+            favoriteStar.textContent = '☆'
         }
     })
     
@@ -348,18 +441,24 @@ class GW2API {
         
         // Map events to their daily achievement IDs for auto-completion
         this.eventAchievementMap = {
-            'ShadowBehemoth': [1840, 1899], // Daily Shadow Behemoth
-            'FireElemental': [1841, 1900], // Daily Fire Elemental  
-            'SvanirShamanChief': [1842, 1901], // Daily Svanir Shaman Chief
-            'GreatJungleWurm': [1843, 1902], // Daily Great Jungle Wurm
-            'GolemMarkII': [1844, 1903], // Daily Golem Mark II
-            'TheShatterer': [1845, 1904], // Daily The Shatterer
-            'TequatltheSunless': [573, 1846], // Daily Tequatl the Sunless
-            'TripleTroubleWurm': [1847, 1905], // Daily Triple Trouble
-            'EvolvedJungleWurm': [1848, 1906], // Daily Evolved Jungle Wurm
-            'KarkaQueen': [1849, 1907], // Daily Karka Queen
-            'ClawofJormag': [1850, 1908], // Daily Claw of Jormag
-            'Doppelganger': [1851, 1909], // Daily Doppelganger
+            // Core world boss daily achievements (ID lists reflect multiple rotating sets where applicable)
+            'ShadowBehemoth': [1840, 1899],
+            'FireElemental': [1841, 1900],
+            'SvanirShamanChief': [1842, 1901],
+            'GreatJungleWurm': [1843, 1902],
+            'GolemMarkII': [1844, 1903],
+            'TheShatterer': [1845, 1904],
+            'Tequatl': [573, 1846],
+            'TripleTrouble': [1847, 1905],
+            'KarkaQueen': [1849, 1907],
+            'ClawofJormag': [1850, 1908],
+            // Misc / expansion (retain if they map to a daily; keep Doppelganger which exists in events)
+            'Doppelganger': [1851, 1909],
+            // Additional bosses present in timer but NOT in current mapping (commented until verified):
+            // 'Megadestroyer': [/* TODO verify id */],
+            // 'ModniirUlgoth': [/* TODO verify id */],
+            // 'AdmiralTaidhaCovington': [/* TODO verify id */],
+            // 'LeyLineAnomaly': [/* TODO verify id */]
         };
     }
 
@@ -460,7 +559,8 @@ class GW2API {
 const gw2Api = new GW2API();
 
 let now = new Date();
-const minTimeToShowCountdown = 20 * 60 * 1000
+// Show countdown only in final 15 minutes
+const minTimeToShowCountdown = 15 * 60 * 1000
 const maxTimeToShowCards = 5 * 60 * 60 * 1000
 
 class EventClass {
@@ -507,34 +607,52 @@ class EventClass {
     
     addEventToDOM() {
         let clone = cardTemplate.content.cloneNode(true)
-        clone.querySelector(".event-card-element").id =  this.eventid
-        clone.querySelector(".event-card-element").classList.add(this.parentEvent.key)
-        clone.querySelector(".event-card-element").setAttribute('data-event-key', this.parentEvent.key)
-        clone.querySelector(".event-card-element").style.borderColor =  this.color
-        // Set category color as CSS custom property for hover effects
-        clone.querySelector(".event-card-element").style.setProperty('--category-color', this.color)
-        clone.querySelector('.done-icon').classList.add(`di-${this.parentEvent.key}`)
-        clone.querySelector(".wiki-link").href = this.parentEvent.wiki
-        clone.querySelector(".fastf-link").href = this.parentEvent.fastF
-        clone.querySelector(".event-start-time").textContent = getTimeAsStr(this.localStartTime)
-        clone.querySelector(".event-name").textContent = this.parentEvent.name
-        clone.querySelector(".note").textContent = this.parentEvent.note
-        clone.querySelector(".event-map").textContent = this.event.map
-
+        const cardElem = clone.querySelector(".event-card-element");
+        const eventCard = clone.querySelector(".event-card");
+        
+        cardElem.id =  this.eventid;
+        cardElem.classList.add(this.parentEvent.key);
+        cardElem.setAttribute('data-event-key', this.parentEvent.key);
+        eventCard.style.borderColor =  this.color;
+        eventCard.style.setProperty('--category-color', this.color);
+        
+        // Set background image from category if available
+    applyProceduralBackground(eventCard, this.parentEvent.categoryKey);
+        
+        // Set text content
+    const titleEl = clone.querySelector(".event-title");
+    titleEl.childNodes[0].textContent = this.parentEvent.name + " "; // ensure space before note
+    clone.querySelector(".event-note").textContent = this.parentEvent.note || "";
+    clone.querySelector(".event-map").textContent = this.event.map;
+    clone.querySelector(".event-start-time").textContent = getTimeAsStr(this.localStartTime);
+    const remainingEl = clone.querySelector(".remaining-time")
+    const sepEl = clone.querySelector('.countdown-separator')
+    remainingEl.textContent = "";
+    if (sepEl) sepEl.style.display = 'none'
+        
         // Set up favorite star
         const favoriteStar = clone.querySelector(".favorite-star")
+        // Render as empty star initially (consistent styling using text glyph)
+        favoriteStar.textContent = favoriteEvents.includes(this.parentEvent.key) ? '★' : '☆'
         if (favoriteEvents.includes(this.parentEvent.key)) {
             favoriteStar.classList.add('favorited')
-            favoriteStar.textContent = '★'
         }
-        favoriteStar.addEventListener('click', () => {
-            toggleFavorite(this.parentEvent.key)
-        })
+        favoriteStar.addEventListener('click', () => { toggleFavorite(this.parentEvent.key) })
 
-        // Set up chain start indicator
-        const chainIndicator = clone.querySelector(".chain-start-indicator")
-        if (this.isChainStartEvent()) {
-            chainIndicator.style.display = 'flex'
+        // Set up links
+        const wikiLink = clone.querySelector(".wiki-link");
+        wikiLink.addEventListener('click', () => {
+            window.open(this.parentEvent.wiki, '_blank');
+        });
+        
+        const fastfLink = clone.querySelector(".fastf-link");
+        if (this.parentEvent.fastF) {
+            fastfLink.addEventListener('click', () => {
+                window.open(this.parentEvent.fastF, '_blank');
+            });
+        } else {
+            fastfLink.style.opacity = '0.3';
+            fastfLink.style.cursor = 'not-allowed';
         }
 
         eventTable.appendChild(clone)
@@ -545,23 +663,16 @@ class EventClass {
         let copy = `${getTimeAsStr(this.localStartTime)} || ${this.parentEvent.name} || ${this.event.waypoint}`
         wp.addEventListener("click", () => {  
             navigator.clipboard.writeText(copy)
-            // Show toast notification
             showToast('Waypoint copied to clipboard')
         })
 
         //Reminder Link
         let rl = this.card.querySelector(".reminder-link")
         rl.addEventListener("click", () => { updateAlert(this) } )
-        rl.addEventListener("mouseover", () => { rl.style.backgroundColor = this.color || "var(--accent-color)" } )
-        rl.addEventListener("mouseout", () => { rl.style.backgroundColor = "var(--alt-bg-color)" } )
         
         // Set initial reminder display based on localStorage
         if (this.reminderMSbeforEvent === "no") {
-            rl.textContent = ""
-            let icon = document.createElement('div')
-            icon.className = 'reminder-icon'
-            icon.alt = "Reminder switch 2 5 10 Minutes"
-            rl.appendChild(icon)
+            rl.innerHTML = '<div class="reminder-icon"></div>'
         } else if (this.reminderMSbeforEvent === 2 * 60000) {
             rl.textContent = "2m"
         } else if (this.reminderMSbeforEvent === 5 * 60000) {
@@ -570,36 +681,37 @@ class EventClass {
             rl.textContent = "10m"
         }
 
-        // [fast] FarmingLink
-        if (this.parentEvent.fastF === "") {
-            this.card.querySelector(".fastf-link").style.visibility = "hidden"
-        }
-
         //Done Link
         let dl = this.card.querySelector(".done-link")
         let toggleCheckbox = document.getElementById(`dcb-${this.parentEvent.key}`)
         dl.addEventListener("click", () => {
             toggleCheckbox.click()
-            // Update icon state
-            const icon = dl.querySelector('.done-icon')
+            // Update icon state & card done class
             if (toggleCheckbox.checked) {
-                icon.classList.add('completed')
+                dl.style.backgroundColor = 'rgba(46, 204, 113, 0.8)';
+                this.card.classList.add('done')
             } else {
-                icon.classList.remove('completed')
+                dl.style.backgroundColor = 'rgba(0,0,0,0.6)';
+                this.card.classList.remove('done')
+                const badge = this.card.querySelector('.api-badge');
+                if (badge) badge.remove();
             }
-        } )
+        })
 
-        if (toggleCheckbox.checked) {
-            this.card.querySelector(".done-icon").classList.add('completed')
+        if (toggleCheckbox && toggleCheckbox.checked) {
+            dl.style.backgroundColor = 'rgba(46, 204, 113, 0.8)';
+            this.card.classList.add('done')
+        }
+
+        // Chain start indicator styling
+        if (this.isChainStartEvent()) {
+            const title = this.card.querySelector('.event-title');
+            if (title) title.classList.add('chain-start');
         }
 
         //Toggle Visibility based on localStorage Settings
         let visibility = getVisibilityFromLocalStorage(this.parentEvent.key)
         toggleVisibility(this.parentEvent.key, visibility)
-
-        // Add smart tooltip positioning
-        this.setupSmartTooltips()
-
     }
     
     setupSmartTooltips() {
@@ -627,8 +739,16 @@ class EventClass {
         this.remainingMS = this.localStartTime - now
         if (this.localStartTime > now.getTime() + maxTimeToShowCards) {return}
         if (!this.card) {this.addEventToDOM()}
+        // Show countdown only when within threshold
+        const rt = this.card.querySelector('.remaining-time')
+        const sep = this.card.querySelector('.countdown-separator')
         if (this.remainingMS < minTimeToShowCountdown) {
             this.updateCountDown()
+            if (sep) sep.classList.add('visible')
+            if (rt) rt.classList.add('visible')
+        } else {
+            if (sep) sep.classList.remove('visible')
+            if (rt) { rt.classList.remove('visible'); rt.textContent = '' }
         }
         
         // Send notification if event is starting in 5 minutes and hasn't been notified yet
@@ -859,6 +979,8 @@ function toggleDone(parentEventKey, value) {
             e.src = "assets/done_outline_FFFFFF.svg"
             localStorage.removeItem(`done-${parentEventKey}`)
         }
+    // Remove API badge if user manually unmarks
+    document.querySelectorAll(`.${parentEventKey} .api-badge`).forEach(b => b.remove());
     }
     if (value === true) {
         for (let e of elements) {
@@ -900,6 +1022,17 @@ function updateEventCards() {
     for (let i = 0; i < allEvents.length; i++) {
         allEvents[i].updateCard()
     }
+}
+
+// Track last reset for API auto-clearing
+function isAfterDailyReset(timestamp) {
+    if (!timestamp) return true;
+    const last = new Date(timestamp);
+    const nowUTC = new Date();
+    // Daily reset at 00:00 UTC
+    const reset = new Date();
+    reset.setUTCHours(0,0,0,0);
+    return last < reset; // if last sync happened before today's reset
 }
 
 function updateAlert(Event){
@@ -1091,6 +1224,16 @@ function showApiStatus(message, type) {
         apiStatus.textContent = message;
         apiStatus.className = `api-status ${type}`;
     }
+    // Separate last sync timestamp area
+    const syncEl = document.getElementById('api-last-sync');
+    if (syncEl && type !== 'error' && gw2Api.lastFetch) {
+    const d = new Date(gw2Api.lastFetch);
+    const hh = String(d.getUTCHours()).padStart(2,'0');
+    const mm = String(d.getUTCMinutes()).padStart(2,'0');
+    syncEl.textContent = `Last sync: ${hh}:${mm} UTC`;
+    } else if (syncEl && type === 'error') {
+        syncEl.textContent = '';
+    }
 }
 
 function updateEventStatesFromAPI() {
@@ -1109,14 +1252,20 @@ function updateEventStatesFromAPI() {
     allEvents.forEach(event => {
         const isCompleted = gw2Api.isEventCompleted(event.parentEvent.key);
         const eventCard = event.card;
-        const doneCheckbox = document.querySelector(`input[data-event-id="${event.eventid}"].done-checkbox`);
-        
-        if (eventCard && doneCheckbox) {
-            if (isCompleted && !doneCheckbox.checked) {
-                // Mark as done if API says it's completed
-                doneCheckbox.checked = true;
-                eventCard.classList.add('done');
-                console.log(`✅ Auto-marked ${event.parentEvent.name} as completed via API`);
+        const doneCheckbox = document.getElementById(`dcb-${event.parentEvent.key}`);
+
+        if (eventCard && doneCheckbox && isCompleted && !doneCheckbox.checked) {
+            doneCheckbox.checked = true;
+            eventCard.classList.add('done');
+            console.log(`✅ Auto-marked ${event.parentEvent.name} as completed via API`);
+            // Inject small API badge (avoid duplicates)
+            const title = eventCard.querySelector('.event-title');
+            if (title && !title.querySelector('.api-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'api-badge';
+                badge.title = 'Completed (GW2 API)';
+                badge.textContent = 'API';
+                title.appendChild(badge);
             }
         }
     });
@@ -1127,15 +1276,20 @@ function updateEventStatesFromAPI() {
     } else {
         showApiStatus('API connected - no events completed today', 'success');
     }
+
+    // Persist last API sync to check daily reset
+    localStorage.setItem('gw2-last-api-sync', gw2Api.lastFetch || Date.now());
 }
 
 function resetEventStates() {
     // Reset all done states when API key is cleared
     allEvents.forEach(event => {
-        const doneCheckbox = document.querySelector(`input[data-event-id="${event.eventid}"].done-checkbox`);
-        if (doneCheckbox) {
-            doneCheckbox.checked = false;
-            event.card?.classList.remove('done');
+        const doneCheckbox = document.getElementById(`dcb-${event.parentEvent.key}`);
+        if (doneCheckbox) doneCheckbox.checked = false;
+        if (event.card) {
+            event.card.classList.remove('done');
+            const badge = event.card.querySelector('.api-badge');
+            if (badge) badge.remove();
         }
     });
 }
@@ -1144,6 +1298,13 @@ function resetEventStates() {
 function initializeApp() {
     console.log('Initializing app...');
     initializeApiInterface();
+    // Daily reset clearing for API badges & done states if past reset
+    const lastSync = localStorage.getItem('gw2-last-api-sync');
+    if (isAfterDailyReset(lastSync)) {
+        console.log('Daily reset detected - clearing API-completed states');
+        resetEventStates();
+    }
+    initBackgroundStyleToggle();
 }
 
 // Call initialization when script loads (modules are deferred, so DOM is ready)
@@ -1153,3 +1314,31 @@ if (document.readyState === 'loading') {
     // DOM already loaded
     initializeApp();
 }
+
+// Background style toggle logic
+function initBackgroundStyleToggle(){
+    const container = document.getElementById('appearance-options');
+    if (!container) return;
+    const saved = localStorage.getItem('bg-style') || 'generated';
+    if (saved === 'plain') document.body.classList.add('plain-background');
+    container.querySelectorAll('input[name="bg-style"]').forEach(radio => {
+        if (radio.value === saved) radio.checked = true;
+        radio.addEventListener('change', () => {
+            localStorage.setItem('bg-style', radio.value);
+            if (radio.value === 'plain') {
+                document.body.classList.add('plain-background');
+            } else {
+                document.body.classList.remove('plain-background');
+            }
+            // Reapply / clear per existing cards
+            document.querySelectorAll('.event-card-element').forEach(wrapper => {
+                const key = wrapper.getAttribute('data-event-key');
+                const card = wrapper.querySelector('.event-card');
+                if (!card || !key) return;
+                const parent = getObjByKey(events.parentEvents, key);
+                if (parent) applyProceduralBackground(card, parent.categoryKey);
+            });
+        });
+    });
+}
+
