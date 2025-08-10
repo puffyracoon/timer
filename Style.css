@@ -569,6 +569,9 @@ h2{
     border-radius: 6px;
     backdrop-filter: blur(4px);
     z-index: 20; /* ensure above category list */
+    max-width: 260px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .api-help details[open] p {
@@ -731,6 +734,7 @@ h2{
 .api-help p {
     margin: 0.3em 0;
     padding-left: 1em;
+    max-width: 240px;
 }
 
 .api-help a {
@@ -1495,6 +1499,16 @@ h4{
 .wn-btn.primary:hover { background: linear-gradient(180deg, rgba(175,36,33,0.75), rgba(175,36,33,0.45)); }
 .hidden { display:none !important; }
 
+/* Header icon toggles */
+.icon-toggle { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.18); border-radius:8px; padding:4px 6px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.15s background, .15s border-color, .15s box-shadow; }
+.icon-toggle:hover { background: rgba(255,255,255,0.16); }
+.icon-toggle.active { background: rgba(70,140,220,0.25); border-color: rgba(120,180,255,0.9); box-shadow: 0 0 0 2px rgba(80,150,255,0.25); }
+.icon-toggle svg { display:block; }
+.icon-toggle path.state-on { stroke:#fff; fill:none; stroke-width:2; opacity:.55; }
+.icon-toggle.active path.state-on { opacity:1; stroke:#beddff; }
+.icon-toggle.active path.state-fill { fill:#5ca9ff; }
+.icon-toggle path.state-fill { fill:#5ca9ff; opacity:.2; }
+
 /* API completion badge */
 .api-badge {
     display: inline-block;
@@ -1511,6 +1525,9 @@ h4{
     text-shadow: 0 1px 2px rgba(0,0,0,0.6);
     vertical-align: middle;
 }
+.api-badge.wv-daily { border-color: rgba(0,255,170,0.6); background: linear-gradient(180deg, rgba(0,140,120,0.5), rgba(0,90,70,0.4)); color:#9fffe9; }
+.api-badge.wv-weekly { border-color: rgba(120,170,255,0.6); background: linear-gradient(180deg, rgba(60,110,190,0.5), rgba(30,60,120,0.4)); color:#cfe1ff; }
+.api-badge.wv-special { border-color: rgba(255,200,90,0.6); background: linear-gradient(180deg, rgba(160,110,10,0.5), rgba(120,70,0,0.45)); color:#ffe7b1; }
 .event-card-element.done .api-badge {
     opacity: .9;
 }

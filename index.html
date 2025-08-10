@@ -44,6 +44,22 @@
                     <path d="M12 19a7 7 0 0 1-6.708-5H8a1 1 0 1 0 0-2H3a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-2.143A9 9 0 0 0 21 12a1 1 0 1 0-2 0 7 7 0 0 1-7 7Z"/>
                 </svg>
             </button>
+            <button id="toggle-auto-mark" class="icon-toggle" title="Toggle auto-mark WV objectives" aria-label="Toggle auto-mark" aria-pressed="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" role="img" aria-hidden="true">
+                    <rect class="state-fill" x="4" y="4" width="16" height="4" rx="1"/>
+                    <rect class="state-fill" x="4" y="10" width="16" height="4" rx="1"/>
+                    <rect class="state-fill" x="4" y="16" width="11" height="4" rx="1"/>
+                    <path class="state-on" d="M9 18.5 7.2 16.7a1 1 0 0 0-1.4 1.4l2.5 2.5a1 1 0 0 0 1.45-.05L15 14.5a1 1 0 0 0-1.5-1.3Z" />
+                </svg>
+            </button>
+            <button id="toggle-weekly-autoalert" class="icon-toggle" title="Toggle weekly meta auto-alerts" aria-label="Toggle weekly meta auto-alerts" aria-pressed="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" role="img" aria-hidden="true">
+                    <circle class="state-on" cx="12" cy="12" r="9" fill="none" />
+                    <path class="state-on" d="M12 7v5.2l4 2" />
+                    <path class="state-on" d="M8 18h8" />
+                    <circle class="state-fill" cx="12" cy="12" r="9" fill="none" />
+                </svg>
+            </button>
             <button id="toggle-favorites" class="favorites-toggle" title="Show Only Favorites" aria-label="Toggle favorites filter"><div class="star-icon" aria-hidden="true"></div></button>
             <button id="toggle-alerts" class="alerts-toggle" title="Show Only Events with Active Alerts" aria-label="Toggle active alerts filter"><div class="alert-icon" aria-hidden="true"></div></button>
             <button id="faq-toggle" class="faq-toggle" title="How to use this site - FAQ" aria-label="Open FAQ">?</button>
@@ -69,22 +85,9 @@
                 <input type="text" id="api-key-input" placeholder="Enter your GW2 API key..." />
                 <button id="api-key-save" class="api-button">Save</button>
                 <button id="api-key-clear" class="api-button secondary">Clear</button>
-                <button id="api-refresh" class="api-button" title="Refresh achievements" aria-label="Refresh achievements">
-                    <svg class="rescan-icon" viewBox="0 0 24 24" role="img" aria-hidden="true" width="16" height="16">
-                        <path d="M12 5a7 7 0 0 1 6.708 5H16a1 1 0 1 0 0 2h5a1 1 0 0 0 1-1V6a1 1 0 1 0-2 0v2.143A9 9 0 0 0 3 12a1 1 0 0 0 2 0 7 7 0 0 1 7-7Z"/>
-                        <path d="M12 19a7 7 0 0 1-6.708-5H8a1 1 0 1 0 0-2H3a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-2.143A9 9 0 0 0 21 12a1 1 0 1 0-2 0 7 7 0 0 1-7 7Z"/>
-                    </svg>
-                </button>
             </div>
             <div id="api-status" class="api-status"></div>
             <div id="api-last-sync" class="api-last-sync"></div>
-            <div class="api-auto-mark-setting" style="margin-top:6px; font-size:0.8rem; line-height:1.2;">
-                <label style="cursor:pointer; display:flex; align-items:center; gap:6px;">
-                    <input type="checkbox" id="api-auto-mark-toggle" />
-                    <span>Auto-mark world boss dailies</span>
-                </label>
-                <div style="opacity:0.7; margin-top:2px;">Uncheck to disable automatic completion updates.</div>
-            </div>
             <div class="api-help">
                 <details>
                     <summary>How to get your API key</summary>
@@ -134,10 +137,15 @@
         <div class="wn-body">
             <p class="wn-version" id="wn-version"></p>
             <ul class="wn-changes" id="wn-changes">
-                <li><strong>World Boss Auto‑Mark Change:</strong> Now uses your personal /account/wizardsvault/daily data (API key required) instead of retired endpoints.</li>
-                <li><strong>Boss Tracking Banner:</strong> Clear notice if no API key or no matching world bosses in today’s WV dailies.</li>
-                <li><strong>Cleanup:</strong> Removed legacy analytics + stale notification icon path.</li>
-                <li><strong>Audio Reliability:</strong> First click/keypress primes alert sound so reminders always play.</li>
+                <li><strong>Wizard's Vault Integration 2.0:</strong> Auto‑marks world bosses + weekly & special metas using your personal WV objectives (full progress or claimed). Handles objectives lacking achievement_id via name pattern fallback.</li>
+                <li><strong>Full Progress Gating:</strong> WV metas only auto‑mark once the objective is fully complete (e.g. 15/15), preventing premature green checks.</li>
+                <li><strong>Earliest Weekly Meta Reminder:</strong> When enabled, sets a single 5‑minute auto reminder for the next upcoming weekly/special meta instead of spamming all instances. Re‑applies after completion or manual clear.</li>
+                <li><strong>Onboarding Boost:</strong> Saving an API key now triggers an immediate WV scan—no manual rescan needed.</li>
+                <li><strong>Visual Parity:</strong> Auto‑marked events show the same green done icon plus a small API badge for clarity.</li>
+                <li><strong>Weekly Rollover Watcher:</strong> Detects Monday reset and refreshes WV weekly metas automatically (toast confirms).</li>
+                <li><strong>Dynamic Meta Exclusion:</strong> Removed pattern for A Titanic Voyage (objective rotates, avoids false positives).</li>
+                <li><strong>Reminder Stability:</strong> Fixed edge cases causing duplicate or missed 5‑minute weekly meta alerts.</li>
+                <li><strong>Housekeeping:</strong> Cleaned legacy UI bits and improved console helpers (bumpWhatsNewVersion).</li>
             </ul>
         </div>
         <div class="wn-footer">
@@ -258,19 +266,19 @@
             <h3>🎮 Guild Wars 2 Integration</h3>
             <div class="faq-item">
                 <div class="faq-question">What is the GW2 API key for?</div>
-                <div class="faq-answer">Enter your GW2 API key to enable: <ul><li><span class="faq-highlight">World boss daily auto‑marking</span> (from your personal Wizard's Vault dailies)</li><li><span class="faq-highlight">Achievement-based completion</span> for supported events</li></ul>Only <span class="faq-highlight">account + progression</span> scopes are required. Auto‑marked events show an <span class="faq-highlight">API badge</span> and reset at 00:00 UTC.</div>
+                <div class="faq-answer">Enter your GW2 API key to enable: <ul><li><span class="faq-highlight">World boss/meta auto‑marking</span> (from your personal Wizard's Vault daily, weekly & special objectives)</li><li><span class="faq-highlight">Achievement-based completion</span> for supported events</li></ul>Only <span class="faq-highlight">account + progression</span> scopes are required. Auto‑marked events show an <span class="faq-highlight">API badge</span> and reset at 00:00 UTC (weekly/special objective availability may extend beyond a day).</div>
             </div>
             <div class="faq-item">
-                <div class="faq-question">Why aren’t world boss dailies marked without a key?</div>
-                <div class="faq-answer">World boss detection now uses <span class="faq-highlight">/account/wizardsvault/daily</span>, which is only available with your API key. Without a key we can’t see your daily objectives, so boss auto‑marking is disabled (you’ll see a banner prompting you to connect).</div>
+                <div class="faq-question">Why aren’t WV boss/meta objectives marked without a key?</div>
+                <div class="faq-answer">Boss/meta detection now scans <span class="faq-highlight">/account/wizardsvault/daily</span>, <span class="faq-highlight">/weekly</span> and <span class="faq-highlight">/special</span>, which all require your API key. Without a key we can’t see your personal objectives, so auto‑marking is disabled (you’ll see a banner prompting you to connect).</div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">What does the Last Sync time mean?</div>
                 <div class="faq-answer">It shows the most recent successful achievement fetch (UTC). Use the <span class="faq-highlight">🔄 Refresh</span> button to manually sync; otherwise it auto-refreshes every 10 minutes.</div>
             </div>
             <div class="faq-item">
-                <div class="faq-question">What does "Auto-mark world boss dailies" do?</div>
-                <div class="faq-answer">When enabled (and API key present) the timer reads your personal Wizard's Vault daily objectives, matches any world boss tasks via name variants, and auto‑marks those bosses you’ve completed with an <span class="faq-highlight">API badge</span>. Disable anytime if you prefer manual tracking.</div>
+                <div class="faq-question">What does "Auto-mark WV world boss/meta objectives" do?</div>
+                <div class="faq-answer">When enabled (and API key present) the timer reads your personal Wizard's Vault daily, weekly & special objectives, matches any world boss or meta tasks via name variants, and auto‑marks those you’ve completed with an <span class="faq-highlight">API badge</span>. Disable anytime if you prefer manual tracking.</div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">How do I force a new daily scan?</div>
@@ -318,7 +326,7 @@
                     <ul>
                         <li>Events are <span class="faq-highlight">color-coded by expansion</span> - green borders for HoT, orange for PoF, etc.</li>
                         <li>Events with a <span class="faq-highlight">🔗 indicator</span> start meta farming chains - perfect for efficient farming</li>
-                        <li>World boss events show a <span class="faq-highlight">⚔ icon</span> (auto-marked if in today's Wizard's Vault dailies)</li>
+                        <li>World boss events show a <span class="faq-highlight">⚔ icon</span> (auto-marked if in your current Wizard's Vault objectives)</li>
                         <li>Use the <span class="faq-highlight">Appearance</span> toggle (Generated / Plain) if you prefer simpler backgrounds</li>
                         <li>Auto-marked API events show an <span class="faq-highlight">API badge</span>; they reset with the daily reset (00:00 UTC)</li>
                         <li>Icon hover effects match the event category colors</li>

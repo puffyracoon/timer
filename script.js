@@ -462,6 +462,11 @@ class GW2API {
         this.dailyBossIdMap = {}; // eventKey -> achievementId (for today only)
         this.dailyBossBuildDay = null; // UTC day string used to know when to rebuild
     this.dailyBossCompletedIds = new Set(); // achievementIds already completed today (optional shortcut)
+    // Extended WV scope caches
+    this.wvScopeByAchId = {}; // achievementId -> 'daily' | 'weekly' | 'special'
+    this._wvCacheMeta = { dailyDay: null, weeklyWeek: null, specialExpiry: 0 };
+    // Cache raw WV objectives (id -> objective object) so we can rely on title/progress now that achievement_id is absent
+    this._wvObjectivesById = {}; // id -> { title, progress_current, progress_complete, claimed, _wvScope }
         // Canonical boss name variants for fuzzy match (lowercase substrings)
         this.bossNameVariants = {
             ShadowBehemoth: ['shadow behemoth'],
@@ -476,7 +481,11 @@ class GW2API {
             ClawofJormag: ['claw of jormag'],
             AdmiralTaidhaCovington: ['admiral taidha covington','taidha'],
             Megadestroyer: ['megadestroyer'],
-            ModniirUlgoth: ['modniir ulgoth','ulgoth']
+            ModniirUlgoth: ['modniir ulgoth','ulgoth'],
+            // Meta-event weekly rotation additions
+            PathToAscension: ['path to ascension'],
+            UnlockingWizardsTower: ['unlocking the wizard\'s tower','unlocking the wizards tower'],
+            AetherbladeAssault: ['aetherblade assault']
         };
         // NOTE: Ley-Line Anomaly currently excluded (not a standard WV daily achievement)
     }
@@ -540,10 +549,25 @@ class GW2API {
     }
 
     isEventCompleted(eventKey) {
-    if (!this.achievements || !this.dailyBossIdMap[eventKey]) return false;
-    const achId = this.dailyBossIdMap[eventKey];
-    const achievement = this.achievements.find(a => a.id === achId);
-    return !!(achievement && achievement.done);
+    const mappedId = this.dailyBossIdMap[eventKey];
+    if (!mappedId) return false;
+    // First try account achievements (world bosses etc.)
+    if (this.achievements) {
+        const achievement = this.achievements.find(a => a.id === mappedId);
+        if (achievement) return !!achievement.done;
+    }
+    // Fallback: WV objective progress (weekly/special meta objectives use WV-only ids)
+    const obj = this._wvObjectivesById[mappedId];
+    if (obj) {
+    // Require full progress (e.g. 15/15) – partial progress should NOT auto-mark
+    const hasProgressNumbers = (typeof obj.progress_current === 'number' && typeof obj.progress_complete === 'number' && obj.progress_complete > 0);
+    const completeViaProgress = hasProgressNumbers && obj.progress_current >= obj.progress_complete;
+    // Respect user auto-mark toggle for WV-only objectives (no achievement entry)
+    const autoMarkEnabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
+    if (!autoMarkEnabled) return false;
+    return !!(obj.claimed || completeViaProgress);
+    }
+    return false;
     }
     
     // Get all completed events for today
@@ -574,8 +598,8 @@ const WORLD_BOSS_KEYS = new Set([
 ]);
 
 // What's New modal version (bump when updating notes)
-// Format suggestion: YYYY-MM-DD + letter suffix for multiple releases/day
-let WHATS_NEW_VERSION = '2025-08-10f'; // bumped for WV account daily + FAQ updates
+// Format: YYYY-MM-DD + letter suffix for multiple releases/day
+let WHATS_NEW_VERSION = '2025-08-10h'; // updated notes: earliest-only meta reminder, onboarding scan, exclusions
 // Auto-bump helper: if developer forgets to change version but list changed, allow console helper
 window.bumpWhatsNewVersion = (suffix = 'a') => {
     const d = new Date();
@@ -1153,6 +1177,7 @@ function updateAlert(Event){
         icon.className = 'reminder-icon'
         icon.alt = "Reminder switch 2 5 10 Minutes"
         element.appendChild(icon)
+        // No suppression: allow reapplication on next API rescan if still the next upcoming meta occurrence.
     }
 
     function alert(){
@@ -1182,42 +1207,98 @@ function updateAlert(Event){
     filterEvents()
 }
 
+// Helper: schedule a fixed reminder without cycling the 2m->5m->10m sequence
+function scheduleFixedReminder(Event, minutes){
+    const element = Event.card.querySelector('.reminder-link');
+    Event.reminderMSbeforEvent = minutes * 60000;
+    if (Event.remainingMS < Event.reminderMSbeforEvent) {
+        // Too close; abort and clear
+        Event.reminderMSbeforEvent = 'no';
+        Event.saveReminderToLocalStorage();
+        if (element) element.textContent = '';
+        return;
+    }
+    // Persist
+    Event.saveReminderToLocalStorage();
+    if (element) element.textContent = `${minutes}m`;
+    clearTimeout(Event.timeoutID);
+    const reminderInMS = Event.remainingMS - Event.reminderMSbeforEvent;
+    Event.timeoutID = setTimeout(()=>{ triggerFixedReminder(); }, reminderInMS);
+
+    function triggerFixedReminder(){
+        const p = alertSound.play();
+        if (p && typeof p.then === 'function') {
+            p.catch(err => console.warn('Alert sound blocked or failed:', err));
+        }
+        let x = 0;
+        if (element){
+            const icon = document.createElement('div');
+            icon.className = 'reminder-icon-active';
+            icon.alt = 'Reminder';
+            element.textContent = '';
+            element.appendChild(icon);
+            Event.intervalID = setInterval(()=>{ if (x===0){ element.style.backgroundColor = Event.color || 'var(--accent-color)'; x=1;} else { element.style.backgroundColor = 'var(--alt-bg-color)'; x=0;} }, 1000);
+        }
+        try { umami.track(`A Gamer got notified about ${Event.parentEvent.name}`); } catch (err) { console.debug('umami track failed', err); }
+        filterEvents();
+    }
+    filterEvents();
+}
+
+// (Removed week-based suppression logic; simplified auto-alert sequencing)
 // GW2 API Interface functions
 function initializeApiInterface() {
     const apiKeyInput = document.getElementById('api-key-input');
     const apiKeySave = document.getElementById('api-key-save');
     const apiKeyClear = document.getElementById('api-key-clear');
-    const apiRefresh = document.getElementById('api-refresh');
     const apiStatus = document.getElementById('api-status');
-    const autoMarkToggle = document.getElementById('api-auto-mark-toggle');
+    const autoMarkBtn = document.getElementById('toggle-auto-mark');
+    const weeklyAutoAlertBtn = document.getElementById('toggle-weekly-autoalert');
+    // Legacy (removed) sidebar refresh button; guard in case it's gone
+    const apiRefresh = document.getElementById('api-refresh');
 
     // Debug: Check if elements exist
     console.log('API Elements found:', {
         input: !!apiKeyInput,
         save: !!apiKeySave,
         clear: !!apiKeyClear,
-        refresh: !!apiRefresh,
         status: !!apiStatus
     });
 
-    if (!apiKeyInput || !apiKeySave || !apiKeyClear || !apiRefresh || !apiStatus) {
+    if (!apiKeyInput || !apiKeySave || !apiKeyClear || !apiStatus) {
         console.error('Some API elements not found in DOM');
         return;
     }
-
-    // Initialize auto-mark toggle
-    if (autoMarkToggle) {
-        const enabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
-        autoMarkToggle.checked = enabled;
-        autoMarkToggle.addEventListener('change', () => {
-            localStorage.setItem('auto-mark-enabled', JSON.stringify(autoMarkToggle.checked));
-            if (autoMarkToggle.checked) {
+    // (Week-based cleanup removed)
+    // Initialize new icon-based toggles
+    const autoMarkEnabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
+    if (autoMarkBtn) {
+        autoMarkBtn.classList.toggle('active', autoMarkEnabled);
+        autoMarkBtn.setAttribute('aria-pressed', String(autoMarkEnabled));
+        autoMarkBtn.addEventListener('click', () => {
+            const newVal = !autoMarkBtn.classList.contains('active');
+            autoMarkBtn.classList.toggle('active', newVal);
+            autoMarkBtn.setAttribute('aria-pressed', String(newVal));
+            localStorage.setItem('auto-mark-enabled', JSON.stringify(newVal));
+            if (newVal) {
                 if (gw2Api.achievements) updateEventStatesFromAPI();
                 showToast('Auto-mark enabled');
             } else {
                 showToast('Auto-mark disabled');
                 document.querySelectorAll('.api-badge').forEach(b => b.remove());
             }
+        });
+    }
+    const weeklyAlertEnabled = JSON.parse(localStorage.getItem('weekly-autoalert-enabled') || 'true');
+    if (weeklyAutoAlertBtn) {
+        weeklyAutoAlertBtn.classList.toggle('active', weeklyAlertEnabled);
+        weeklyAutoAlertBtn.setAttribute('aria-pressed', String(weeklyAlertEnabled));
+        weeklyAutoAlertBtn.addEventListener('click', () => {
+            const newVal = !weeklyAutoAlertBtn.classList.contains('active');
+            weeklyAutoAlertBtn.classList.toggle('active', newVal);
+            weeklyAutoAlertBtn.setAttribute('aria-pressed', String(newVal));
+            localStorage.setItem('weekly-autoalert-enabled', JSON.stringify(newVal));
+            showToast(newVal ? 'Weekly meta auto-alerts enabled' : 'Weekly meta auto-alerts disabled');
         });
     }
 
@@ -1244,10 +1325,9 @@ function initializeApiInterface() {
             const accountInfo = await gw2Api.getAccountInfo();
             showApiStatus(`Connected as: ${accountInfo.name}`, 'success');
             
-            // Fetch achievements for future use
+            // Fetch achievements & build WV mapping before first update to ensure weekly metas processed immediately
             await gw2Api.fetchAchievements();
-            
-            // Update event states based on API data
+            try { await buildDailyBossMappingIfNeeded(); } catch(e){ console.debug('Initial WV mapping build failed', e); }
             updateEventStatesFromAPI();
         } else {
             showApiStatus('Invalid API key or insufficient permissions', 'error');
@@ -1265,23 +1345,25 @@ function initializeApiInterface() {
         resetEventStates();
     });
 
-    // Refresh achievements and update events
-    apiRefresh.addEventListener('click', async () => {
-        if (!gw2Api.apiKey) {
-            showApiStatus('Please set an API key first', 'error');
-            return;
-        }
-        
-        showApiStatus('Refreshing achievement data...', 'loading');
-        
-        const achievements = await gw2Api.fetchAchievements();
-        if (achievements) {
-            console.log(`Refreshed ${achievements.length} achievements`);
-            updateEventStatesFromAPI();
-        } else {
-            showApiStatus('Failed to refresh achievement data', 'error');
-        }
-    });
+    // Refresh achievements and update events (only if legacy button still exists)
+    if (apiRefresh) {
+        apiRefresh.addEventListener('click', async () => {
+            if (!gw2Api.apiKey) {
+                showApiStatus('Please set an API key first', 'error');
+                return;
+            }
+            showApiStatus('Refreshing achievement data...', 'loading');
+            const achievements = await gw2Api.fetchAchievements();
+            if (achievements) {
+                console.log(`Refreshed ${achievements.length} achievements`);
+                updateEventStatesFromAPI();
+            } else {
+                showApiStatus('Failed to refresh achievement data', 'error');
+            }
+        });
+    } else {
+        console.log('Legacy api-refresh button not found (expected after UI cleanup)');
+    }
 
     // Enter key support
     apiKeyInput.addEventListener('keypress', (e) => {
@@ -1349,6 +1431,10 @@ function updateEventStatesFromAPI() {
         console.log('Dynamic daily boss matches:', gw2Api.dailyBossIdMap);
         console.log('Completed boss events via API today:', completedEvents);
 
+    // Track earliest upcoming occurrence per incomplete weekly/special WV meta and whether a reminder already exists
+    const earliestPerMeta = new Map(); // metaKey -> EventClass
+    const hasReminderPerMeta = new Map(); // metaKey -> true
+
         allEvents.forEach(event => {
             const isCompleted = gw2Api.isEventCompleted(event.parentEvent.key);
             const eventCard = event.card;
@@ -1356,6 +1442,13 @@ function updateEventStatesFromAPI() {
             if (eventCard && doneCheckbox && isCompleted && !doneCheckbox.checked) {
                 doneCheckbox.checked = true;
                 eventCard.classList.add('done');
+                // Color the done icon like manual marking
+                try {
+                    const parentEventKey = event.parentEvent.key;
+                    document.querySelectorAll(`[data-event-key="${parentEventKey}"] .doneIcon`).forEach(ic => {
+                        ic.src = 'assets/done_outline_75FB4C_.svg';
+                    });
+                } catch(err){ console.debug('Done icon update failed', err); }
                 const title = eventCard.querySelector('.event-title');
                 if (title) {
                     let badge = title.querySelector('.api-badge');
@@ -1367,9 +1460,34 @@ function updateEventStatesFromAPI() {
                     }
                     const achId = gw2Api.dailyBossIdMap[event.parentEvent.key];
                     const achName = gw2Api._dailyMetaNameById?.[achId];
-                    badge.title = achName ? `Completed (GW2 API: ${achName})` : 'Completed (GW2 API)';
+                    const scope = gw2Api.wvScopeByAchId?.[achId];
+                    if (scope) badge.classList.add(`wv-${scope}`);
+                    const scopeLabel = scope ? scope.charAt(0).toUpperCase()+scope.slice(1) : 'WV';
+                    badge.title = achName ? `Completed (${scopeLabel} WV objective: ${achName})` : `Completed (${scopeLabel} WV objective)`;
+                }
+            } else if (!isCompleted) {
+                const metaKey = event.parentEvent.key;
+                const achId = gw2Api.dailyBossIdMap[metaKey];
+                if (!achId) return; // not mapped
+                const scope = gw2Api.wvScopeByAchId?.[achId];
+                if (!(scope === 'weekly' || scope === 'special')) return;
+                const weeklyAlertsOn = JSON.parse(localStorage.getItem('weekly-autoalert-enabled') || 'true');
+                if (!weeklyAlertsOn) return;
+                if (event.remainingMS < 5 * 60000) return; // too close
+                // If any future occurrence already has a reminder, mark and skip scheduling a new one
+                if (event.reminderMSbeforEvent !== 'no') { hasReminderPerMeta.set(metaKey, true); return; }
+                if (hasReminderPerMeta.get(metaKey)) return; // already covered by another occurrence with active reminder
+                const existing = earliestPerMeta.get(metaKey);
+                if (!existing || event.localStartTime < existing.localStartTime) {
+                    earliestPerMeta.set(metaKey, event);
                 }
             }
+        });
+
+        // Schedule only if no existing reminder already active for that meta key
+        earliestPerMeta.forEach(ev => {
+            if (hasReminderPerMeta.get(ev.parentEvent.key)) return;
+            try { scheduleFixedReminder(ev, 5); } catch(e){ console.warn('Auto alert scheduling failed', e); }
         });
 
         if (completedEvents.length > 0) {
@@ -1378,7 +1496,7 @@ function updateEventStatesFromAPI() {
             // Differentiate between: no matches vs matches but none done
             const bossCount = Object.keys(gw2Api.dailyBossIdMap).length;
             if (bossCount === 0) {
-                showApiStatus('No world bosses in today\'s dailies (auto-mark idle)', 'success');
+                showApiStatus('No WV boss/meta objectives active (auto‑mark idle)', 'success');
             } else {
                 showApiStatus('API connected - no boss events done yet', 'success');
             }
@@ -1387,46 +1505,61 @@ function updateEventStatesFromAPI() {
     })();
 }
 // Show a banner when boss auto-marking is unavailable or informational
-function showBossTrackingNotice(message, type = 'info') {
-    const noticeId = 'boss-tracking-notice';
-    let notice = document.getElementById(noticeId);
-    if (!notice) {
-        notice = document.createElement('div');
-        notice.id = noticeId;
-        notice.style.padding = '8px';
-        notice.style.marginTop = '6px';
-        notice.style.borderRadius = '4px';
-        notice.style.fontSize = '0.9rem';
-        notice.style.backgroundColor = type === 'error' ? '#ffcccc' : '#e1ecf4';
-        notice.style.color = type === 'error' ? '#990000' : '#084c61';
-        const apiSection = document.getElementById('api-content') || document.body;
-        apiSection.insertBefore(notice, apiSection.firstChild);
-    }
-    notice.textContent = message;
-}
+function showBossTrackingNotice(){ /* removed visual banner per user request */ }
 
 // Build daily boss mapping from personal Wizard's Vault objectives (requires API key)
-async function buildDailyBossMappingIfNeeded() {
-    const today = new Date().toISOString().slice(0,10);
-    if (gw2Api.dailyBossBuildDay === today && Object.keys(gw2Api.dailyBossIdMap).length > 0) return;
+async function buildDailyBossMappingIfNeeded(opts = {}) {
+    const forceAll = !!opts.forceAllScopes;
+    const nowUtc = new Date();
+    const today = nowUtc.toISOString().slice(0,10);
+    // Determine ISO week string for weekly caching (YYYY-Www)
+    function isoWeekString(d){
+        const dt = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+        // Thursday in current week decides the year.
+        dt.setUTCDate(dt.getUTCDate() + 4 - (dt.getUTCDay()||7));
+        const yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+        const weekNo = Math.ceil((((dt - yearStart) / 86400000) + 1)/7);
+        return `${dt.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
+    }
+    const isoWeek = isoWeekString(nowUtc);
+    const specialValid = !forceAll && nowUtc.getTime() < (gw2Api._wvCacheMeta.specialExpiry || 0);
+    const dailyFresh = !forceAll && gw2Api._wvCacheMeta.dailyDay === today;
+    const weeklyFresh = !forceAll && gw2Api._wvCacheMeta.weeklyWeek === isoWeek;
+    const haveMap = Object.keys(gw2Api.dailyBossIdMap).length > 0;
+    if (haveMap && dailyFresh && weeklyFresh && specialValid) return; // All scopes still fresh
 
     if (!gw2Api.apiKey) {
         console.log('No API key — skipping WV daily boss detection.');
         gw2Api.dailyBossIdMap = {};
-        showBossTrackingNotice('Connect your GW2 API key to track daily world bosses.');
+    showApiStatus('Add API key to enable WV auto-mark.', 'info');
         return;
     }
 
     try {
-        const res = await fetch(`${gw2Api.baseUrl}/account/wizardsvault/daily?access_token=${gw2Api.apiKey}`);
-        if (!res.ok) {
-            console.warn('Failed to fetch WV dailies', res.status);
-            showBossTrackingNotice('Could not fetch WV dailies — check your API key.', 'error');
+        // Fetch daily, weekly, and special WV objective sets in parallel
+    const [dailyRes, weeklyRes, specialRes] = await Promise.all([
+            fetch(`${gw2Api.baseUrl}/account/wizardsvault/daily?access_token=${gw2Api.apiKey}`),
+            fetch(`${gw2Api.baseUrl}/account/wizardsvault/weekly?access_token=${gw2Api.apiKey}`),
+            fetch(`${gw2Api.baseUrl}/account/wizardsvault/special?access_token=${gw2Api.apiKey}`)
+        ]);
+        if (!dailyRes.ok && !weeklyRes.ok && !specialRes.ok) {
+            console.warn('Failed to fetch ALL WV objective groups', {daily: dailyRes.status, weekly: weeklyRes.status, special: specialRes.status});
+            showApiStatus('WV objective fetch failed (check API key)', 'error');
             return;
         }
-        const dailyData = await res.json();
-        const objectives = dailyData.objectives || [];
-        console.debug('[WV] Objectives sample (first 3):', objectives.slice(0,3).map(o => ({id:o.id, achievement_id:o.achievement_id, keys:Object.keys(o)})));
+        let allObjectiveSets = [];
+        async function safeJson(res){ try { return res.ok ? await res.json() : {objectives:[]} } catch { return {objectives:[]} } }
+        const [dailyData, weeklyData, specialData] = await Promise.all([
+            safeJson(dailyRes), safeJson(weeklyRes), safeJson(specialRes)
+        ]);
+    const objectives = [];
+    if (!dailyFresh) objectives.push(...(dailyData.objectives||[]).map(o=>({...o,_wvScope:'daily'})));
+    if (!weeklyFresh) objectives.push(...(weeklyData.objectives||[]).map(o=>({...o,_wvScope:'weekly'})));
+    if (!specialValid) objectives.push(...(specialData.objectives||[]).map(o=>({...o,_wvScope:'special'})));
+        // Refresh raw cache only for scopes we re-fetched (retain others)
+        objectives.forEach(o => { if (o && typeof o.id === 'number') gw2Api._wvObjectivesById[o.id] = o; });
+        console.debug('[WV] Aggregated objectives counts', {daily: dailyData.objectives?.length||0, weekly: weeklyData.objectives?.length||0, special: specialData.objectives?.length||0});
+        console.debug('[WV] Sample objectives (first 3 agg):', objectives.slice(0,3).map(o => ({id:o.id, achievement_id:o.achievement_id, scope:o._wvScope})));
 
         // Collect candidate achievement ids. Prefer explicit achievement_id if present; fall back to id.
         const primaryIds = new Set();
@@ -1468,39 +1601,84 @@ async function buildDailyBossMappingIfNeeded() {
             return metas;
         }
 
-        let metas = await fetchAchievementMetas(primaryIds);
-        // Fallback path: if nothing resolved (maybe field name changed or absent), attempt id fallback
-        if (metas.length === 0 && fallbackIds.size > 0) {
-            console.debug('[WV] No metas via achievement_id; trying fallback id set');
-            metas = await fetchAchievementMetas(fallbackIds);
+        // Attempt meta achievement fetch only if any primaryIds exist (world boss achievements still use achievement IDs)
+        let metas = [];
+        if (primaryIds.size > 0) {
+            metas = await fetchAchievementMetas(primaryIds);
         }
-
-        const map = {}; const nameById = {};
+    const map = {}; const nameById = {};
+        const variantKeyAliases = { ThePathtoAscension: 'PathToAscension' };
+        // Existing achievement-based mapping (world bosses) retained
         metas.forEach(m => {
             if (!m || !m.name) return;
             nameById[m.id] = m.name;
             const nameLC = m.name.toLowerCase();
             for (const [eventKey, variants] of Object.entries(gw2Api.bossNameVariants)) {
-                if (map[eventKey]) continue; // already matched
+                if (map[eventKey]) continue;
                 if (variants.some(v => nameLC.includes(v))) map[eventKey] = m.id;
+            }
+            Object.entries(variantKeyAliases).forEach(([actualKey, variantKey]) => {
+                if (!map[actualKey] && map[variantKey]) map[actualKey] = map[variantKey];
+            });
+        });
+
+        // NEW: Weekly/Special meta detection directly from WV objective titles (since achievement_id is absent)
+        const metaTitleMatchers = [
+            { key: 'KainengBlackout', patterns: ['kaineng blackout meta event','kaineng blackout meta-event','complete kaineng blackout meta event','kaineng blackout'] },
+            { key: 'ThePathtoAscension', patterns: ['path to ascension meta event','path to ascension meta-event','complete the path to ascension meta event','path to ascension'] },
+            { key: 'AetherbladeAssault', patterns: ['aetherblade assault meta event','aetherblade assault meta-event','complete aetherblade assault meta event','aetherblade assault'] },
+            { key: "Wizard'sTower", patterns: ["unlocking the wizard's tower meta event","unlocking the wizard's tower meta-event","unlock the wizard's tower meta event","unlock the wizard's tower","unlocking the wizard's tower"] }
+            // TitanicVoyage intentionally omitted: dynamic meta without fixed WV weekly objective mapping
+        ];
+        const normalize = t => t.toLowerCase().replace(/[-–—]/g,' ').replace(/\s+/g,' ').trim();
+        objectives.forEach(o => {
+            if (!o || !o.title) return;
+            const nt = normalize(o.title);
+            // Only consider weekly and special for these metas (could appear there)
+            if (o._wvScope !== 'weekly' && o._wvScope !== 'special') return;
+            metaTitleMatchers.forEach(m => {
+                if (map[m.key]) return; // already mapped (achievement-based or earlier match)
+                if (m.patterns.some(p => nt.includes(p))) {
+                    map[m.key] = o.id; // map event key to WV objective id
+                    gw2Api.wvScopeByAchId[o.id] = o._wvScope;
+                }
+            });
+        });
+        // Debug: log titles containing 'meta-event' not matched
+        const unmatchedMetaTitles = objectives
+            .filter(o => (o._wvScope === 'weekly' || o._wvScope === 'special') && o.title && /meta[- ]event/i.test(o.title) && !Object.values(map).includes(o.id))
+            .map(o => o.title);
+        if (unmatchedMetaTitles.length) console.debug('[WV] Unmatched meta-event titles (for future patterns):', unmatchedMetaTitles);
+
+        // Track scope for matched achievements (prefer narrower scope if multiple)
+        const scopePriority = { daily:3, weekly:2, special:1 }; // higher = more specific / recent
+        objectives.forEach(o => {
+            const achId = o.achievement_id || o.id;
+            if (!achId) return;
+            if (!gw2Api.wvScopeByAchId[achId] || scopePriority[o._wvScope] > scopePriority[gw2Api.wvScopeByAchId[achId]]) {
+                gw2Api.wvScopeByAchId[achId] = o._wvScope;
             }
         });
 
-        gw2Api.dailyBossIdMap = map;
-        gw2Api.dailyBossBuildDay = today;
+        // Merge with existing map if some scopes weren't refreshed
+        if (!dailyFresh || !weeklyFresh || !specialValid) {
+            gw2Api.dailyBossIdMap = { ...gw2Api.dailyBossIdMap, ...map };
+        } else {
+            gw2Api.dailyBossIdMap = map;
+        }
+        gw2Api.dailyBossBuildDay = today; // keep legacy field for compatibility (daily part)
+        if (!dailyFresh) gw2Api._wvCacheMeta.dailyDay = today;
+        if (!weeklyFresh) gw2Api._wvCacheMeta.weeklyWeek = isoWeek;
+        if (!specialValid) gw2Api._wvCacheMeta.specialExpiry = Date.now() + 7*24*60*60*1000; // 7 days heuristic
         gw2Api._dailyMetaNameById = nameById;
-        console.log('Built WV daily boss mapping:', map, 'from metas:', metas.length);
+    console.log('Updated WV boss/meta mapping:', gw2Api.dailyBossIdMap, 'from metas:', metas.length, 'scopes:', gw2Api.wvScopeByAchId);
 
-        if (Object.keys(map).length === 0) {
-            if (metas.length === 0) {
-                showBossTrackingNotice('No world boss achievements resolved from WV objectives (API format may have changed).');
-            } else {
-                showBossTrackingNotice('No world bosses are in your WV dailies today.');
-            }
+        if (Object.keys(map).length === 0 && metas.length === 0) {
+            showApiStatus('No WV boss/meta achievements resolved (API format?)', 'success');
         }
     } catch (e) {
         console.error('Error building daily boss mapping', e);
-        showBossTrackingNotice('Error building daily boss mapping.', 'error');
+    showApiStatus('Error building WV objective mapping', 'error');
     }
 }
 
@@ -1536,19 +1714,38 @@ function initializeApp() {
             if (!autoMarkEnabled) { showToast('Enable auto-mark first'); return; }
             const todayKey = new Date().toISOString().slice(0,10);
             localStorage.removeItem(`daily-meta-${todayKey}`);
+            // Invalidate freshness flags but retain existing mapping so we can detect which are actually new this scan
             gw2Api.dailyBossBuildDay = null;
-            gw2Api.dailyBossIdMap = {};
+            gw2Api._wvCacheMeta.dailyDay = null;
+            gw2Api._wvCacheMeta.weeklyWeek = null;
+            gw2Api._wvCacheMeta.specialExpiry = 0;
             gw2Api.dailyUnavailable = false; // allow retries after manual intervention
             if (!gw2Api.achievements && gw2Api.apiKey) {
                 await gw2Api.fetchAchievements();
             }
             showApiStatus('Re-scanning daily API...', 'loading');
-            await buildDailyBossMappingIfNeeded();
+            const beforeKeys = new Set(Object.keys(gw2Api.dailyBossIdMap));
+            // Force all scopes so weekly meta patterns are re-evaluated
+            await buildDailyBossMappingIfNeeded({forceAllScopes:true});
+            const afterKeys = new Set(Object.keys(gw2Api.dailyBossIdMap));
             updateEventStatesFromAPI();
+            const newMatches = [...afterKeys].filter(k => !beforeKeys.has(k));
+            const total = afterKeys.size;
             if (gw2Api.dailyUnavailable) {
                 showToast('Daily API still unavailable');
             } else {
-                showToast('Daily mapping re-scanned');
+                if (total === 0) {
+                    const hadWeeklyObj = Object.values(gw2Api._wvObjectivesById).some(o => o && o._wvScope === 'weekly');
+                    if (hadWeeklyObj) {
+                        showToast('WV scan: 0 matches (no recognized meta titles)');
+                    } else {
+                        showToast('WV scan: 0 matches (no WV objectives loaded)');
+                    }
+                } else if (newMatches.length === 0) {
+                    showToast(`WV scan: ${total} matches (no new)`);
+                } else {
+                    showToast(`WV scan: ${total} matches (+${newMatches.length} new)`);
+                }
             }
         });
     }
@@ -1565,6 +1762,9 @@ function initializeApp() {
             else apiContent.classList.remove('api-content--overflow');
         });
     }
+
+    // Start background weekly WV watcher
+    initWeeklyWVWatcher();
 }
 
 // Call initialization when script loads (modules are deferred, so DOM is ready)
@@ -1661,5 +1861,44 @@ function initWhatsNewModal() {
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(false); });
 
     openModal();
+}
+
+// Background watcher: detect weekly WV reset (Monday) and refresh mapping automatically
+function initWeeklyWVWatcher() {
+    const CHECK_INTERVAL_MS = 10 * 60 * 1000; // every 10 minutes
+    let lastIsoWeek = gw2Api._wvCacheMeta.weeklyWeek || null;
+    let triggeredForWeek = lastIsoWeek; // avoid duplicate toasts per week
+
+    function isoWeekString(d){
+        const dt = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+        dt.setUTCDate(dt.getUTCDate() + 4 - (dt.getUTCDay()||7));
+        const yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+        const weekNo = Math.ceil((((dt - yearStart) / 86400000) + 1)/7);
+        return `${dt.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
+    }
+
+    async function checkWeekly() {
+        // Only run if auto-mark enabled & API key present
+        const autoMarkEnabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
+        if (!autoMarkEnabled || !gw2Api.apiKey) return;
+        const now = new Date();
+        const isoWeek = isoWeekString(now);
+        if (isoWeek !== lastIsoWeek) {
+            // Weekly rolled over; rebuild mapping focusing weekly scope
+            console.log('[WV] Weekly rollover detected. Refreshing weekly metas.');
+            await buildDailyBossMappingIfNeeded();
+            updateEventStatesFromAPI();
+            if (triggeredForWeek !== isoWeek) {
+                showToast('Weekly WV metas refreshed');
+                triggeredForWeek = isoWeek;
+            }
+            lastIsoWeek = isoWeek;
+        }
+    }
+
+    // Initial schedule
+    setInterval(checkWeekly, CHECK_INTERVAL_MS);
+    // Also run a light delayed first check to catch active Monday sessions
+    setTimeout(checkWeekly, 15 * 1000);
 }
 
