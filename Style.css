@@ -1392,6 +1392,27 @@ h4{
 }
 .event-card-element.done .event-title.world-boss::before { opacity: 0.8; }
 
+/* Overflow menu (mobile compact) */
+.overflow-wrapper { position: relative; display:none; }
+.overflow-menu-btn {
+        width:34px; height:34px; border-radius:8px; background:rgba(35,35,35,0.8); border:1px solid rgba(68,68,68,0.3);
+        color: var(--text-color); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.1rem; padding:0; transition:var(--transition-fast); backdrop-filter:blur(10px);
+}
+.overflow-menu-btn:hover { background:rgba(45,45,45,0.9); border-color:rgba(68,68,68,0.7); }
+.overflow-menu { position:absolute; top:110%; right:0; background:rgba(30,30,34,0.97); border:1px solid rgba(255,255,255,0.08); border-radius:10px; min-width:170px; padding:.4rem .35rem .5rem; display:none; flex-direction:column; gap:.3rem; box-shadow:0 8px 28px -6px rgba(0,0,0,0.55); backdrop-filter:blur(14px); z-index:30; }
+.overflow-menu.open { display:flex; animation:fadeIn .18s ease; }
+.overflow-menu button { all:unset; font:inherit; display:flex; align-items:center; gap:.55rem; padding:.45rem .6rem; border-radius:6px; cursor:pointer; font-size:.7rem; letter-spacing:.4px; color:#cfcfcf; }
+.overflow-menu button:hover { background:rgba(255,255,255,0.07); color:#fff; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(-4px);} to { opacity:1; transform:translateY(0);} }
+
+@media (max-width: 540px) {
+    .event-icons > button.fastf-link,
+    .event-icons > button.wiki-link,
+    .event-icons > button.waypoint-link,
+    .event-icons > button.favorite-star { display:none; }
+    .overflow-wrapper { display:flex; }
+}
+
 /* What's New modal */
 .wn-overlay {
     position: fixed;
@@ -1870,4 +1891,42 @@ a:active {
 .faq-overlay.open {
     opacity: 1;
     visibility: visible;
+}
+
+/* Ultra-compact mobile adjustments */
+@media (max-width: 540px) {
+    .event-card {
+        padding: 0.55rem 0.65rem 0.55rem 0.65rem;
+        gap: 0.45rem;
+        min-height: unset;
+    }
+    .event-info { gap: 0.25rem; }
+    .event-title { font-size: 0.78rem; }
+    .event-map { font-size: 0.6rem; opacity: 0.8; }
+    .event-time { font-size: 0.65rem; }
+    .event-icons button { width: 30px; height: 30px; }
+    .favorite-star { width:30px; height:30px; }
+    .done-link, .reminder-link, .waypoint-link, .wiki-link, .fastf-link { border-radius:4px; }
+    .header-search #event-search { font-size: 0.8rem; padding: 0.55em 2.2em 0.55em 1em; }
+    .header-controls button { width:36px; height:36px; }
+    .api-input-container #api-key-input { font-size:0.65rem; height:32px; }
+    .api-input-container .api-button { height:32px; font-size:0.6rem; padding:0 0.5rem; }
+}
+
+@media (max-width: 420px) {
+    .header-left .SiteName { font-size:0.85rem; }
+    .event-title { font-size: 0.74rem; }
+    .event-icons button { width:28px; height:28px; }
+    .favorite-star { width:28px; height:28px; }
+    .reminder-link { font-size: 0.55rem; }
+    .event-time { font-size: 0.6rem; }
+    .header-search { order: 3; }
+    header { gap:0.5rem; }
+    body { margin-top: 150px; }
+}
+
+/* Hide additional lesser-used icons on very narrow screens */
+@media (max-width: 380px) {
+    .waypoint-link { display:none; }
+    .favorite-star { display:none; }
 }

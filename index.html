@@ -134,12 +134,13 @@
         <div class="wn-body">
             <p class="wn-version" id="wn-version"></p>
             <ul class="wn-changes" id="wn-changes">
-                <li><strong>World Boss Icons:</strong> All core world bosses now display a ⚔ marker.</li>
-                <li><strong>Dynamic Daily Auto‑Mark:</strong> Rebuilt using Wizard's Vault daily scan + achievement metadata.</li>
-                <li><strong>Manual Daily Re‑scan:</strong> New refresh button (far left) to rebuild today's boss mapping.</li>
-                <li><strong>API Badge Tooltips:</strong> Hover to see the achievement name that caused auto‑completion.</li>
+                <li><strong>Overflow Menu (Mobile):</strong> Actions now collapse under a ⋮ menu on narrow screens instead of disappearing.</li>
+                <li><strong>World Boss Icons:</strong> All core world bosses display a ⚔ marker for quick scanning.</li>
+                <li><strong>Dynamic Daily Auto‑Mark:</strong> Uses Wizard's Vault daily scan + achievement metadata (no manual list).</li>
+                <li><strong>Manual Daily Re‑scan:</strong> Leftmost refresh button rebuilds today's world boss mapping.</li>
+                <li><strong>API Badge Tooltips:</strong> Hover to see which achievement auto‑completed an event.</li>
                 <li><strong>Procedural Backgrounds:</strong> Regenerate anytime or switch to Plain mode.</li>
-                <li><strong>Chain Alerts:</strong> Auto reminder propagation for meta chains (link 🔗 indicator).</li>
+                <li><strong>Chain Alerts:</strong> Auto reminder propagation for meta chains (🔗 indicator).</li>
             </ul>
         </div>
         <div class="wn-footer">
@@ -165,6 +166,10 @@
                 <button class="reminder-link" aria-label="Cycle reminder" title="Set reminder"><div class="reminder-icon" aria-hidden="true"></div></button>
                 <button class="waypoint-link" aria-label="Copy waypoint" title="Copy waypoint"><i class="waypoint-icon" aria-hidden="true"></i></button>
                 <button class="favorite-star" aria-label="Toggle favorite" title="Toggle favorite"><i class="fa-regular fa-star" aria-hidden="true"></i></button>
+                <div class="overflow-wrapper">
+                    <button class="overflow-menu-btn" aria-haspopup="true" aria-expanded="false" title="More actions" aria-label="More actions">⋮</button>
+                    <div class="overflow-menu" role="menu" aria-label="Event extra actions"></div>
+                </div>
             </div>
         </div>
     </div>

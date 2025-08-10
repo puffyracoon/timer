@@ -555,7 +555,7 @@ const WORLD_BOSS_KEYS = new Set([
 
 // What's New modal version (bump when updating notes)
 // Format suggestion: YYYY-MM-DD + letter suffix for multiple releases/day
-let WHATS_NEW_VERSION = '2025-08-10b';
+let WHATS_NEW_VERSION = '2025-08-10c'; // bumped for overflow menu & updated change log
 // Auto-bump helper: if developer forgets to change version but list changed, allow console helper
 window.bumpWhatsNewVersion = (suffix = 'a') => {
     const d = new Date();
@@ -730,6 +730,47 @@ class EventClass {
                 title.classList.add('world-boss');
                 title.title = (title.title ? title.title + ' | ' : '') + 'World Boss';
             }
+        }
+
+        // Overflow menu (mobile) population
+        const overflowWrap = this.card.querySelector('.overflow-wrapper');
+        const overflowMenu = this.card.querySelector('.overflow-menu');
+        const overflowBtn  = this.card.querySelector('.overflow-menu-btn');
+        if (overflowWrap && overflowMenu && overflowBtn) {
+            // Build menu entries only once
+            if (!overflowMenu.hasChildNodes()) {
+                const makeItem = (label, cb, icon='') => {
+                    const b = document.createElement('button');
+                    b.setAttribute('role','menuitem');
+                    b.innerHTML = (icon ? `<span>${icon}</span>` : '') + `<span>${label}</span>`;
+                    b.addEventListener('click', () => { cb(); closeMenu(); });
+                    overflowMenu.appendChild(b);
+                    return b;
+                };
+                // Reference existing buttons
+                const fastBtn = this.card.querySelector('.fastf-link');
+                if (fastBtn && !fastBtn.style.display.includes('none')) makeItem('[fast] Guide', () => fastBtn.click(), '🚀');
+                const wikiBtn = this.card.querySelector('.wiki-link');
+                if (wikiBtn && !wikiBtn.style.display.includes('none')) makeItem('Wiki Page', () => wikiBtn.click(), '📖');
+                const wpBtn = this.card.querySelector('.waypoint-link');
+                if (wpBtn) makeItem('Copy Waypoint', () => wpBtn.click(), '📍');
+                const favBtn = this.card.querySelector('.favorite-star');
+                if (favBtn) makeItem('Toggle Favorite', () => favBtn.click(), '☆');
+            }
+            function closeMenu(){
+                overflowMenu.classList.remove('open');
+                overflowBtn.setAttribute('aria-expanded','false');
+            }
+            overflowBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const open = overflowMenu.classList.toggle('open');
+                overflowBtn.setAttribute('aria-expanded', open ? 'true':'false');
+            });
+            document.addEventListener('click', (e) => {
+                if (!overflowWrap.contains(e.target)) closeMenu();
+            });
+            // Keyboard accessibility
+            overflowBtn.addEventListener('keydown', (e) => { if (e.key==='Escape') closeMenu(); });
         }
 
         //Toggle Visibility based on localStorage Settings
