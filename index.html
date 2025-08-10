@@ -38,6 +38,12 @@
             </div>
         </div>
         <div class="header-controls">
+            <button id="api-daily-rescan" class="rescan-toggle" title="Re-scan today's dailies + achievements" aria-label="Re-scan dailies">
+                <svg class="rescan-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+                    <path d="M12 5a7 7 0 0 1 6.708 5H16a1 1 0 1 0 0 2h5a1 1 0 0 0 1-1V6a1 1 0 1 0-2 0v2.143A9 9 0 0 0 3 12a1 1 0 0 0 2 0 7 7 0 0 1 7-7Z"/>
+                    <path d="M12 19a7 7 0 0 1-6.708-5H8a1 1 0 1 0 0-2H3a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-2.143A9 9 0 0 0 21 12a1 1 0 1 0-2 0 7 7 0 0 1-7 7Z"/>
+                </svg>
+            </button>
             <button id="toggle-favorites" class="favorites-toggle" title="Show Only Favorites" aria-label="Toggle favorites filter"><div class="star-icon" aria-hidden="true"></div></button>
             <button id="toggle-alerts" class="alerts-toggle" title="Show Only Events with Active Alerts" aria-label="Toggle active alerts filter"><div class="alert-icon" aria-hidden="true"></div></button>
             <button id="faq-toggle" class="faq-toggle" title="How to use this site - FAQ" aria-label="Open FAQ">?</button>
@@ -67,6 +73,13 @@
             </div>
             <div id="api-status" class="api-status"></div>
             <div id="api-last-sync" class="api-last-sync"></div>
+            <div class="api-auto-mark-setting" style="margin-top:6px; font-size:0.8rem; line-height:1.2;">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:6px;">
+                    <input type="checkbox" id="api-auto-mark-toggle" />
+                    <span>Auto-mark world boss dailies</span>
+                </label>
+                <div style="opacity:0.7; margin-top:2px;">Uncheck to disable automatic completion updates.</div>
+            </div>
             <div class="api-help">
                 <details>
                     <summary>How to get your API key</summary>
@@ -222,6 +235,14 @@
                 <div class="faq-answer">It shows the most recent successful achievement fetch (UTC). Use the <span class="faq-highlight">🔄 Refresh</span> button to manually sync; otherwise it auto-refreshes every 10 minutes.</div>
             </div>
             <div class="faq-item">
+                <div class="faq-question">What does "Auto-mark world boss dailies" do?</div>
+                <div class="faq-answer">When enabled, the timer scans the current day's Wizard's Vault dailies and dynamically matches world boss tasks. If a matching boss task is completed on your account, its event card is auto-marked with an <span class="faq-highlight">API badge</span>. Disable it if you prefer to mark everything manually.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I force a new daily scan?</div>
+                <div class="faq-answer">Click the <span class="faq-highlight">🔄 button in the header</span> to re-fetch today's daily list and rebuild the boss mapping (clears the cached daily metadata for the day).</div>
+            </div>
+            <div class="faq-item">
                 <div class="faq-question">How do I copy waypoints?</div>
                 <div class="faq-answer">Click the <span class="faq-highlight">waypoint 📍</span> icon to copy the waypoint code. Paste it in GW2 chat to create a map marker.</div>
             </div>
@@ -269,6 +290,7 @@
                         <li>Use chain alerts for efficient meta farming</li>
                         <li>Use "select all/none" for quick category filtering</li>
                         <li>Your settings (timers, favorites, categories) are saved automatically in your browser</li>
+                        <li>Notification bell asset switched to SVG (lighter + avoids 404s)</li>
                     </ul>
                 </div>
             </div>

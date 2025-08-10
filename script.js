@@ -330,7 +330,7 @@ function sendNotification(eventName, timeRemaining) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(`GW2 Event Starting Soon!`, {
             body: `${eventName} starts in ${timeRemaining}`,
-            icon: 'assets/Event_star_(map_icon).png',
+            icon: 'assets/notifications_active_FFFFFF.svg',
             tag: eventName // Prevents duplicate notifications
         })
     }
@@ -438,28 +438,27 @@ class GW2API {
         this.achievements = null;
         this.lastFetch = null;
         this.baseUrl = 'https://api.guildwars2.com/v2';
-        
-        // Map events to their daily achievement IDs for auto-completion
-        this.eventAchievementMap = {
-            // Core world boss daily achievements (ID lists reflect multiple rotating sets where applicable)
-            'ShadowBehemoth': [1840, 1899],
-            'FireElemental': [1841, 1900],
-            'SvanirShamanChief': [1842, 1901],
-            'GreatJungleWurm': [1843, 1902],
-            'GolemMarkII': [1844, 1903],
-            'TheShatterer': [1845, 1904],
-            'Tequatl': [573, 1846],
-            'TripleTrouble': [1847, 1905],
-            'KarkaQueen': [1849, 1907],
-            'ClawofJormag': [1850, 1908],
-            // Misc / expansion (retain if they map to a daily; keep Doppelganger which exists in events)
-            'Doppelganger': [1851, 1909],
-            // Additional bosses present in timer but NOT in current mapping (commented until verified):
-            // 'Megadestroyer': [/* TODO verify id */],
-            // 'ModniirUlgoth': [/* TODO verify id */],
-            // 'AdmiralTaidhaCovington': [/* TODO verify id */],
-            // 'LeyLineAnomaly': [/* TODO verify id */]
+        // Dynamic daily world-boss detection (Wizard's Vault era):
+        // We build a mapping each day by scanning /v2/achievements/daily and matching names.
+        this.dailyBossIdMap = {}; // eventKey -> achievementId (for today only)
+        this.dailyBossBuildDay = null; // UTC day string used to know when to rebuild
+        // Canonical boss name variants for fuzzy match (lowercase substrings)
+        this.bossNameVariants = {
+            ShadowBehemoth: ['shadow behemoth'],
+            FireElemental: ['fire elemental'],
+            SvanirShamanChief: ['svanir shaman chief','svanir shaman'],
+            GreatJungleWurm: ['great jungle wurm'],
+            GolemMarkII: ['golem mark ii','golem mark 2'],
+            TheShatterer: ['the shatterer'],
+            Tequatl: ['tequatl'],
+            TripleTrouble: ['evolved jungle wurm','triple trouble'],
+            KarkaQueen: ['karka queen'],
+            ClawofJormag: ['claw of jormag'],
+            AdmiralTaidhaCovington: ['admiral taidha covington','taidha'],
+            Megadestroyer: ['megadestroyer'],
+            ModniirUlgoth: ['modniir ulgoth','ulgoth']
         };
+        // NOTE: Ley-Line Anomaly currently excluded (not a standard WV daily achievement)
     }
 
     setApiKey(key) {
@@ -521,30 +520,16 @@ class GW2API {
     }
 
     isEventCompleted(eventKey) {
-        if (!this.achievements || !this.eventAchievementMap[eventKey]) {
-            return false;
-        }
-        
-        const achievementIds = this.eventAchievementMap[eventKey];
-        
-        // Check if any of the mapped achievements are completed
-        return achievementIds.some(achievementId => {
-            const achievement = this.achievements.find(a => a.id === achievementId);
-            return achievement && achievement.done;
-        });
+    if (!this.achievements || !this.dailyBossIdMap[eventKey]) return false;
+    const achId = this.dailyBossIdMap[eventKey];
+    const achievement = this.achievements.find(a => a.id === achId);
+    return !!(achievement && achievement.done);
     }
     
     // Get all completed events for today
     getCompletedEvents() {
-        if (!this.achievements) return [];
-        
-        const completedEvents = [];
-        for (const [eventKey, achievementIds] of Object.entries(this.eventAchievementMap)) {
-            if (this.isEventCompleted(eventKey)) {
-                completedEvents.push(eventKey);
-            }
-        }
-        return completedEvents;
+    if (!this.achievements) return [];
+    return Object.keys(this.dailyBossIdMap).filter(key => this.isEventCompleted(key));
     }
 
     async getAccountInfo() {
@@ -1114,6 +1099,7 @@ function initializeApiInterface() {
     const apiKeyClear = document.getElementById('api-key-clear');
     const apiRefresh = document.getElementById('api-refresh');
     const apiStatus = document.getElementById('api-status');
+    const autoMarkToggle = document.getElementById('api-auto-mark-toggle');
 
     // Debug: Check if elements exist
     console.log('API Elements found:', {
@@ -1127,6 +1113,22 @@ function initializeApiInterface() {
     if (!apiKeyInput || !apiKeySave || !apiKeyClear || !apiRefresh || !apiStatus) {
         console.error('Some API elements not found in DOM');
         return;
+    }
+
+    // Initialize auto-mark toggle
+    if (autoMarkToggle) {
+        const enabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
+        autoMarkToggle.checked = enabled;
+        autoMarkToggle.addEventListener('change', () => {
+            localStorage.setItem('auto-mark-enabled', JSON.stringify(autoMarkToggle.checked));
+            if (autoMarkToggle.checked) {
+                if (gw2Api.achievements) updateEventStatesFromAPI();
+                showToast('Auto-mark enabled');
+            } else {
+                showToast('Auto-mark disabled');
+                document.querySelectorAll('.api-badge').forEach(b => b.remove());
+            }
+        });
     }
 
     // Load existing API key
@@ -1237,48 +1239,113 @@ function showApiStatus(message, type) {
 }
 
 function updateEventStatesFromAPI() {
-    console.log('Updating event states from GW2 API...');
-    
-    if (!gw2Api.achievements) {
-        console.log('No achievement data available');
-        return;
-    }
-    
-    console.log(`Checking ${gw2Api.achievements.length} achievements for completed events`);
-    const completedEvents = gw2Api.getCompletedEvents();
-    console.log('API detected completed events:', completedEvents);
-    
-    // Update event cards based on API data
-    allEvents.forEach(event => {
-        const isCompleted = gw2Api.isEventCompleted(event.parentEvent.key);
-        const eventCard = event.card;
-        const doneCheckbox = document.getElementById(`dcb-${event.parentEvent.key}`);
+    (async () => {
+        console.log('Updating event states from GW2 API...');
+        if (!gw2Api.apiKey) return;
+        if (!gw2Api.achievements) {
+            console.log('No achievement data available');
+            return;
+        }
 
-        if (eventCard && doneCheckbox && isCompleted && !doneCheckbox.checked) {
-            doneCheckbox.checked = true;
-            eventCard.classList.add('done');
-            console.log(`✅ Auto-marked ${event.parentEvent.name} as completed via API`);
-            // Inject small API badge (avoid duplicates)
-            const title = eventCard.querySelector('.event-title');
-            if (title && !title.querySelector('.api-badge')) {
-                const badge = document.createElement('span');
-                badge.className = 'api-badge';
-                badge.title = 'Completed (GW2 API)';
-                badge.textContent = 'API';
-                title.appendChild(badge);
+        const autoMarkEnabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
+        if (!autoMarkEnabled) {
+            showApiStatus('Auto-mark disabled', 'success');
+            return;
+        }
+
+        await buildDailyBossMappingIfNeeded();
+
+        const completedEvents = gw2Api.getCompletedEvents();
+        console.log('Dynamic daily boss matches:', gw2Api.dailyBossIdMap);
+        console.log('Completed boss events via API today:', completedEvents);
+
+        allEvents.forEach(event => {
+            const isCompleted = gw2Api.isEventCompleted(event.parentEvent.key);
+            const eventCard = event.card;
+            const doneCheckbox = document.getElementById(`dcb-${event.parentEvent.key}`);
+            if (eventCard && doneCheckbox && isCompleted && !doneCheckbox.checked) {
+                doneCheckbox.checked = true;
+                eventCard.classList.add('done');
+                const title = eventCard.querySelector('.event-title');
+                if (title) {
+                    let badge = title.querySelector('.api-badge');
+                    if (!badge) {
+                        badge = document.createElement('span');
+                        badge.className = 'api-badge';
+                        badge.textContent = 'API';
+                        title.appendChild(badge);
+                    }
+                    const achId = gw2Api.dailyBossIdMap[event.parentEvent.key];
+                    const achName = gw2Api._dailyMetaNameById?.[achId];
+                    badge.title = achName ? `Completed (GW2 API: ${achName})` : 'Completed (GW2 API)';
+                }
+            }
+        });
+
+        if (completedEvents.length > 0) {
+            showApiStatus(`Auto-marked ${completedEvents.length} boss events`, 'success');
+        } else {
+            // Differentiate between: no matches vs matches but none done
+            const bossCount = Object.keys(gw2Api.dailyBossIdMap).length;
+            if (bossCount === 0) {
+                showApiStatus('No world bosses in today\'s dailies (auto-mark idle)', 'success');
+            } else {
+                showApiStatus('API connected - no boss events done yet', 'success');
             }
         }
-    });
-    
-    // Show status message
-    if (completedEvents.length > 0) {
-        showApiStatus(`Auto-marked ${completedEvents.length} completed events`, 'success');
-    } else {
-        showApiStatus('API connected - no events completed today', 'success');
+        localStorage.setItem('gw2-last-api-sync', gw2Api.lastFetch || Date.now());
+    })();
+}
+// Build daily boss mapping if not built for current UTC day (with localStorage caching)
+async function buildDailyBossMappingIfNeeded() {
+    const today = new Date();
+    const dayKey = today.toISOString().slice(0,10);
+    if (gw2Api.dailyBossBuildDay === dayKey && Object.keys(gw2Api.dailyBossIdMap).length > 0) return;
+    try {
+        let dailyJson = null, metas = null;
+        const cacheKey = `daily-meta-${dayKey}`;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                if (parsed && parsed.daily && parsed.metas) {
+                    dailyJson = parsed.daily;
+                    metas = parsed.metas;
+                    console.log('Loaded daily metadata from cache');
+                }
+            } catch { /* ignore */ }
+        }
+        if (!dailyJson) {
+            const dailyRes = await fetch(`${gw2Api.baseUrl}/achievements/daily`);
+            if (!dailyRes.ok) { console.warn('Failed to fetch daily achievements'); return; }
+            dailyJson = await dailyRes.json();
+        }
+        const idSet = new Set();
+        Object.values(dailyJson).forEach(arr => { if (Array.isArray(arr)) arr.forEach(o => { if (o?.id) idSet.add(o.id); }); });
+        const ids = Array.from(idSet);
+        if (!metas) {
+            const metaRes = await fetch(`${gw2Api.baseUrl}/achievements?ids=${ids.join(',')}`);
+            if (!metaRes.ok) { console.warn('Failed to fetch daily metadata'); return; }
+            metas = await metaRes.json();
+            try { localStorage.setItem(cacheKey, JSON.stringify({daily: dailyJson, metas})); } catch {}
+        }
+        const map = {}; const nameById = {};
+        metas.forEach(m => {
+            if (!m.name) return;
+            nameById[m.id] = m.name;
+            const nameLC = m.name.toLowerCase();
+            for (const [eventKey, variants] of Object.entries(gw2Api.bossNameVariants)) {
+                if (map[eventKey]) continue;
+                if (variants.some(v => nameLC.includes(v))) map[eventKey] = m.id;
+            }
+        });
+        gw2Api.dailyBossIdMap = map;
+        gw2Api.dailyBossBuildDay = dayKey;
+        gw2Api._dailyMetaNameById = nameById;
+        console.log('Built daily boss mapping:', map);
+    } catch (e) {
+        console.error('Error building daily boss mapping', e);
     }
-
-    // Persist last API sync to check daily reset
-    localStorage.setItem('gw2-last-api-sync', gw2Api.lastFetch || Date.now());
 }
 
 function resetEventStates() {
@@ -1305,6 +1372,24 @@ function initializeApp() {
         resetEventStates();
     }
     initBackgroundStyleToggle();
+    // Hook up manual re-scan button
+    const rescanBtn = document.getElementById('api-daily-rescan');
+    if (rescanBtn) {
+        rescanBtn.addEventListener('click', async () => {
+            const autoMarkEnabled = JSON.parse(localStorage.getItem('auto-mark-enabled') || 'true');
+            if (!autoMarkEnabled) { showToast('Enable auto-mark first'); return; }
+            const todayKey = new Date().toISOString().slice(0,10);
+            localStorage.removeItem(`daily-meta-${todayKey}`);
+            gw2Api.dailyBossBuildDay = null;
+            gw2Api.dailyBossIdMap = {};
+            if (!gw2Api.achievements && gw2Api.apiKey) {
+                await gw2Api.fetchAchievements();
+            }
+            await buildDailyBossMappingIfNeeded();
+            updateEventStatesFromAPI();
+            showToast('Daily mapping re-scanned');
+        });
+    }
 }
 
 // Call initialization when script loads (modules are deferred, so DOM is ready)
