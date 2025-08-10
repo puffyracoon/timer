@@ -119,6 +119,29 @@
     
     <!-- Toast notification -->
     <div id="toast" class="toast"></div>
+    <!-- What's New Modal -->
+    <div id="whats-new-overlay" class="wn-overlay hidden" aria-hidden="true"></div>
+    <div id="whats-new-modal" class="wn-modal hidden" role="dialog" aria-labelledby="wn-title" aria-modal="true">
+        <div class="wn-header">
+            <h2 id="wn-title">What's New</h2>
+            <button id="wn-close" class="wn-close" aria-label="Close What's New">×</button>
+        </div>
+        <div class="wn-body">
+            <p class="wn-version" id="wn-version"></p>
+            <ul class="wn-changes" id="wn-changes">
+                <li><strong>World Boss Icons:</strong> All core world bosses now display a ⚔ marker.</li>
+                <li><strong>Dynamic Daily Auto‑Mark:</strong> Rebuilt using Wizard's Vault daily scan + achievement metadata.</li>
+                <li><strong>Manual Daily Re‑scan:</strong> New refresh button (far left) to rebuild today's boss mapping.</li>
+                <li><strong>API Badge Tooltips:</strong> Hover to see the achievement name that caused auto‑completion.</li>
+                <li><strong>Procedural Backgrounds:</strong> Regenerate anytime or switch to Plain mode.</li>
+                <li><strong>Chain Alerts:</strong> Auto reminder propagation for meta chains (link 🔗 indicator).</li>
+            </ul>
+        </div>
+        <div class="wn-footer">
+            <button id="wn-hide-session" class="wn-btn secondary">Close</button>
+            <button id="wn-dont-show" class="wn-btn primary">Don't show again</button>
+        </div>
+    </div>
 </body>
 
 <!-- HTML Template for Event Card-->
@@ -284,6 +307,7 @@
                     <ul>
                         <li>Events are <span class="faq-highlight">color-coded by expansion</span> - green borders for HoT, orange for PoF, etc.</li>
                         <li>Events with a <span class="faq-highlight">🔗 indicator</span> start meta farming chains - perfect for efficient farming</li>
+                        <li>World boss events show a <span class="faq-highlight">⚔ icon</span> (auto-marked if in today's Wizard's Vault dailies)</li>
                         <li>Use the <span class="faq-highlight">Appearance</span> toggle (Generated / Plain) if you prefer simpler backgrounds</li>
                         <li>Auto-marked API events show an <span class="faq-highlight">API badge</span>; they reset with the daily reset (00:00 UTC)</li>
                         <li>Icon hover effects match the event category colors</li>

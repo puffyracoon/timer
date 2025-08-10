@@ -547,6 +547,14 @@ let now = new Date();
 // Show countdown only in final 15 minutes
 const minTimeToShowCountdown = 15 * 60 * 1000
 const maxTimeToShowCards = 5 * 60 * 60 * 1000
+// World boss identification (align with dynamic WV daily matching set)
+const WORLD_BOSS_KEYS = new Set([
+    'ShadowBehemoth','FireElemental','SvanirShamanChief','GreatJungleWurm','GolemMarkII','ClawofJormag',
+    'AdmiralTaidhaCovington','Megadestroyer','TheShatterer','ModniirUlgoth','Tequatl','KarkaQueen','TripleTrouble'
+]);
+
+// What's New modal version (bump when updating notes)
+const WHATS_NEW_VERSION = '2025-08-10a';
 
 class EventClass {
     constructor(parentEvent, event, start) {
@@ -691,7 +699,23 @@ class EventClass {
         // Chain start indicator styling
         if (this.isChainStartEvent()) {
             const title = this.card.querySelector('.event-title');
-            if (title) title.classList.add('chain-start');
+            if (title) {
+                title.classList.add('chain-start');
+                // Append tooltip info without overwriting any existing title text
+                const tipFragment = 'Meta chain start';
+                if (!title.title.includes(tipFragment)) {
+                    title.title = title.title ? (title.title + ' | ' + tipFragment) : tipFragment;
+                }
+            }
+        }
+
+        // World boss indicator
+        if (WORLD_BOSS_KEYS.has(this.parentEvent.key)) {
+            const title = this.card.querySelector('.event-title');
+            if (title && !title.classList.contains('world-boss')) {
+                title.classList.add('world-boss');
+                title.title = (title.title ? title.title + ' | ' : '') + 'World Boss';
+            }
         }
 
         //Toggle Visibility based on localStorage Settings
@@ -1390,6 +1414,9 @@ function initializeApp() {
             showToast('Daily mapping re-scanned');
         });
     }
+
+    // Initialize What's New modal after base UI
+    initWhatsNewModal();
 }
 
 // Call initialization when script loads (modules are deferred, so DOM is ready)
@@ -1448,5 +1475,43 @@ function initBackgroundStyleToggle(){
             showToast('Backgrounds regenerated');
         });
     }
+}
+
+// ---------------- What's New Modal Logic ----------------
+function initWhatsNewModal() {
+    const overlay = document.getElementById('whats-new-overlay');
+    const modal = document.getElementById('whats-new-modal');
+    if (!overlay || !modal) return;
+    const closeBtn = document.getElementById('wn-close');
+    const hideSessionBtn = document.getElementById('wn-hide-session');
+    const dontShowBtn = document.getElementById('wn-dont-show');
+    const verEl = document.getElementById('wn-version');
+    if (verEl) verEl.textContent = `Version: ${WHATS_NEW_VERSION}`;
+
+    const dismissed = localStorage.getItem('whats-new-dismissed-version');
+    if (dismissed === WHATS_NEW_VERSION) return; // Already acknowledged
+
+    function openModal() {
+        overlay.classList.remove('hidden');
+        modal.classList.remove('hidden');
+        overlay.setAttribute('aria-hidden','false');
+        setTimeout(() => { dontShowBtn?.focus(); }, 50);
+    }
+    function closeModal(persist) {
+        overlay.classList.add('hidden');
+        modal.classList.add('hidden');
+        overlay.setAttribute('aria-hidden','true');
+        if (persist) {
+            try { localStorage.setItem('whats-new-dismissed-version', WHATS_NEW_VERSION); } catch {}
+        }
+    }
+
+    closeBtn?.addEventListener('click', () => closeModal(false));
+    hideSessionBtn?.addEventListener('click', () => closeModal(false));
+    dontShowBtn?.addEventListener('click', () => closeModal(true));
+    overlay?.addEventListener('click', (e) => { if (e.target === overlay) closeModal(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(false); });
+
+    openModal();
 }
 
