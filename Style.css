@@ -16,6 +16,7 @@
     --success-color: #5ee01a;
     --warning-color: #fbb94c;
     --error-color: #fb4c4c;
+    --info-color: #87ceeb;
     --text-color: #dddddd;
     --text-secondary: #888;
     --bg-color: #1a1a1d;
@@ -262,9 +263,9 @@ header{
 }
 
 .chain-toggle.active {
-    background-color: rgba(0, 255, 127, 0.1);
-    border-color: #00ff7f;
-    color: #00ff7f;
+    background-color: rgba(135, 206, 235, 0.12);
+    border-color: #87ceeb;
+    color: #87ceeb;
 }
 
 /* FAQ Toggle Button */
@@ -586,38 +587,39 @@ h2{
     color: var(--text-secondary);
 }
 
+/* Unified button style (API section matches header controls) */
 .api-button {
-    padding: 0.8em 1.5em;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent-color), #8a1f1c);
-    color: white;
-    font-weight: 600;
+    height: 34px;
+    padding: 0 0.6rem;
+    border-radius: 6px; /* slightly tighter */
+    background-color: rgba(35,35,35,0.8);
+    border: 1px solid rgba(68,68,68,0.3);
+    color: var(--text-color);
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    transition: var(--transition-normal);
-    position: relative;
-    overflow: hidden;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: .3px;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    transition: var(--transition-fast);
+    backdrop-filter: blur(10px);
+    box-shadow: none;
 }
+.api-button:hover { background-color: rgba(45,45,45,0.9); border-color: rgba(68,68,68,0.6); }
+.api-button:active { background-color: rgba(55,55,55,0.95); }
 
-.api-button:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--small-shadow);
-    background: linear-gradient(135deg, var(--success-color), #4bc513);
-}
-
-.api-button:active {
-    transform: translateY(0);
-}
-
-.api-button.secondary {
-    background: linear-gradient(135deg, #666, #555);
-    color: var(--text-color);
-}
-
-.api-button.secondary:hover {
-    background: linear-gradient(135deg, #777, #666);
-}
+/* Subtle variants */
+.api-button.primary { border-color: var(--accent-color); color: #fff; }
+.api-button.primary:hover { background-color: rgba(90,35,33,0.85); }
+.api-button.secondary { color: var(--text-secondary); }
+.api-button.secondary:hover { color: var(--text-color); }
+.api-button.danger { border-color: rgba(255,80,60,0.4); color: #ff9b8d; }
+.api-button.danger:hover { background-color: rgba(80,30,25,0.85); color:#fff; }
+.api-input-container .api-button { width: 100%; }
 
 .api-status {
     font-size: 0.8em;
@@ -633,13 +635,13 @@ h2{
 }
 
 .api-status.success {
-    background: linear-gradient(135deg, rgba(94, 224, 26, 0.15), rgba(117, 251, 76, 0.1));
-    color: var(--success-color);
-    border-color: var(--success-color);
+    background: linear-gradient(135deg, rgba(135,206,235,0.18), rgba(135,206,235,0.08));
+    color: var(--info-color);
+    border-color: var(--info-color);
 }
 
 .api-status.success::before {
-    content: '✅';
+    content: '🛈';
 }
 
 .api-status.error {
@@ -814,9 +816,12 @@ h4{
     .appearance-options label {
         display: flex;
         align-items: center;
-        gap: .4em;
+        gap: .35rem;
         font-size: .75rem;
-        cursor: pointer;
+    .api-input-container .api-button { width: auto; }
+    .api-input-container { gap: .5em; }
+    .api-input-container #api-key-input { height: 36px; padding: 0 0.75em; }
+    .api-input-container #api-key-input { font-size: 0.75rem; }
         margin-bottom: .4em;
         user-select: none;
     }
@@ -1628,10 +1633,10 @@ a:active {
     left: 50%;
     transform: translateX(-50%) translateY(100px);
     background: rgba(26, 26, 29, 0.95);
-    color: var(--success-color);
+    color: var(--info-color);
     padding: 1rem 1.5rem;
     border-radius: 8px;
-    border: 1px solid var(--success-color);
+    border: 1px solid var(--info-color);
     backdrop-filter: blur(20px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     z-index: 1000;
@@ -1657,7 +1662,7 @@ a:active {
     display: inline-block;
     width: 16px;
     height: 16px;
-    background: var(--success-color);
+    background: var(--info-color);
     border-radius: 50%;
     color: var(--bg-color);
     font-size: 12px;

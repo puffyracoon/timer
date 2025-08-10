@@ -69,7 +69,12 @@
                 <input type="text" id="api-key-input" placeholder="Enter your GW2 API key..." />
                 <button id="api-key-save" class="api-button">Save</button>
                 <button id="api-key-clear" class="api-button secondary">Clear</button>
-                <button id="api-refresh" class="api-button">🔄 Refresh</button>
+                <button id="api-refresh" class="api-button" title="Refresh achievements" aria-label="Refresh achievements">
+                    <svg class="rescan-icon" viewBox="0 0 24 24" role="img" aria-hidden="true" width="16" height="16">
+                        <path d="M12 5a7 7 0 0 1 6.708 5H16a1 1 0 1 0 0 2h5a1 1 0 0 0 1-1V6a1 1 0 1 0-2 0v2.143A9 9 0 0 0 3 12a1 1 0 0 0 2 0 7 7 0 0 1 7-7Z"/>
+                        <path d="M12 19a7 7 0 0 1-6.708-5H8a1 1 0 1 0 0-2H3a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-2.143A9 9 0 0 0 21 12a1 1 0 1 0-2 0 7 7 0 0 1-7 7Z"/>
+                    </svg>
+                </button>
             </div>
             <div id="api-status" class="api-status"></div>
             <div id="api-last-sync" class="api-last-sync"></div>

@@ -554,7 +554,21 @@ const WORLD_BOSS_KEYS = new Set([
 ]);
 
 // What's New modal version (bump when updating notes)
-const WHATS_NEW_VERSION = '2025-08-10a';
+// Format suggestion: YYYY-MM-DD + letter suffix for multiple releases/day
+let WHATS_NEW_VERSION = '2025-08-10b';
+// Auto-bump helper: if developer forgets to change version but list changed, allow console helper
+window.bumpWhatsNewVersion = (suffix = 'a') => {
+    const d = new Date();
+    const iso = d.toISOString().slice(0,10);
+    WHATS_NEW_VERSION = `${iso}${suffix}`;
+    localStorage.removeItem('whats-new-dismissed-version');
+    console.info('[WhatsNew] Bumped version to', WHATS_NEW_VERSION, 'and cleared dismissal. Reload to display.');
+};
+// If a special flag is set before load, force auto bump with date (for CI or scripted deploy)
+if (localStorage.getItem('whats-new-auto-bump') === 'true') {
+    window.bumpWhatsNewVersion('a');
+    localStorage.removeItem('whats-new-auto-bump');
+}
 
 class EventClass {
     constructor(parentEvent, event, start) {
