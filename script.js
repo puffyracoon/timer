@@ -294,7 +294,7 @@ function filterEvents() {
         const titleEl = card.querySelector('.event-title')
         const mapEl = card.querySelector('.event-map')
         if (!titleEl || !mapEl) { return } // skip malformed cards
-        const eventName = titleEl.childNodes[0] ? titleEl.childNodes[0].textContent.toLowerCase() : titleEl.textContent.toLowerCase()
+    const eventName = titleEl.getAttribute('data-base-name') || titleEl.textContent.toLowerCase()
         const eventMap = mapEl.textContent.toLowerCase()
         const isFavorite = card.querySelector('.favorite-star').classList.contains('favorited')
         
@@ -672,6 +672,8 @@ class EventClass {
         
         // Set text content
     const titleEl = clone.querySelector(".event-title");
+    // Store original name for stable filtering before markers get injected later
+    titleEl.setAttribute('data-base-name', this.parentEvent.name.toLowerCase());
     titleEl.childNodes[0].textContent = this.parentEvent.name + " "; // ensure space before note
     clone.querySelector(".event-note").textContent = this.parentEvent.note || "";
     clone.querySelector(".event-map").textContent = this.event.map;
@@ -754,25 +756,31 @@ class EventClass {
             this.card.classList.add('done')
         }
 
-        // Chain start indicator styling
-        if (this.isChainStartEvent()) {
-            const title = this.card.querySelector('.event-title');
-            if (title) {
+        // Unified event markers (chain start / world boss)
+        const title = this.card.querySelector('.event-title');
+        if (title) {
+            // Ensure we only prepend markers once
+            const existingMarkers = title.querySelectorAll('.ev-marker');
+            let prependFragments = [];
+            if (this.isChainStartEvent() && !title.classList.contains('chain-start')) {
                 title.classList.add('chain-start');
-                // Append tooltip info without overwriting any existing title text
-                const tipFragment = 'Meta chain start';
-                if (!title.title.includes(tipFragment)) {
-                    title.title = title.title ? (title.title + ' | ' + tipFragment) : tipFragment;
-                }
+                prependFragments.push({ cls: 'ev-marker ev-chain', tip: 'Meta chain start' });
             }
-        }
-
-        // World boss indicator
-        if (WORLD_BOSS_KEYS.has(this.parentEvent.key)) {
-            const title = this.card.querySelector('.event-title');
-            if (title && !title.classList.contains('world-boss')) {
+            if (WORLD_BOSS_KEYS.has(this.parentEvent.key) && !title.classList.contains('world-boss')) {
                 title.classList.add('world-boss');
-                title.title = (title.title ? title.title + ' | ' : '') + 'World Boss';
+                prependFragments.push({ cls: 'ev-marker ev-boss', tip: 'World Boss' });
+            }
+            if (prependFragments.length) {
+                // Preserve original text while inserting markers at front
+                prependFragments.reverse().forEach(f => {
+                    const span = document.createElement('span');
+                    span.className = f.cls;
+                    span.setAttribute('aria-hidden','true');
+                    title.prepend(span);
+                    if (!title.title.includes(f.tip)) {
+                        title.title = title.title ? (title.title + ' | ' + f.tip) : f.tip;
+                    }
+                });
             }
         }
 

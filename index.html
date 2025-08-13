@@ -38,32 +38,13 @@
             </div>
         </div>
         <div class="header-controls">
-            <button id="api-daily-rescan" class="rescan-toggle" title="Re-scan today's dailies + achievements" aria-label="Re-scan dailies">
-                <svg class="rescan-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
-                    <path d="M12 5a7 7 0 0 1 6.708 5H16a1 1 0 1 0 0 2h5a1 1 0 0 0 1-1V6a1 1 0 1 0-2 0v2.143A9 9 0 0 0 3 12a1 1 0 0 0 2 0 7 7 0 0 1 7-7Z"/>
-                    <path d="M12 19a7 7 0 0 1-6.708-5H8a1 1 0 1 0 0-2H3a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-2.143A9 9 0 0 0 21 12a1 1 0 1 0-2 0 7 7 0 0 1-7 7Z"/>
-                </svg>
-            </button>
-            <button id="toggle-auto-mark" class="icon-toggle" title="Toggle auto-mark WV objectives" aria-label="Toggle auto-mark" aria-pressed="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" role="img" aria-hidden="true">
-                    <rect class="state-fill" x="4" y="4" width="16" height="4" rx="1"/>
-                    <rect class="state-fill" x="4" y="10" width="16" height="4" rx="1"/>
-                    <rect class="state-fill" x="4" y="16" width="11" height="4" rx="1"/>
-                    <path class="state-on" d="M9 18.5 7.2 16.7a1 1 0 0 0-1.4 1.4l2.5 2.5a1 1 0 0 0 1.45-.05L15 14.5a1 1 0 0 0-1.5-1.3Z" />
-                </svg>
-            </button>
-            <button id="toggle-weekly-autoalert" class="icon-toggle" title="Toggle weekly meta auto-alerts" aria-label="Toggle weekly meta auto-alerts" aria-pressed="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" role="img" aria-hidden="true">
-                    <circle class="state-on" cx="12" cy="12" r="9" fill="none" />
-                    <path class="state-on" d="M12 7v5.2l4 2" />
-                    <path class="state-on" d="M8 18h8" />
-                    <circle class="state-fill" cx="12" cy="12" r="9" fill="none" />
-                </svg>
-            </button>
-            <button id="toggle-favorites" class="favorites-toggle" title="Show Only Favorites" aria-label="Toggle favorites filter"><div class="star-icon" aria-hidden="true"></div></button>
-            <button id="toggle-alerts" class="alerts-toggle" title="Show Only Events with Active Alerts" aria-label="Toggle active alerts filter"><div class="alert-icon" aria-hidden="true"></div></button>
-            <button id="faq-toggle" class="faq-toggle" title="How to use this site - FAQ" aria-label="Open FAQ">?</button>
-            <button id="chain-alerts-toggle" class="chain-toggle" title="Event Chain Alerts - Auto-alert for meta event chains" aria-label="Toggle chain alerts">🔗</button>
+            <button id="api-daily-rescan" class="header-icon-btn" title="Re-scan today's dailies + achievements" aria-label="Re-scan dailies"><div class="hi hi-refresh" aria-hidden="true"></div></button>
+            <button id="toggle-auto-mark" class="header-icon-btn" title="Toggle auto-mark WV objectives" aria-label="Toggle auto-mark" aria-pressed="true"><div class="hi hi-checklist" aria-hidden="true"></div></button>
+            <button id="toggle-weekly-autoalert" class="header-icon-btn" title="Toggle weekly meta auto-alerts" aria-label="Toggle weekly meta auto-alerts" aria-pressed="true"><div class="hi hi-clock" aria-hidden="true"></div></button>
+            <button id="toggle-favorites" class="header-icon-btn" title="Show Only Favorites" aria-label="Toggle favorites filter"><div class="hi hi-star" aria-hidden="true"></div></button>
+            <button id="toggle-alerts" class="header-icon-btn" title="Show Only Events with Active Alerts" aria-label="Toggle active alerts filter"><div class="hi hi-bell" aria-hidden="true"></div></button>
+            <button id="faq-toggle" class="header-icon-btn" title="How to use this site - FAQ" aria-label="Open FAQ"><div class="hi hi-help" aria-hidden="true"></div></button>
+            <button id="chain-alerts-toggle" class="header-icon-btn" title="Event Chain Alerts - Auto-alert for meta event chains" aria-label="Toggle chain alerts"><div class="hi hi-chain" aria-hidden="true"></div></button>
         </div>
     </header>
 
@@ -211,160 +192,58 @@
     </div>
     <div class="faq-content">
         <div class="faq-section">
-            <h3>🧭 Icon Legend</h3>
-            <div class="faq-item">
-                <div class="faq-answer">
-                    <ul>
-                        <li><span class="faq-highlight">✓ Checkmark</span> – Manually mark an event completed (toggles green). Auto‑marked events also show green plus API badge.</li>
-                        <li><span class="faq-highlight">API badge</span> – Event was auto‑marked from your Wizard's Vault objectives (daily / weekly / special).</li>
-                        <li><span class="faq-highlight">Bell 🔔 (on card)</span> – Cycle per‑event reminder: 2m → 5m → 10m → off.</li>
-                        <li><span class="faq-highlight">Bell filter (header)</span> – Show only events with an active reminder.</li>
-                        <li><span class="faq-highlight">Clock ⏱ (header)</span> – Weekly & special WV meta auto‑alert toggle (keeps a single rolling 5m reminder on the earliest incomplete meta).</li>
-                        <li><span class="faq-highlight">Checklist (header)</span> – Auto‑mark WV world boss / meta objectives toggle.</li>
-                        <li><span class="faq-highlight">Star ⭐</span> – Favorite this event (all its occurrences). Header star filters favorites only.</li>
-                        <li><span class="faq-highlight">🔗 Chain toggle (header)</span> – Enable meta chain auto‑alerts (auto adds short reminders to next chain steps after completion).</li>
-                        <li><span class="faq-highlight">🔗 Indicator (card title)</span> – Event starts a predefined chain.</li>
-                        <li><span class="faq-highlight">⚔ World Boss icon</span> – Identifies a world boss (auto‑mark capable via WV).</li>
-                        <li><span class="faq-highlight">📖 Wiki</span> – Open event wiki page.</li>
-                        <li><span class="faq-highlight">[fast] 🚀</span> – Open fast.farming-community guide.</li>
-                        <li><span class="faq-highlight">📍 Waypoint</span> – Copy waypoint code to clipboard.</li>
-                        <li><span class="faq-highlight">⋮ Overflow</span> – More actions (context / future utilities).</li>
-                        <li><span class="faq-highlight">🔄 Rescan</span> – Force rebuild WV mapping & achievements sync.</li>
-                    </ul>
-                </div>
-            </div>
+            <h3>⚡ Quick Start</h3>
+            <div class="faq-item"><div class="faq-answer">
+                1. Pick events (left sidebar)  2. Set reminders (bell)  3. Mark done (✓)  4. Optional: add API key for auto‑mark.
+            </div></div>
         </div>
         <div class="faq-section">
-            <h3>🕐 Timer Features</h3>
-            <div class="faq-item">
-                <div class="faq-question">What are the different time displays?</div>
-                <div class="faq-answer">Each event shows the <span class="faq-highlight">start time</span> (when it begins) and <span class="faq-highlight">remaining time</span> (countdown). Events appear 5 hours before they start.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">Why do some events not show a countdown yet?</div>
-                <div class="faq-answer">To reduce visual noise the <span class="faq-highlight">countdown only appears in the final 15 minutes</span> before an event starts. Before that you just see the start time.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How do I mark events as completed?</div>
-                <div class="faq-answer">Click the <span class="faq-highlight">checkmark ✓</span> icon to mark an event as done. This saves until the next daily reset and dims the event card.</div>
-            </div>
+            <h3>🧭 Icons</h3>
+            <div class="faq-item"><div class="faq-answer">
+                ✓ done  API badge = auto‑marked  ⭐ favorite  🔔 reminder  🕒 weekly/special auto‑alert  ✔ checklist auto‑mark  🔗 chain mode  📖 wiki  [fast] guide  📍 waypoint.
+            </div></div>
         </div>
-
         <div class="faq-section">
-            <h3>🔔 Alerts & Notifications</h3>
-            <div class="faq-item">
-                <div class="faq-question">How do I set up event alerts?</div>
-                <div class="faq-answer">Click the <span class="faq-highlight">bell 🔔</span> icon to cycle through alert times: 2m → 5m → 10m → off. You'll get browser notifications when enabled.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">What are Event Chains?</div>
-                <div class="faq-answer">The <span class="faq-highlight">🔗 button</span> enables auto-alerts for meta event chains (like HoT train). When you complete one event, it automatically sets reminders for the next events in the sequence. Events that start a meta chain are marked with a <span class="faq-highlight">🔗 indicator</span> next to their name.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">Do chain alerts auto-set a reminder?</div>
-                <div class="faq-answer">Yes. When chain alerts are enabled and you mark a chain event as done, the next events in that chain will auto-get a short (2m) reminder if they don't already have one. You can still click the bell to adjust or remove it.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">What does the header auto‑alert (clock) icon do?</div>
-                <div class="faq-answer">The <span class="faq-highlight">clock icon</span> (next to the checklist auto‑mark icon) toggles <span class="faq-highlight">weekly & special Wizard's Vault meta auto‑alerts</span>. When ON it always keeps a single 5m reminder on the <span class="faq-highlight">earliest upcoming incomplete</span> weekly/special meta. When that occurrence finishes or you clear its reminder, the next future one gets a new 5m reminder automatically. Turning it OFF stops scheduling new automatic weekly meta reminders (your manual per‑event bell alerts stay untouched).</div>
-            </div>
+            <h3>🔔 Alerts & Chains</h3>
+            <div class="faq-item"><div class="faq-answer">
+                Card bell: 2m → 5m → 10m → off. Clock: keeps a rolling 5m reminder on the next incomplete weekly/special WV meta. Chain mode: marking one chain step auto‑adds a short reminder to the next steps.
+            </div></div>
         </div>
-
         <div class="faq-section">
-            <h3>🎯 Organization</h3>
-            <div class="faq-item">
-                <div class="faq-question">How do I use favorites?</div>
-                <div class="faq-answer">Click the <span class="faq-highlight">star ⭐</span> to favorite events. Use the star button in the header to show only favorited events. Favoriting one instance marks all instances of that event.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How do I view my active alerts?</div>
-                <div class="faq-answer">Click the <span class="faq-highlight">bell 🔔</span> button in the header to show only events with active reminders set. This helps you see all your scheduled alerts at a glance.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How does the search work?</div>
-                <div class="faq-answer">Type in the search box to filter events by name or map. Search works in real-time as you type.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How do I hide events I don't want?</div>
-                <div class="faq-answer">Open the sidebar (hamburger menu) and use the toggles to hide entire event categories or individual events. Use <span class="faq-highlight">"select all" / "select none"</span> for quick category management.</div>
-            </div>
+            <h3>🎮 API & Auto‑Mark</h3>
+            <div class="faq-item"><div class="faq-answer">
+                Add an API key (account + progression) to auto‑mark WV world boss / meta objectives (daily, weekly, special). Checklist toggle enables/disables marking; weekly clock toggle is independent. Rescan (refresh icon) forces a new WV + achievement sync.
+            </div></div>
         </div>
-
         <div class="faq-section">
-            <h3>🎮 Guild Wars 2 Integration</h3>
-            <div class="faq-item">
-                <div class="faq-question">What is the GW2 API key for?</div>
-                <div class="faq-answer">Enter your GW2 API key to enable: <ul><li><span class="faq-highlight">World boss/meta auto‑marking</span> (from your personal Wizard's Vault daily, weekly & special objectives)</li><li><span class="faq-highlight">Achievement-based completion</span> for supported events</li></ul>Only <span class="faq-highlight">account + progression</span> scopes are required. Auto‑marked events show an <span class="faq-highlight">API badge</span> and reset at 00:00 UTC (weekly/special objective availability may extend beyond a day).</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">Why aren’t WV boss/meta objectives marked without a key?</div>
-                <div class="faq-answer">Boss/meta detection now scans <span class="faq-highlight">/account/wizardsvault/daily</span>, <span class="faq-highlight">/weekly</span> and <span class="faq-highlight">/special</span>, which all require your API key. Without a key we can’t see your personal objectives, so auto‑marking is disabled (you’ll see a banner prompting you to connect).</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">What does the Last Sync time mean?</div>
-                <div class="faq-answer">It shows the most recent successful achievement fetch (UTC). Use the <span class="faq-highlight">🔄 Refresh</span> button to manually sync; otherwise it auto-refreshes every 10 minutes.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">What does "Auto-mark WV world boss/meta objectives" do?</div>
-                <div class="faq-answer">When enabled (and API key present) the timer reads your personal Wizard's Vault daily, weekly & special objectives, matches any world boss or meta tasks via name variants, and auto‑marks those you’ve completed with an <span class="faq-highlight">API badge</span>. Disable anytime if you prefer manual tracking.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How do I force a new daily scan?</div>
-                <div class="faq-answer">Click the <span class="faq-highlight">🔄 button in the header</span> to re-fetch today's daily list and rebuild the boss mapping (clears the cached daily metadata for the day).</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How do I copy waypoints?</div>
-                <div class="faq-answer">Click the <span class="faq-highlight">waypoint 📍</span> icon to copy the waypoint code. Paste it in GW2 chat to create a map marker.</div>
-            </div>
+            <h3>⭐ Favorites & Filters</h3>
+            <div class="faq-item"><div class="faq-answer">
+                Star marks all occurrences of that event. Header star = show only favorites. Header bell = show only events with an active reminder. Search filters by name or map instantly. Sidebar category toggles hide/show whole groups (use select all / none for speed).
+            </div></div>
         </div>
-
+        <div class="faq-section">
+            <h3>🕐 Timing</h3>
+            <div class="faq-item"><div class="faq-answer">
+                You see start time plus a countdown (countdown appears in last 15 min). Events appear up to 5h early so you can plan ahead. Marked completions reset at daily reset (00:00 UTC); weeklies follow Monday reset.
+            </div></div>
+        </div>
         <div class="faq-section">
             <h3>🎨 Appearance</h3>
-            <div class="faq-item">
-                <div class="faq-question">Why do the backgrounds look different?</div>
-                <div class="faq-answer">Zone backgrounds are <span class="faq-highlight">procedurally generated</span> (abstract shapes + palette) so they are original and lightweight. Each category palette matches its expansion. They are cached locally for fast reloads.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">Can I disable the generated backgrounds?</div>
-                <div class="faq-answer">Yes. In the sidebar under <span class="faq-highlight">Appearance</span> choose <span class="faq-highlight">Plain</span> to switch to a simple neutral gradient. Switch back to <span class="faq-highlight">Generated</span> any time.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">How do I regenerate a background?</div>
-                <div class="faq-answer">Clear the related <span class="faq-highlight">bg-*</span> entries from your browser storage (or clear all site data) and reload, or temporarily switch to Plain and back after clearing to force a refresh.</div>
-            </div>
+            <div class="faq-item"><div class="faq-answer">
+                Generated backgrounds are lightweight procedural textures keyed per category. Switch to Plain in Appearance if you want neutral cards; regenerate to refresh cached images.
+            </div></div>
         </div>
-
         <div class="faq-section">
-            <h3>🔗 Useful Links</h3>
-            <div class="faq-item">
-                <div class="faq-question">What are the other icons for?</div>
-                <div class="faq-answer">
-                    <ul>
-                        <li><span class="faq-highlight">Wiki 📖</span> - Opens the event guide on Guild Wars 2 Wiki</li>
-                        <li><span class="faq-highlight">[fast] 🚀</span> - Links to fast.farming-community.eu for detailed guides</li>
-                    </ul>
-                </div>
-            </div>
+            <h3>💡 Tips</h3>
+            <div class="faq-item"><div class="faq-answer">
+                Use chain mode for meta trains. Keep the weekly clock on for passive progress. Clear a reminder by cycling past 10m. API badge = verified objective progress (full or claimed). Favorites + search = fast personal shortlist.
+            </div></div>
         </div>
-
         <div class="faq-section">
-            <h3>💡 Pro Tips</h3>
-            <div class="faq-item">
-                <div class="faq-answer">
-                    <ul>
-                        <li>Events are <span class="faq-highlight">color-coded by expansion</span> - green borders for HoT, orange for PoF, etc.</li>
-                        <li>Events with a <span class="faq-highlight">🔗 indicator</span> start meta farming chains - perfect for efficient farming</li>
-                        <li>World boss events show a <span class="faq-highlight">⚔ icon</span> (auto-marked if in your current Wizard's Vault objectives)</li>
-                        <li>Use the <span class="faq-highlight">Appearance</span> toggle (Generated / Plain) if you prefer simpler backgrounds</li>
-                        <li>Auto-marked API events show an <span class="faq-highlight">API badge</span>; they reset with the daily reset (00:00 UTC)</li>
-                        <li>Icon hover effects match the event category colors</li>
-                        <li>Use chain alerts for efficient meta farming</li>
-                        <li>Use "select all/none" for quick category filtering</li>
-                        <li>Your settings (timers, favorites, categories) are saved automatically in your browser</li>
-                        <li>Notification bell asset switched to SVG (lighter + avoids 404s)</li>
-                    </ul>
-                </div>
-            </div>
+            <h3>🔐 Storage</h3>
+            <div class="faq-item"><div class="faq-answer">
+                Everything (key, filters, favorites, done flags, backgrounds) lives locally in your browser storage—nothing is uploaded here.
+            </div></div>
         </div>
     </div>
 </div>

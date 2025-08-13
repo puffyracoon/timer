@@ -213,95 +213,55 @@ header{
     color: var(--warning-color);
 }
 
-/* Daily re-scan (Wizard's Vault dailies rebuild) */
-.rescan-toggle {
+/* Unified header icon buttons */
+.header-icon-btn {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background-color: rgba(35, 35, 35, 0.8);
-    border: 1px solid rgba(68, 68, 68, 0.3);
+    background: rgba(35,35,35,0.75);
+    border: 1px solid rgba(255,255,255,0.15);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
     transition: var(--transition-fast);
     backdrop-filter: blur(10px);
+    position: relative;
 }
-.rescan-toggle:hover { background-color: rgba(45,45,45,0.9); border-color: rgba(68,68,68,0.7); }
-.rescan-toggle:focus { outline: none; }
-.rescan-toggle:active { background-color: rgba(45,45,45,0.95); }
-.rescan-toggle.active { background-color: rgba(135,206,235,0.1); border-color: #87ceeb; }
-.rescan-icon { width:20px; height:20px; fill:#87ceeb; transition:var(--transition-fast); }
-.rescan-toggle:hover .rescan-icon { fill:#b4e9fb; }
-.rescan-toggle:active .rescan-icon { fill:#ffffff; }
+.header-icon-btn:hover { background: rgba(45,45,45,0.85); border-color: rgba(255,255,255,0.25); }
+.header-icon-btn:active { background: rgba(55,55,55,0.9); }
+.header-icon-btn[aria-pressed="true"], .header-icon-btn.active { background: rgba(70,140,220,0.18); border-color: rgba(120,180,255,0.7); box-shadow: 0 0 0 2px rgba(90,150,255,0.25); }
+.header-icon-btn:focus { outline: none; box-shadow: 0 0 0 2px rgba(120,180,255,0.35); }
 
-/* Chain Alerts Toggle */
-.chain-toggle {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: rgba(35, 35, 35, 0.8);
-    border: 1px solid rgba(68, 68, 68, 0.3);
-    color: var(--text-color);
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    outline: none; /* Remove red focus outline */
-}
+/* Icon glyphs (inline SVG as background) */
+.hi { width:22px; height:22px; background-repeat:no-repeat; background-position:center; background-size:20px 20px; filter: drop-shadow(0 0 0 transparent); opacity:.85; transition: var(--transition-fast); }
+.header-icon-btn:hover .hi { opacity:1; }
+.header-icon-btn.active .hi, .header-icon-btn[aria-pressed="true"] .hi { opacity:1; }
 
-.chain-toggle:hover {
-    background-color: rgba(45, 45, 45, 0.9);
-    border-color: rgba(68, 68, 68, 0.7);
-}
+/* Refresh (circular arrows) */
+.hi-refresh { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23b4e9fb' fill='none' viewBox='0 0 24 24' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 0 1 15-6l2 2'/%3E%3Cpath d='M21 12a9 9 0 0 1-15 6l-2-2'/%3E%3Cpath d='M18 8V4h4'/%3E%3Cpath d='M6 16v4H2'/%3E%3C/svg%3E"); }
+/* Checklist (list + check) */
+.hi-checklist { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23beddff' fill='none' viewBox='0 0 24 24' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6h11'/%3E%3Cpath d='M9 12h11'/%3E%3Cpath d='M9 18h11'/%3E%3Cpath d='m4 6 1.5 1.5L7.5 5'/%3E%3Cpath d='m4 12 1.5 1.5L7.5 11'/%3E%3Cpath d='m4 18 1.5 1.5L7.5 17'/%3E%3C/svg%3E"); }
+/* Clock */
+.hi-clock { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23beddff' fill='none' viewBox='0 0 24 24' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v6l4 2'/%3E%3C/svg%3E"); }
+/* Help (simple question mark) */
+.hi-help { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e0e0e0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.5 9a3.5 3.5 0 0 1 6 2.5c0 2-2 2.5-2.5 3'/%3E%3Ccircle cx='12' cy='18' r='1' fill='%23e0e0e0' stroke='none'/%3E%3C/svg%3E"); }
+/* Star */
+.hi-star { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23dddddd' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 3 15 9 22 10 17 15 18.2 21 12 17.5 5.8 21 7 15 2 10 9 9'/%3E%3C/svg%3E"); }
+/* Bell */
+.hi-bell { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23dddddd' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9'/%3E%3Cpath d='M13.5 21a2 2 0 0 1-3 0'/%3E%3C/svg%3E"); }
+/* Chain link */
+.hi-chain { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23beddff' fill='none' viewBox='0 0 24 24' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 15 7.5 16.5a4 4 0 0 1-5.5-5.5L4.5 9'/%3E%3Cpath d='M15 9 16.5 7.5a4 4 0 0 1 5.5 5.5L19.5 15'/%3E%3Cpath d='M8 12h1'/%3E%3Cpath d='M15 12h1'/%3E%3C/svg%3E"); }
 
-.chain-toggle:focus {
-    outline: none; /* Remove red focus outline on click */
-}
-
-.chain-toggle.active {
-    background-color: rgba(135, 206, 235, 0.12);
-    border-color: #87ceeb;
-    color: #87ceeb;
-}
-
-/* FAQ Toggle Button */
-.faq-toggle {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: rgba(35, 35, 35, 0.8);
-    border: 1px solid rgba(68, 68, 68, 0.3);
-    color: var(--text-color);
-    font-size: 1.2em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    outline: none; /* No red border on click */
-}
-
-.faq-toggle:hover {
-    background-color: rgba(45, 45, 45, 0.9);
-    border-color: rgba(68, 68, 68, 0.7);
-    color: #87ceeb; /* Light blue on hover */
-}
-
-.faq-toggle:focus {
-    outline: none; /* No red border on click */
-}
-
-.faq-toggle.active {
-    background-color: rgba(135, 206, 235, 0.1);
-    border-color: #87ceeb;
-    color: #87ceeb;
-}
+/* Active state tint overrides */
+.header-icon-btn.active .hi-refresh { filter: drop-shadow(0 0 2px rgba(180,233,251,0.4)); }
+.header-icon-btn.active .hi-checklist,
+.header-icon-btn.active .hi-clock,
+.header-icon-btn.active .hi-chain { filter: drop-shadow(0 0 2px rgba(120,180,255,0.45)); }
+.header-icon-btn.active .hi-help { filter: drop-shadow(0 0 2px rgba(255,255,255,0.35)); }
+.header-icon-btn.active .hi-star { filter: drop-shadow(0 0 2px rgba(255,215,0,0.45)); }
+.header-icon-btn.active .hi-bell { filter: drop-shadow(0 0 2px rgba(251,185,76,0.45)); }
 
 .hamburger{
     position: fixed;
@@ -1408,31 +1368,12 @@ h4{
     transition: opacity .3s ease;
 }
 
-/* Chain start indicator */
-.event-card .event-title.chain-start::before {
-    content: '\1F517'; /* link icon */
-    margin-right: 3px;
-    font-size: 0.8em;
-    line-height: 1;
-    position: relative;
-    top: -1px;
-    filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));
-}
-.event-card .event-title.chain-start {
-    color: inherit; /* keep original text color */
-    font-weight: 600; /* still emphasize */
-}
-
-/* World boss indicator */
-.event-card .event-title.world-boss::before {
-    content: '\2694'; /* ⚔ */
-    margin-right: 4px;
-    font-size: 0.8em;
-    line-height: 1;
-    color: #ffffff;
-    filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));
-}
-.event-card-element.done .event-title.world-boss::before { opacity: 0.8; }
+/* Unified inline event markers */
+.ev-marker { display:inline-block; width:16px; height:16px; margin-right:4px; vertical-align:middle; opacity:.85; background-repeat:no-repeat; background-position:center; background-size:16px 16px; filter:drop-shadow(0 0 2px rgba(0,0,0,0.55)); }
+.ev-marker.ev-chain { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23beddff' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 15 7.5 16.5a4 4 0 0 1-5.5-5.5L4.5 9'/%3E%3Cpath d='M15 9 16.5 7.5a4 4 0 0 1 5.5 5.5L19.5 15'/%3E%3Cpath d='M8 12h1'/%3E%3Cpath d='M15 12h1'/%3E%3C/svg%3E"); }
+.ev-marker.ev-boss { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23ffffff' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 19h12'/%3E%3Cpath d='M6 16h12'/%3E%3Cpath d='M9 8 12 3l3 5'/%3E%3Cpath d='M4 11h16'/%3E%3Cpath d='M8 11v5'/%3E%3Cpath d='M16 11v5'/%3E%3C/svg%3E"); }
+.event-card-element.done .ev-marker { opacity:.6; filter:drop-shadow(0 0 1px rgba(0,0,0,0.4)); }
+.event-card .event-title.chain-start { font-weight:600; }
 
 /* Overflow menu (mobile compact) */
 .overflow-wrapper { position: relative; display:none; }
@@ -1659,25 +1600,6 @@ a:active {
     opacity: 1;
 }
 
-/* Star Icon for Favorites */
-.star-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dddddd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12,2 15.09,8.26 22,9 17,14.74 18.18,21.02 12,17.77 5.82,21.02 7,14.74 2,9 8.91,8.26'/%3E%3C/svg%3E");
-}
-
-/* Active state for favorites */
-.favorites-toggle.active .star-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12,2 15.09,8.26 22,9 17,14.74 18.18,21.02 12,17.77 5.82,21.02 7,14.74 2,9 8.91,8.26'/%3E%3C/svg%3E");
-}
-
-/* Alert Icon for Active Alerts Filter */
-.alert-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dddddd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9'/%3E%3Cpath d='M13.73 21a2 2 0 0 1-3.46 0'/%3E%3C/svg%3E");
-}
-
-/* Active state for alerts */
-.alerts-toggle.active .alert-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fbb94c' stroke='%23fbb94c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9'/%3E%3Cpath d='M13.73 21a2 2 0 0 1-3.46 0'/%3E%3C/svg%3E");
-}
 
 /* Fast Farming Community Icon - Clean group/people icon */
 .fastf-icon {
