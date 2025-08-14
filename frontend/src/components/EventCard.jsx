@@ -82,23 +82,47 @@ function RoadmapTooltip({ eventKey }){
   const { allChains, occurrences, done } = useEvents();
   const chains = allChains.filter(c => c.events.some(e=>e.key===eventKey));
   const now = Date.now();
+  // Helper to get display name from occurrences or fallback to key
+  const getDisplayName = key => {
+    const occ = occurrences.find(o=>o.parent.key===key);
+    return occ ? occ.parent.name : key;
+  };
+  // Keyboard navigation state
+  const [focusedStep, setFocusedStep] = useState(-1);
+  const handleKeyDown = e => {
+    if (!chains.length) return;
+    if (e.key === 'ArrowDown') setFocusedStep(f=>Math.min(f+1, chains[0].events.length-1));
+    if (e.key === 'ArrowUp') setFocusedStep(f=>Math.max(f-1, 0));
+  };
   return (
-  <div className="absolute z-[60] mt-1 left-0 top-full bg-neutral-900/95 border border-neutral-600 rounded p-2 text-[10px] shadow-xl max-w-sm w-72 space-y-2 max-h-72 overflow-auto">
+    <div
+      className="absolute z-[60] mt-1 left-0 top-full bg-neutral-900/95 border border-neutral-600 rounded p-2 text-[10px] shadow-xl max-w-sm w-72 space-y-2 max-h-72 overflow-auto"
+      role="dialog"
+      aria-label="Chain roadmap tooltip"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
       {chains.length===0 && <p>No chain info.</p>}
       {chains.map(chain => {
-        const steps = chain.events.map(s => {
+        const steps = chain.events.map((s, idx) => {
           const occs = occurrences.filter(o=>o.parent.key===s.key && o.startTime>now).sort((a,b)=>a.startTime-b.startTime);
-            const nextOcc = occs[0];
-            const eta = nextOcc? formatCountdown(nextOcc.startTime - now): '—';
-            return { key: s.key, done: !!done[s.key], eta };
+          const nextOcc = occs[0];
+          const eta = nextOcc? formatCountdown(nextOcc.startTime - now): '—';
+          return { key: s.key, name: getDisplayName(s.key), done: !!done[s.key], eta, idx };
         });
         return (
-          <div key={chain.name} className="border border-neutral-700 rounded p-1">
+          <div key={chain.name} className="border border-neutral-700 rounded p-1" role="group" aria-label={chain.name}>
             <p className="font-semibold mb-1 text-[10px]">{chain.name}</p>
-            <ul className="space-y-0.5">
+            <ul className="space-y-0.5" role="list">
               {steps.map(st => (
-                <li key={st.key} className="flex justify-between gap-2">
-                  <span className={`truncate ${st.done? 'text-emerald-400 line-through':'text-neutral-200'}`}>{st.key}</span>
+                <li
+                  key={st.key}
+                  className={`flex justify-between gap-2 ${focusedStep===st.idx?'bg-neutral-700/40':''}`}
+                  tabIndex={0}
+                  aria-label={st.name + (st.done? ' done':'')}
+                  onFocus={()=>setFocusedStep(st.idx)}
+                >
+                  <span className={`truncate ${st.done? 'text-emerald-400 line-through':'text-neutral-200'}`}>{st.name}</span>
                   <span className="text-neutral-400">{st.eta}</span>
                 </li>
               ))}

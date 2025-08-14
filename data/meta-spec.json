@@ -9,7 +9,7 @@
       "map": "Queensdale",
       "intervalMinutes": 180,
       "schedule": [60, 240, 420, 600, 780, 960, 1140],
-      "scheduleProvisional": true,
+  "scheduleProvisional": false,
       "trainGroups": ["core-boss"],
       "status": "existing"
     },
