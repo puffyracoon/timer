@@ -1,0 +1,31 @@
+{
+	"version": 1,
+	"generated": "static-copy",
+	"events": [
+		{"key": "ShadowBehemoth","name": "Shadow Behemoth","type": "worldBoss","map": "Queensdale","intervalMinutes": 180,"schedule": [60,240,420,600,780,960,1140],"scheduleProvisional": true,"trainGroups": ["core-boss"],"status": "existing"},
+		{"key": "Octovine","name": "Octovine","type": "expansionMeta","map": "Auric Basin","intervalMinutes": 120,"schedule": [105,225,345,465,585,705,825,945,1065,1185],"scheduleProvisional": true,"trainGroups": ["hot-train"],"status": "existing"},
+		{"key": "ChakGerent","name": "Chak Gerent","type": "expansionMeta","map": "Tangled Depths","intervalMinutes": 120,"schedule": [120,240,360,480,600,720,840,960,1080,1200],"scheduleProvisional": true,"trainGroups": ["hot-train"],"status": "existing"},
+		{"key": "Dragon'sStand","name": "Dragon's Stand","type": "expansionMeta","map": "Dragon's Stand","intervalMinutes": 120,"schedule": [150,270,390,510,630,750,870,990,1110],"scheduleProvisional": true,"trainGroups": ["hot-train"],"status": "existing"},
+		{"key": "NightBosses","name": "Verdant Brink Night Bosses","type": "expansionMeta","map": "Verdant Brink","intervalMinutes": 120,"schedule": [90,210,330,450,570,690,810,930,1050,1170],"scheduleProvisional": true,"trainGroups": ["hot-train"],"status": "existing"},
+		{"key": "CasinoBlitz","name": "Casino Blitz","type": "expansionMeta","map": "Crystal Oasis","intervalMinutes": 120,"schedule": [],"trainGroups": ["pof-train"],"status": "existing"},
+		{"key": "Palawadan","name": "Palawadan","type": "ls4Meta","map": "Domain of Istan","intervalMinutes": 120,"schedule": [],"trainGroups": ["istan-sandswept"],"status": "existing"},
+		{"key": "Doppelganger","name": "Doppelganger","type": "ls4Meta","map": "Sandswept Isles","intervalMinutes": 120,"schedule": [],"trainGroups": ["istan-sandswept"],"status": "existing"},
+		{"key": "KainengBlackout","name": "Kaineng Blackout","type": "expansionMeta","map": "New Kaineng City","intervalMinutes": 120,"schedule": [],"trainGroups": ["eod-train"],"status": "existing"},
+		{"key": "Aspenwood","name": "Aspenwood (Gang War of Echovald)","type": "expansionMeta","map": "The Echovald Wilds","intervalMinutes": 120,"schedule": [],"trainGroups": ["eod-train"],"status": "existing"},
+		{"key": "Dragon'sEnd","name": "Dragon's End","type": "expansionMeta","map": "Dragon's End","intervalMinutes": 120,"schedule": [180,300,420,540,660,780,900,1020,1140],"scheduleProvisional": true,"trainGroups": ["eod-train"],"status": "existing"},
+		{"key": "AetherbladeAssault","name": "Aetherblade Assault","type": "expansionMeta","map": "Seitung Province","intervalMinutes": 120,"schedule": [60,180,300,420,540,660,780,900,1020,1140],"scheduleProvisional": true,"trainGroups": ["eod-train"],"status": "missing"},
+		{"key": "ThunderheadKeep","name": "Thunderhead Keep","type": "ls4Meta","map": "Thunderhead Peaks","intervalMinutes": 120,"schedule": [],"trainGroups": ["ls4-late"],"status": "missing"},
+		{"key": "Drakkar","name": "Drakkar","type": "ibsMeta","map": "Bjora Marches","intervalMinutes": 120,"schedule": [],"trainGroups": ["ibs-train"],"status": "missing"},
+		{"key": "Dragonstorm","name": "Dragonstorm","type": "ibsMeta","map": "Eye of the North","intervalMinutes": 120,"schedule": [30,150,270,390,510,630,750,870,990,1110],"scheduleProvisional": true,"trainGroups": ["ibs-train"],"status": "missing"},
+		{"key": "GyalaDelveJadeCrisis","name": "The Jade Crisis","type": "expansionMeta","map": "Gyala Delve","intervalMinutes": 120,"schedule": [210,330,450,570,690,810,930,1050,1170],"scheduleProvisional": true,"trainGroups": ["eod-train"],"status": "missing"},
+		{"key": "UnlockingWizardsTower","name": "Unlocking the Wizard's Tower","type": "sotoMeta","map": "Skywatch Archipelago","intervalMinutes": 120,"schedule": [75,195,315,435,555,675,795,915,1035,1155],"scheduleProvisional": true,"trainGroups": ["soto-train"],"status": "missing"},
+		{"key": "DefenseOfAmnytas","name": "Defense of Amnytas","type": "sotoMeta","map": "Amnytas","intervalMinutes": 120,"schedule": [135,255,375,495,615,735,855,975,1095],"scheduleProvisional": true,"trainGroups": ["soto-train"],"status": "missing"},
+		{"key": "InnerNayos","name": "Inner Nayos Meta","type": "sotoMeta","map": "Inner Nayos","intervalMinutes": 120,"schedule": [195,315,435,555,675,795,915,1035,1155],"scheduleProvisional": true,"trainGroups": ["soto-train"],"status": "missing"}
+	],
+	"chains": [
+		{"key": "hot-standard","name": "HoT Standard Train","steps": ["NightBosses","Octovine","ChakGerent","Dragon'sStand"],"mode": "schedule","status": "needsValidation"},
+		{"key": "istan-sandswept","name": "Istan + Sandswept","steps": ["Palawadan","Doppelganger"],"mode": "schedule","status": "needsValidation"},
+		{"key": "eod-standard","name": "EoD Full Train","steps": ["AetherbladeAssault","KainengBlackout","Aspenwood","Dragon'sEnd","GyalaDelveJadeCrisis"],"mode": "schedule","status": "draft"},
+		{"key": "soto-standard","name": "SotO Train","steps": ["UnlockingWizardsTower","DefenseOfAmnytas","InnerNayos"],"mode": "schedule","status": "draft"}
+	]
+}
