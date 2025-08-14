@@ -1,0 +1,62 @@
+# Root
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+frontend/dist/
+backend/dist/
+coverage/
+*.coverage
+coverage-final.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.history/
+.fleet/
+
+# OS
+Icon?
+
+# Misc
+*.tgz
+*.zip
+.eslintcache
+
+# Cache
+.cache/
+.next/
+.svelte-kit/
+.parcel-cache/
+.temp/
+.tmp/
+frontend/.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# Lock backup
+package-lock.json.*
+
+# Local data
+*.local
