@@ -1314,6 +1314,10 @@ function initializeApiInterface() {
     if (gw2Api.apiKey) {
         apiKeyInput.value = gw2Api.apiKey;
         validateAndShowStatus();
+        // Hide Save button if API key is present
+        apiKeySave.style.display = 'none';
+    } else {
+        apiKeySave.style.display = '';
     }
 
     // Save API key
@@ -1332,7 +1336,8 @@ function initializeApiInterface() {
         if (isValid) {
             const accountInfo = await gw2Api.getAccountInfo();
             showApiStatus(`Connected as: ${accountInfo.name}`, 'success');
-            
+            // Hide Save button immediately after successful save
+            apiKeySave.style.display = 'none';
             // Fetch achievements & build WV mapping before first update to ensure weekly metas processed immediately
             await gw2Api.fetchAchievements();
             try { await buildDailyBossMappingIfNeeded(); } catch(e){ console.debug('Initial WV mapping build failed', e); }
@@ -1348,7 +1353,8 @@ function initializeApiInterface() {
         apiKeyInput.value = '';
         gw2Api.setApiKey('');
         showApiStatus('API key cleared', 'error');
-        
+        // Show Save button again
+        apiKeySave.style.display = '';
         // Reset all event states
         resetEventStates();
     });
