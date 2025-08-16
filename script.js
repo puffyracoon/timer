@@ -1088,7 +1088,7 @@ function toggleDone(parentEventKey, value) {
             localStorage.removeItem(`done-${parentEventKey}`)
         }
     // Remove API badge if user manually unmarks
-    document.querySelectorAll(`.${parentEventKey} .api-badge`).forEach(b => b.remove());
+    document.querySelectorAll(`.${CSS.escape(parentEventKey)} .api-badge`).forEach(b => b.remove());
     }
     if (value === true) {
         for (let e of elements) {
