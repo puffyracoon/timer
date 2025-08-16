@@ -1449,14 +1449,15 @@ function updateEventStatesFromAPI() {
     const earliestPerMeta = new Map(); // metaKey -> EventClass
     const hasReminderPerMeta = new Map(); // metaKey -> true
 
+
         allEvents.forEach(event => {
             const isCompleted = gw2Api.isEventCompleted(event.parentEvent.key);
             const eventCard = event.card;
             const doneCheckbox = document.getElementById(`dcb-${event.parentEvent.key}`);
+            // Auto-mark when completed
             if (eventCard && doneCheckbox && isCompleted && !doneCheckbox.checked) {
                 doneCheckbox.checked = true;
                 eventCard.classList.add('done');
-                // Color the done icon like manual marking
                 try {
                     const parentEventKey = event.parentEvent.key;
                     document.querySelectorAll(`[data-event-key="${parentEventKey}"] .doneIcon`).forEach(ic => {
@@ -1479,30 +1480,28 @@ function updateEventStatesFromAPI() {
                     const scopeLabel = scope ? scope.charAt(0).toUpperCase()+scope.slice(1) : 'WV';
                     badge.title = achName ? `Completed (${scopeLabel} WV objective: ${achName})` : `Completed (${scopeLabel} WV objective)`;
                 }
-            } else if (!isCompleted) {
-                const metaKey = event.parentEvent.key;
-                const achId = gw2Api.dailyBossIdMap[metaKey];
-                if (!achId) return; // not mapped
-                const scope = gw2Api.wvScopeByAchId?.[achId];
-                if (!(scope === 'weekly' || scope === 'special')) return;
-                const weeklyAlertsOn = JSON.parse(localStorage.getItem('weekly-autoalert-enabled') || 'true');
-                if (!weeklyAlertsOn) return;
-                if (event.remainingMS < 5 * 60000) return; // too close
-                // If any future occurrence already has a reminder, mark and skip scheduling a new one
-                if (event.reminderMSbeforEvent !== 'no') { hasReminderPerMeta.set(metaKey, true); return; }
-                if (hasReminderPerMeta.get(metaKey)) return; // already covered by another occurrence with active reminder
-                const existing = earliestPerMeta.get(metaKey);
-                if (!existing || event.localStartTime < existing.localStartTime) {
-                    earliestPerMeta.set(metaKey, event);
-                }
             }
         });
 
-        // Schedule only if no existing reminder already active for that meta key
-        earliestPerMeta.forEach(ev => {
-            if (hasReminderPerMeta.get(ev.parentEvent.key)) return;
-            try { scheduleFixedReminder(ev, 5); } catch(e){ console.warn('Auto alert scheduling failed', e); }
-        });
+        // Auto-alert for next weekly meta until completed
+        const weeklyAlertsOn = JSON.parse(localStorage.getItem('weekly-autoalert-enabled') || 'true');
+        if (weeklyAlertsOn) {
+            // Find next incomplete weekly meta event and schedule alert
+            allEvents.forEach(event => {
+                const metaKey = event.parentEvent.key;
+                const achId = gw2Api.dailyBossIdMap[metaKey];
+                if (!achId) return;
+                const scope = gw2Api.wvScopeByAchId?.[achId];
+                if (!(scope === 'weekly' || scope === 'special')) return;
+                const isCompleted = gw2Api.isEventCompleted(metaKey);
+                if (isCompleted) return; // skip completed
+                if (event.remainingMS < 5 * 60000) return; // too close
+                // Always schedule alert for next occurrence if not completed
+                if (event.reminderMSbeforEvent === 'no') {
+                    try { scheduleFixedReminder(event, 5); } catch(e){ console.warn('Auto alert scheduling failed', e); }
+                }
+            });
+        }
 
         if (completedEvents.length > 0) {
             showApiStatus(`Auto-marked ${completedEvents.length} boss events`, 'success');
