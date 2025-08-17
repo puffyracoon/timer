@@ -408,9 +408,15 @@ function scheduleChainAlerts(completedEventKey) {
                     showToast(`🔗 Chain Alert: ${nextEvent.parentEvent.name} starts soon! ${chainEvent.note}`)
                     sendNotification(`Chain Event: ${nextEvent.parentEvent.name}`, chainEvent.note)
                     
-                    // Auto-set a 5-minute reminder if no reminder is set
-                    if (nextEvent.reminderMSbeforEvent === "no") {
-                        updateAlert(nextEvent)
+                    // Auto-set a 2-minute reminder for the next event in the chain
+                    nextEvent.reminderMSbeforEvent = 2 * 60000;
+                    if (nextEvent.remainingMS < nextEvent.reminderMSbeforEvent) {
+                        // Too close, do not set reminder
+                        nextEvent.reminderMSbeforEvent = "no";
+                    } else {
+                        let element = nextEvent.card.querySelector(".reminder-link");
+                        if (element) element.textContent = "2m";
+                        nextEvent.saveReminderToLocalStorage();
                     }
                 }
             }, delayMs)
