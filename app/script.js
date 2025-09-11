@@ -476,20 +476,30 @@ function markWizardVaultEvents(weeklyData) {
     const completedObjectives = new Set();
     const activeMetaEvents = new Set();
     
+    // First, clear all existing Wizard Vault highlights
+    allEvents.forEach(event => {
+        clearWizardVaultMarking(event);
+    });
+    
     weeklyData.objectives.forEach(objective => {
-        if (objective.claimed) {
+        // Check if objective is completed based on progress
+        const isCompleted = objective.progress_current >= objective.progress_complete;
+        const isClaimed = objective.claimed === true;
+        
+        if (isCompleted || isClaimed) {
             completedObjectives.add(objective.id);
+            console.log(`Objective completed: "${objective.title}" (${objective.progress_current}/${objective.progress_complete}, claimed: ${isClaimed})`);
             return; // Skip completed objectives
         }
         
         const metaEventKey = parseMetaEventFromObjective(objective.title);
         if (metaEventKey) {
             activeMetaEvents.add(metaEventKey);
-            console.log(`Wizard Vault objective found: "${objective.title}" -> ${metaEventKey}`);
+            console.log(`Active Wizard Vault objective: "${objective.title}" -> ${metaEventKey} (${objective.progress_current}/${objective.progress_complete})`);
         }
     });
     
-    // Apply visual indicators to matching events
+    // Apply visual indicators only to active (uncompleted) events
     allEvents.forEach(event => {
         if (activeMetaEvents.has(event.parentEvent.key)) {
             markEventForWizardVault(event);
@@ -499,30 +509,22 @@ function markWizardVaultEvents(weeklyData) {
     // Store for persistence
     localStorage.setItem('gw2-wizard-vault-events', JSON.stringify([...activeMetaEvents]));
     localStorage.setItem('gw2-wizard-vault-completed', JSON.stringify([...completedObjectives]));
+    
+    console.log(`Wizard Vault status: ${activeMetaEvents.size} active events, ${completedObjectives.size} completed objectives`);
 }
 
 function markEventForWizardVault(event) {
     if (!event.card) return;
     
-    // Add a distinctive border or indicator for Wizard Vault events
-    event.card.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.8)'; // Golden glow
-    event.card.style.borderStyle = 'dashed'; // Dashed border
+    // Add Wizard Vault CSS class for styling
+    event.card.classList.add('wizard-vault-event');
+}
+
+function clearWizardVaultMarking(event) {
+    if (!event.card) return;
     
-    // Add a small indicator icon
-    const indicator = event.card.querySelector('.wizard-vault-indicator');
-    if (!indicator) {
-        const wvIndicator = document.createElement('div');
-        wvIndicator.className = 'wizard-vault-indicator';
-        wvIndicator.innerHTML = '⭐'; // Star emoji for Wizard Vault
-        wvIndicator.style.position = 'absolute';
-        wvIndicator.style.top = '5px';
-        wvIndicator.style.left = '5px';
-        wvIndicator.style.fontSize = '16px';
-        wvIndicator.style.zIndex = '10';
-        wvIndicator.title = 'Wizard Vault Weekly Objective';
-        event.card.style.position = 'relative';
-        event.card.appendChild(wvIndicator);
-    }
+    // Remove Wizard Vault CSS class
+    event.card.classList.remove('wizard-vault-event');
 }
 
 async function updateWizardVaultStatus() {

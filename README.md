@@ -6,6 +6,7 @@ This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-
 
 ### ⭐ Wizard Vault Integration
 - **Automatic event highlighting**: Meta events from your weekly Wizard Vault objectives get golden glow and star indicators
+- **Smart progress tracking**: Highlights disappear automatically when objectives are completed (based on progress_current/progress_complete)
 - **Dynamic matching**: Intelligent system automatically matches any meta event without manual updates
 - **GW2 API integration**: Uses your API key to fetch weekly objectives in real-time
 - **Smart filtering**: Ignores generic objectives like "Complete 10 events"
@@ -60,6 +61,8 @@ This fork is configured to work with GitHub Pages for easy deployment.
 - **API key storage**: Secure local storage of your Guild Wars 2 API key
 - **Wizard Vault integration**: Automatically highlights meta events from weekly objectives
 - **Smart event detection**: Dynamic matching system works with any meta event
+- **Progress-aware highlighting**: Visual indicators automatically disappear when objectives are completed
+- **Real-time updates**: Reflects your actual progress (e.g., 3/5 events completed)
 - **Visual indicators**: Golden glow and star markers for Wizard Vault events
 - **Auto-refresh**: Updates immediately when API key is saved
 - **Intelligent caching**: 1-hour cache to minimize API calls
