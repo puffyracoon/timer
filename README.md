@@ -28,9 +28,15 @@ This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-
 ### 🧹 Code Cleanup
 - **Updated attribution**: Proper fork credits and links to both repositories
 
-## Original Project
-- **Original Creator**: Snipppy
-- **Original Repository**: https://github.com/Snipppppy/GW2-Simple-Timer/
+## Links
+
+### This Fork
+- **Repository**: https://github.com/puffyracoon/timer/
+- **Live Demo**: https://puffyracoon.github.io/timer/
+
+### Original Project
+- **Creator**: Snipppy
+- **Repository**: https://github.com/Snipppppy/GW2-Simple-Timer/
 - **Live Demo**: https://gw2timer.snipppy.de/
 
 ## Installation
