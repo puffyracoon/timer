@@ -509,10 +509,10 @@
     {
       "key": "GangWar",
       "categoryKey": "eod",
-      "name": "Gang War",
-      "wiki": "https://wiki.guildwars2.…The_Gang_War_of_Echovald",
+      "name": "The Gang War of Echovald",
+      "wiki": "https://wiki.guildwars2.com/wiki/The_Gang_War_of_Echovald",
       "fastF": "https://fast.farming-community.eu/open-world/meta/gang-war-meta",
-      "durationMS": 1500000
+      "durationMS": 2400000
     },
     {
       "key": "Aspenwood",

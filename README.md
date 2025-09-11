@@ -4,6 +4,13 @@ This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-
 
 ## New Features Added in This Fork
 
+### ⭐ Wizard Vault Integration
+- **Automatic event highlighting**: Meta events from your weekly Wizard Vault objectives get golden glow and star indicators
+- **Dynamic matching**: Intelligent system automatically matches any meta event without manual updates
+- **GW2 API integration**: Uses your API key to fetch weekly objectives in real-time
+- **Smart filtering**: Ignores generic objectives like "Complete 10 events"
+- **Visual excellence**: Beautiful golden animations and star markers for enhanced UX
+
 ### 🔍 Real-time Search
 - **Live event search**: Search for events by name or map location
 - **Instant filtering**: Events that don't match are hidden from view
@@ -49,12 +56,15 @@ This fork is configured to work with GitHub Pages for easy deployment.
 
 ## Additional Features in This Fork
 
-### 🔑 GW2 API Key Integration
+### 🔑 GW2 API Key Integration & Wizard Vault
 - **API key storage**: Secure local storage of your Guild Wars 2 API key
-- **Future-ready**: Prepared for Wizard Vault weekly objective integration
-- **Smart validation**: Save button disables when key is already stored
-- **Easy management**: Simple interface to add, view, and clear API keys
-- **Note**: *API key functionality is currently for storage only - Wizard Vault integration coming soon*
+- **Wizard Vault integration**: Automatically highlights meta events from weekly objectives
+- **Smart event detection**: Dynamic matching system works with any meta event
+- **Visual indicators**: Golden glow and star markers for Wizard Vault events
+- **Auto-refresh**: Updates immediately when API key is saved
+- **Intelligent caching**: 1-hour cache to minimize API calls
+- **Error handling**: Graceful fallback if API is unavailable
+- **Future-proof**: No manual updates needed for new meta events
 
 ### 🔔 Persistent Reminders
 - **Saved alerts**: Reminder settings now persist across browser sessions
@@ -63,6 +73,7 @@ This fork is configured to work with GitHub Pages for easy deployment.
 - **Seamless experience**: No more lost reminder settings
 
 ### 🌊 Updated Meta Events
+- **The Gang War of Echovald**: Updated with proper name and 40-minute duration
 - **The Battle for the Jade Sea**: Updated with proper name and 60-minute duration
 - **Accurate scheduling**: All events include correct timing and map information
 
