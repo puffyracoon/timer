@@ -1,4 +1,4 @@
-let events = await fetch('/app/events.json')
+let events = await fetch('app/events.json')
     .then(response => response.json())
     .then(obj => { return obj })
     .catch(error => console.error("Could not fetch event data: ", error));
@@ -29,6 +29,12 @@ class EventClass {
         this.timeoutID = null
         this.intervalID = null
         this.card = null
+        
+        // Load saved reminder setting
+        const savedReminders = loadReminderSettings();
+        if (savedReminders[this.eventid]) {
+            this.reminderMSbeforEvent = savedReminders[this.eventid];
+        }
     }
     addEventToDOM() {
         let clone = cardTemplate.content.cloneNode(true)
@@ -56,6 +62,9 @@ class EventClass {
         rl.addEventListener("click", () => { updateAlert(this) } )
         rl.addEventListener("mouseover", () => { rl.style.backgroundColor = "var(--accent-color)" } )
         rl.addEventListener("mouseout", () => { rl.style.backgroundColor = "var(--alt-bg-color)" } )
+        
+        // Restore saved reminder state
+        this.restoreReminderDisplay();
 
         // [fast] FarmingLink
         if (this.parentEvent.fastF === "") {
@@ -76,10 +85,34 @@ class EventClass {
         //Toggle Visibility based on localStorage Settings
         let visibility = getVisibilityFromLocalStorage(this.parentEvent.key)
         toggleVisibility(this.parentEvent.key, visibility)
-
-
-
     }
+    
+    restoreReminderDisplay() {
+        if (this.reminderMSbeforEvent !== "no") {
+            const element = this.card.querySelector(".reminder-link");
+            const minutes = this.reminderMSbeforEvent / 60000;
+            element.textContent = `${minutes}m`;
+            
+            // Set up the reminder if the event hasn't passed and there's enough time
+            if (this.remainingMS > 0 && this.remainingMS > this.reminderMSbeforEvent) {
+                const reminderInMS = this.remainingMS - this.reminderMSbeforEvent;
+                this.timeoutID = setTimeout(() => { 
+                    this.triggerAlert();
+                }, reminderInMS);
+            }
+        }
+    }
+    
+    triggerAlert() {
+        alertSound.play();
+        let element = this.card.querySelector(".reminder-link");
+        let x = 0;
+        this.intervalID = setInterval(() => {
+            if (x === 0) { element.style.backgroundColor = "var(--accent-color)"; x=1}
+            else { element.style.backgroundColor = "var(--alt-bg-color)"; x=0}
+        }, 500);
+    }
+
     updateCard() {
         this.remainingMS = this.localStartTime - now
         if (this.localStartTime > now.getTime() + maxTimeToShowCards) {return}
@@ -122,19 +155,204 @@ for (let event of events.events) {
 //Sort all events
 allEvents.sort((a, b) => a.localStartTime - b.localStartTime)
 
+// Reminder persistence functions
+function saveReminderSettings() {
+    const reminderData = {};
+    allEvents.forEach(event => {
+        if (event.reminderMSbeforEvent !== "no") {
+            reminderData[event.eventid] = event.reminderMSbeforEvent;
+        }
+    });
+    localStorage.setItem('gw2-reminder-settings', JSON.stringify(reminderData));
+}
+
+function loadReminderSettings() {
+    const savedData = localStorage.getItem('gw2-reminder-settings');
+    if (savedData) {
+        return JSON.parse(savedData);
+    }
+    return {};
+}
+
+function clearExpiredReminders() {
+    const reminderData = loadReminderSettings();
+    const currentTime = Date.now();
+    let hasChanges = false;
+    
+    // Remove reminders for events that have already passed
+    for (const eventId in reminderData) {
+        const event = allEvents.find(e => e.eventid === eventId);
+        if (event && event.remainingMS <= 0) {
+            delete reminderData[eventId];
+            hasChanges = true;
+        }
+    }
+    
+    if (hasChanges) {
+        localStorage.setItem('gw2-reminder-settings', JSON.stringify(reminderData));
+    }
+}
+
 //Hide browser-settings-alert in the SideBar
 if (localStorage.length > 0) {
     document.getElementById("browser-settings-alert").remove()
-} else {
-    try {
-        umami.track(`revisited with disabled events`)
-    } catch (err) {
-        console.log(err)
-    }
 }
 
 //Add Cards to DOM
 updateEventCards()
+
+// Clear expired reminders on page load
+clearExpiredReminders();
+
+// Real-time search functionality
+const searchInput = document.getElementById('event-search');
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        // Reset all cards first
+        document.querySelectorAll('.event-card-element').forEach(card => {
+            card.style.display = '';
+            card.style.boxShadow = '';
+        });
+        
+        if (query) {
+            // Hide non-matching events, show only matches
+            allEvents.forEach(evt => {
+                if (!evt.card) return;
+                
+                const eventName = evt.parentEvent.name.toLowerCase();
+                const eventMap = evt.event.map.toLowerCase();
+                
+                if (eventName.includes(query) || eventMap.includes(query)) {
+                    // Show and highlight match with glow effect only
+                    evt.card.style.display = '';
+                    evt.card.style.boxShadow = '0 0 20px rgba(175,36,33,0.6)';
+                } else {
+                    // Hide non-matches
+                    evt.card.style.display = 'none';
+                }
+            });
+        }
+    });
+}
+
+// Toggle All/None functionality
+document.getElementById('toggle-all').addEventListener('click', function() {
+    events.categories.forEach(category => {
+        const categoryToggle = document.getElementById(`catTgl-${category.key}`);
+        if (categoryToggle && !categoryToggle.checked) {
+            categoryToggle.click();
+        }
+    });
+});
+
+document.getElementById('toggle-none').addEventListener('click', function() {
+    events.categories.forEach(category => {
+        const categoryToggle = document.getElementById(`catTgl-${category.key}`);
+        if (categoryToggle && categoryToggle.checked) {
+            categoryToggle.click();
+        }
+    });
+});
+
+// API Key Modal functionality
+const apiKeyBtn = document.getElementById('api-key-btn');
+const apiKeyModal = document.getElementById('api-key-modal');
+const closeModal = document.querySelector('.close');
+const saveApiKeyBtn = document.getElementById('save-api-key');
+const clearApiKeyBtn = document.getElementById('clear-api-key');
+const cancelApiKeyBtn = document.getElementById('cancel-api-key');
+const apiKeyInput = document.getElementById('api-key-input');
+const apiKeyStatusText = document.getElementById('api-key-status-text');
+
+// Load saved API key on page load
+function loadApiKey() {
+    const savedKey = localStorage.getItem('gw2-api-key');
+    if (savedKey) {
+        apiKeyInput.value = savedKey;
+        apiKeyStatusText.textContent = `API key set (${savedKey.substring(0, 8)}...)`;
+        apiKeyBtn.style.color = '#4CAF50'; // Green indicator
+        saveApiKeyBtn.disabled = true;
+        saveApiKeyBtn.textContent = 'Saved';
+    } else {
+        apiKeyStatusText.textContent = 'No API key set';
+        apiKeyBtn.style.color = '#dddddd'; // Default text color
+        saveApiKeyBtn.disabled = false;
+        saveApiKeyBtn.textContent = 'Save';
+    }
+}
+
+// Update save button state when input changes
+function updateSaveButtonState() {
+    const currentKey = apiKeyInput.value.trim();
+    const savedKey = localStorage.getItem('gw2-api-key');
+    
+    if (currentKey === savedKey && savedKey) {
+        saveApiKeyBtn.disabled = true;
+        saveApiKeyBtn.textContent = 'Saved';
+    } else if (currentKey) {
+        saveApiKeyBtn.disabled = false;
+        saveApiKeyBtn.textContent = 'Save';
+    } else {
+        saveApiKeyBtn.disabled = true;
+        saveApiKeyBtn.textContent = 'Save';
+    }
+}
+
+// Open modal
+apiKeyBtn.addEventListener('click', function() {
+    apiKeyModal.style.display = 'block';
+    loadApiKey();
+});
+
+// Update save button state when input changes
+apiKeyInput.addEventListener('input', updateSaveButtonState);
+
+// Close modal
+closeModal.addEventListener('click', function() {
+    apiKeyModal.style.display = 'none';
+});
+
+cancelApiKeyBtn.addEventListener('click', function() {
+    apiKeyModal.style.display = 'none';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', function(event) {
+    if (event.target === apiKeyModal) {
+        apiKeyModal.style.display = 'none';
+    }
+});
+
+// Save API key
+saveApiKeyBtn.addEventListener('click', function() {
+    const apiKey = apiKeyInput.value.trim();
+    if (apiKey) {
+        localStorage.setItem('gw2-api-key', apiKey);
+        apiKeyStatusText.textContent = `API key saved (${apiKey.substring(0, 8)}...)`;
+        apiKeyBtn.style.color = '#4CAF50'; // Green indicator
+        saveApiKeyBtn.disabled = true;
+        saveApiKeyBtn.textContent = 'Saved';
+        console.log('GW2 API key saved for future Wizard Vault integration');
+    } else {
+        apiKeyStatusText.textContent = 'Please enter a valid API key';
+    }
+});
+
+// Clear API key
+clearApiKeyBtn.addEventListener('click', function() {
+    localStorage.removeItem('gw2-api-key');
+    apiKeyInput.value = '';
+    apiKeyStatusText.textContent = 'API key cleared';
+    apiKeyBtn.style.color = ''; // Reset to default color
+    saveApiKeyBtn.disabled = true; // Disabled because input is empty
+    saveApiKeyBtn.textContent = 'Save';
+    console.log('GW2 API key cleared');
+});
+
+// Load API key status on page load
+loadApiKey();
 
 //Update cards
 setInterval(interval, 1000)
@@ -186,11 +404,6 @@ function addToggleElement(parentEvent) {
     let visibilityToggle = document.getElementById(`vcb-${parentEvent.key}`)
     visibilityToggle.addEventListener("change", (e) => {
         toggleVisibility(parentEvent.key, e.target.checked)
-        try {
-            umami.track(`Toggled ${parentEventKey} ${visibility}`)
-        } catch (err){
-            console.log(err)
-        }
     })
 
     let doneToggle = document.getElementById(`dcb-${parentEvent.key}`)
@@ -315,6 +528,9 @@ function updateAlert(Event){
 
     let reminderInMS = Event.remainingMS - Event.reminderMSbeforEvent
     Event.timeoutID = setTimeout(()=> {alert()}, reminderInMS);
+    
+    // Save reminder settings
+    saveReminderSettings();
 
     function setReminderToNo(){
         Event.reminderMSbeforEvent = "no"
@@ -325,6 +541,9 @@ function updateAlert(Event){
         img.src = "app/assets/notifications_off_FFFFFF.svg"
         img.alt = "Reminder switch 2 5 10 Minutes"
         element.appendChild(img)
+        
+        // Save reminder settings when turned off
+        saveReminderSettings();
     }
 
     function alert(){
@@ -342,12 +561,6 @@ function updateAlert(Event){
         function blink(){
             if (x === 0) { element.style.backgroundColor = "var(--accent-color)"; x=1}
             else { element.style.backgroundColor = "var(--alt-bg-color)"; x=0}
-        }
-
-        try {
-            umami.track(`A Gamer got notified about ${Event.parentEvent.name}`)
-        } catch (err){
-            console.log(err)
         }
     }
 }

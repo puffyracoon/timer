@@ -1,45 +1,69 @@
-# A Simple GuildWars2 Meta Event Timer
+# GW2 Timer Fork by puffyracoon
 
+This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-Simple-Timer/) with additional functionality.
 
-For one, I built this timer as a hobby project to learn how to code.
-And secondly, because none of the timers already in existence have the use case I wanted, or they didn't cover the latest game expansions.
+## New Features Added in This Fork
 
-The timer is intended to stick on a second monitor.
-To keep an eye on what happens next, in the fantastic world of Tyria.
+### 🔍 Real-time Search
+- **Live event search**: Search for events by name or map location
+- **Instant filtering**: Events that don't match are hidden from view
+- **Visual highlighting**: Matching events get a red glow effect
+- **Preserves expansion colors**: Search doesn't interfere with the color-coded event cards
 
-#### Visit
-Website: https://gw2timer.snipppy.de/ 
+### 🎛️ Enhanced Toggle Controls
+- **Toggle All button**: Quickly enable all event categories at once
+- **Toggle None button**: Quickly disable all event categories at once
+- **Convenient placement**: Located at the top of the filter menu for easy access
 
-## Features
+### 🌊 New Meta Event
+- **A Titanic Voyage**: Added the new meta event from Janthir Wilds expansion
+- **Complete scheduling**: Includes all timing and map information
+- **Proper categorization**: Correctly placed in the Janthir Wilds category
 
-- Copy Waypoint to Clipboard
-- hide Events you are not interested in
-- Set a visual and audible alert 2, 5 or 10 Minutes before an Events begins
-- Mark an Event as done (will reset with in game server reset)
-- "Done Marker" and hidden Events gets Saved for your future visit
+### 🎨 UI/UX Improvements
+- **Centered search bar**: Clean, accessible search input in the header
+- **Preserved styling**: Maintains the original design aesthetic
+- **Better user flow**: More intuitive event discovery and management
 
-## Known issues
+### 🧹 Code Cleanup
+- **Updated attribution**: Proper fork credits and links to both repositories
 
-- Missing events
+## Original Project
+- **Original Creator**: Snipppy
+- **Original Repository**: https://github.com/Snipppppy/GW2-Simple-Timer/
+- **Live Demo**: https://gw2timer.snipppy.de/
 
+## Installation
+1. Clone this repository
+2. Run a local HTTP server (e.g., `python -m http.server 3000`)
+3. Open `http://localhost:3000` in your browser
 
-## Roadmap
+## GitHub Pages
+This fork is configured to work with GitHub Pages for easy deployment.
 
-- Add missing events
-- UI/UX improvement
-- set "Done Marker" via a user provided API key
-- Include Farm Train notifications - maybe if I figure out how.
+## Additional Features in This Fork
+
+### 🔑 GW2 API Key Integration
+- **API key storage**: Secure local storage of your Guild Wars 2 API key
+- **Future-ready**: Prepared for Wizard Vault weekly objective integration
+- **Smart validation**: Save button disables when key is already stored
+- **Easy management**: Simple interface to add, view, and clear API keys
+- **Note**: *API key functionality is currently for storage only - Wizard Vault integration coming soon*
+
+### 🔔 Persistent Reminders
+- **Saved alerts**: Reminder settings now persist across browser sessions
+- **Auto-restore**: Page reloads maintain your alert preferences
+- **Smart cleanup**: Expired reminders are automatically removed
+- **Seamless experience**: No more lost reminder settings
+
+### 🌊 Updated Meta Events
+- **The Battle for the Jade Sea**: Updated with proper name and 60-minute duration
+- **Accurate scheduling**: All events include correct timing and map information
+
+### 🧹 Code Cleanup
+- **Removed analytics**: No more umami tracking calls for privacy
+- **Asset path fixes**: All paths converted to relative for GitHub Pages compatibility
 
 ---
 
-
-## How to contribute?
-Frst of all can let me know you feedback.
-
-Or do you want to help keep the light on?
-I will gladly pay for that, but an in-game Mystic Coin or two would be greatly appreciated. :P
-
-Skiqper.4827
-
-
-![Screenshot from 2024-11-23 15-40-49.png](app/assets/Screenshot%20from%202024-11-23%2015-40-49.png)
+*This fork maintains all original functionality while adding the enhancements listed above.*

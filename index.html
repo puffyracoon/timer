@@ -6,22 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!--Page Information-->
     <title>SimpleTimer - GW2 Meta Event Timer</title>
-    <meta name="description" content="A clear, easy and clean way to keep track of Guild Ware 2 Meta Events.">
-    <meta name="author" content="Snippy" />
-    <meta name="keywords" content="Guild, Wars, 2, gw2, Meta, Event, Timer, Timetable, Ley, Line, Convergences, Icebrood, Pinata, Octovine, Chak, Night, Bosses, Matriarch, Tequatl, Karka, Queen, Triple, Trouble, Ddoppelganger, Death-Branded, Palawadan, Thunderhead, Drakkar, Dragonstorm, Aetherblade, Amnitas">
-    <meta name="page-topic" content="Spiel">
-    <meta name="page-type" content="Katalog Verzeichnis">
-    <meta name="audience" content="Fans">
-    <!--Open Graph Meta tags-->
-    <meta property="og:Title" content="SimpleTimer - GW2 Meta Event Timer">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://gw2simpletimer.netlify.app/">
-    <meta property="og:description" content="A clear, easy and clean way to keep track of Guild Ware 2 Meta Events.">
     <!--Favicon-->
-    <link rel="icon" type="image/x-icon" href="/app/assets/Event_star_(map_icon).png">
-    <!--third party-->
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="2b1f77c5-91f9-4b6c-9b84-fe3b73b5ede1"></script>
-    <!--Assets-->
+    <link rel="icon" type="image/x-icon" href="app/assets/Event_star_(map_icon).png">
+        <!--Assets-->
     <link rel="stylesheet" href="app/Style.css">
     <script defer type="module" src="app/script.js"></script>
 
@@ -29,8 +16,10 @@
 
 <body>
     <header>
-        <div class="logo"><img src="/app/assets/Event_star_(map_icon).png" height="40px" width="auto" alt="GW2 Logo"/></div>
+    <div class="logo"><img src="app/assets/Event_star_(map_icon).png" height="40px" width="auto" alt="GW2 Logo"/></div>
         <h2 class="SiteName">Simple Timer</h2>
+        <input id="event-search" type="text" placeholder="Search events..." class="search-input" />
+        <button id="api-key-btn" class="api-key-button" title="GW2 API Key">🔑</button>
     </header>
 
     <label class="hamburger">
@@ -38,13 +27,17 @@
     </label>
     <aside class="sidebar">
         <div id="browser-settings-alert">Depending on your browser settings, this will be saved for your future sessions.</div>
+        <div class="toggle-controls">
+            <button id="toggle-all" class="toggle-btn">Toggle All</button>
+            <button id="toggle-none" class="toggle-btn">Toggle None</button>
+        </div>
         <div id="category-list" class="category-list"></div>
         <div class="about">
-            Wannt to help to keep the light on?<br/>
-            A Mystic Coin would do it for me. 😉<br/><br/>
+            Fork by puffyracoon.4096<br/>
+            Original by Snipppy<br/><br/>
 
-            Skiqper.4827 <br/><br/><br/>
-            <a href="https://github.com/Snipppppy/GW2-Simple-Timer/" target="_blank" class="github-link">Github</a>
+            <a href="https://github.com/puffyracoon/timer/" target="_blank" class="github-link">This Fork</a><br/>
+            <a href="https://github.com/Snipppppy/GW2-Simple-Timer/" target="_blank" class="github-link">Original</a>
         </div>
     </aside>
     <div class="event-table" id="event-table"></div>
@@ -95,5 +88,27 @@
         <input class="done-checkbox" type="checkbox">
     </div>
 </template>
+
+<!-- API Key Modal -->
+<div id="api-key-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>GW2 API Key</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Enter your Guild Wars 2 API key for Wizard Vault integration:</p>
+            <input type="text" id="api-key-input" placeholder="Enter API key..." />
+            <div class="api-key-status">
+                <span id="api-key-status-text">No API key set</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="save-api-key" class="modal-btn save-btn">Save</button>
+            <button id="clear-api-key" class="modal-btn clear-btn">Clear</button>
+            <button id="cancel-api-key" class="modal-btn cancel-btn">Cancel</button>
+        </div>
+    </div>
+</div>
 
 </html>

@@ -525,10 +525,10 @@
     {
       "key": "Dragon'sEnd",
       "categoryKey": "eod",
-      "name": "Dragon's End",
+      "name": "The Battle for the Jade Sea",
       "wiki": "https://wiki.guildwars2.com/wiki/The_Battle_for_the_Jade_Sea",
       "fastF": "https://fast.farming-community.eu/open-world/meta/dragons-end-meta",
-      "durationMS": 1800000
+      "durationMS": 3600000
     },
     {
       "key": "JadeMaw",
@@ -593,6 +593,15 @@
       "wiki": "https://wiki.guildwars2.com/wiki/Convergence:_Mount_Balrior",
       "fastF": "",
       "durationMS": 60000
+    }
+    ,
+    {
+      "key": "ATitanicVoyage",
+      "categoryKey": "janthir",
+      "name": "A Titanic Voyage",
+      "wiki": "https://wiki.guildwars2.com/wiki/A_Titanic_Voyage",
+      "fastF": "",
+      "durationMS": 600000
     }
   ],
 
@@ -997,6 +1006,12 @@
       "start": ["0:40", "2:40", "4:40", "6:40", "8:40", "10:40", "12:40", "14:40", "16:40", "18:40", "24:30", "22:40"],
       "map": "Janthir Syntri",
       "waypoint": "Decima [&BCoPAAA=] - Greer [&BLgOAAA=]"
+    },
+    {
+      "parentKey": "ATitanicVoyage",
+      "start": ["1:15", "7:15", "13:15", "19:15"],
+      "map": "Bava Nisos",
+      "waypoint": "[&BGEPAAA=]"
     },
     {
       "parentKey": "Convergence:MountBalrior",
