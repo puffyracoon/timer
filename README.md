@@ -1,5 +1,7 @@
 # GW2 Timer Fork by puffyracoon
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3482cc61-6566-49de-957c-2e42d6981e27/deploy-status)](https://app.netlify.com/projects/puffytimer/deploys)
+
 This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-Simple-Timer/) with additional functionality.
 
 ## New Features Added in This Fork
@@ -40,7 +42,7 @@ This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-
 
 ### This Fork
 - **Repository**: https://github.com/puffyracoon/timer/
-- **Live Demo**: https://puffyracoon.github.io/timer/
+- **Live Demo**: https://vargavinter.space
 
 ### Original Project
 - **Creator**: Snipppy
