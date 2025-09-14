@@ -418,14 +418,6 @@
       "durationMS": 660000
     },
     {
-      "key": "TheOilFloes",
-      "categoryKey": "ls4",
-      "name": "The Oil Floes",
-      "wiki": "https://wiki.guildwars2.com/wiki/The_Oil_Floes",
-      "fastF": "https://fast.farming-community.eu/open-world/meta/thunderhead-peaks-the-oil-floes",
-      "durationMS": 720000
-    },
-    {
       "key": "SacredFlame",
       "categoryKey": "ls5",
       "name": "Sacred Flame",
@@ -475,14 +467,6 @@
       "durationMS": 120000
     },
     {
-      "key": "Drakkar",
-      "categoryKey": "ls5",
-      "name": "Drakkar",
-      "wiki": "https://wiki.guildwars2.com/wiki/Champion_of_the_Ice_Dragon",
-      "fastF": "https://fast.farming-community.eu/open-world/meta/drakkar",
-      "durationMS": 900000
-    },
-    {
       "key": "Dragonstorm",
       "categoryKey": "ls5",
       "name": "Dragonstorm",
@@ -496,14 +480,6 @@
       "name": "Aetherblade Assault",
       "wiki": "https://wiki.guildwars2.com/wiki/Aetherblade_Assault",
       "fastF": "https://fast.farming-community.eu/open-world/meta/aetherblade-assault",
-      "durationMS": 1500000
-    },
-    {
-      "key": "KainengBlackout",
-      "categoryKey": "eod",
-      "name": "Kaineng Blackout",
-      "wiki": "https://wiki.guildwars2.com/wiki/Kaineng_Blackout",
-      "fastF": "https://fast.farming-community.eu/open-world/meta/kaineng-blackout-meta",
       "durationMS": 1500000
     },
     {
@@ -602,6 +578,30 @@
       "wiki": "https://wiki.guildwars2.com/wiki/A_Titanic_Voyage",
       "fastF": "",
       "durationMS": 600000
+    },
+    {
+      "key": "Drakkar",
+      "categoryKey": "ls5",
+      "name": "Drakkar",
+      "wiki": "https://wiki.guildwars2.com/wiki/Drakkar",
+      "fastF": "https://fast.farming-community.eu/open-world/meta/drakkar",
+      "durationMS": 1800000
+    },
+    {
+      "key": "OilFloes",
+      "categoryKey": "ls4",
+      "name": "The Oil Floes",
+      "wiki": "https://wiki.guildwars2.com/wiki/The_Oil_Floes",
+      "fastF": "https://fast.farming-community.eu/open-world/meta/oil-floes",
+      "durationMS": 1200000
+    },
+    {
+      "key": "KainengBlackout",
+      "categoryKey": "eod",
+      "name": "Kaineng Blackout",
+      "wiki": "https://wiki.guildwars2.com/wiki/Kaineng_Blackout",
+      "fastF": "https://fast.farming-community.eu/open-world/meta/kaineng-blackout",
+      "durationMS": 1200000
     }
   ],
 
@@ -882,12 +882,6 @@
       "waypoint": "[&BLsLAAA=]"
     },
     {
-      "parentKey": "TheOilFloes",
-      "start": ["1:45", "3:45", "5:45", "7:45", "9:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45", "0:45", "2:45", "4:45", "6:45", "8:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45"],
-      "map": "Thunderhead Peaks",
-      "waypoint": "[&BKYLAAA=]"
-    },
-    {
       "parentKey": "SacredFlame",
       "start": ["0:10", "2:10", "4:10", "6:10", "8:10", "10:10", "12:10", "14:10", "16:10", "18:10", "20:10", "22:10"],
       "map": "Grothmar Valley",
@@ -924,12 +918,6 @@
       "waypoint": "[&BCcMAAA=]"
     },
     {
-      "parentKey": "Drakkar",
-      "start": ["1:20", "3:20", "5:20", "7:20", "9:20", "11:20", "13:20", "15:20", "17:20", "19:20", "21:20", "23:20"],
-      "map": "Bjora Marches",
-      "waypoint": "[&BDkMAAA=]"
-    },
-    {
       "parentKey": "Dragonstorm",
       "start": ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"],
       "map": "Eye of the North",
@@ -940,12 +928,6 @@
       "start": ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30"],
       "map": "Seitung Province",
       "waypoint": "[&BGUNAAA=]"
-    },
-    {
-      "parentKey": "KainengBlackout",
-      "start": ["0:00", "2:00", "4:00", "6:00", "8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
-      "map": "New Kaineng City",
-      "waypoint": "[&BBkNAAA=]"
     },
     {
       "parentKey": "GangWar",
@@ -1018,6 +1000,24 @@
       "start": ["0:00", "3:00", "6:00", "9:00", "12:00", "15:00", "18:00", "21:00"],
       "map": "Lowland Shore",
       "waypoint": "[&BK4OAAA=]"
+    },
+    {
+      "parentKey": "Drakkar",
+      "start": ["2:00", "5:00", "8:00", "11:00", "14:00", "17:00", "20:00", "23:00"],
+      "map": "Bjora Marches",
+      "waypoint": "[&BAgMAAA=]"
+    },
+    {
+      "parentKey": "OilFloes",
+      "start": ["0:20", "2:20", "4:20", "6:20", "8:20", "10:20", "12:20", "14:20", "16:20", "18:20", "20:20", "22:20"],
+      "map": "Sandswept Isles",
+      "waypoint": "[&BHELAAA=]"
+    },
+    {
+      "parentKey": "KainengBlackout",
+      "start": ["0:30", "2:30", "4:30", "6:30", "8:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30"],
+      "map": "Kaineng City",
+      "waypoint": "[&BKgLAAA=]"
     }
   ]
 }

@@ -23,10 +23,13 @@ This is a fork of [Snipppy's GW2 Simple Timer](https://github.com/Snipppppy/GW2-
 - **Toggle None button**: Quickly disable all event categories at once
 - **Convenient placement**: Located at the top of the filter menu for easy access
 
-### 🌊 New Meta Event
+### 🧹 Meta Event Cleanup & Fixes
+- **Removed duplicate entries**: Fixed filter menu showing duplicate events (Drakkar, Kaineng Blackout, etc.)
+- **Improved scheduling**: Updated some events with better/cleaner timing schedules  
+- **The Gang War of Echovald**: Updated with proper name and 40-minute duration
+- **The Battle for the Jade Sea**: Updated with proper name and 60-minute duration
 - **A Titanic Voyage**: Added the new meta event from Janthir Wilds expansion
-- **Complete scheduling**: Includes all timing and map information
-- **Proper categorization**: Correctly placed in the Janthir Wilds category
+- **Comprehensive coverage**: All major meta events with reliable schedules were already included
 
 ### 🎨 UI/UX Improvements
 - **Centered search bar**: Clean, accessible search input in the header
@@ -78,6 +81,8 @@ This fork is configured to work with GitHub Pages for easy deployment.
 ### 🌊 Updated Meta Events
 - **The Gang War of Echovald**: Updated with proper name and 40-minute duration
 - **The Battle for the Jade Sea**: Updated with proper name and 60-minute duration
+- **Duplicate cleanup**: Removed duplicate filter entries that were causing confusion
+- **Schedule optimization**: Improved timing for some existing meta events
 - **Accurate scheduling**: All events include correct timing and map information
 
 ### 🧹 Code Cleanup
